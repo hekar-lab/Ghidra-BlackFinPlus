@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<language_definitions>
+
+  <language processor="ADSP-BF7xx"
+            endian="little"
+            size="32"
+            variant="Blackfin+"
+            version="1.0"
+            slafile="blackfinplus.sla"
+            processorspec="blackfinplus.pspec"
+            id="blackfin:LE:32:blackfin+">
+    <description>Analog Devices Blackfin+ family (ADSP-BF7xx)</description>
+    <compiler name="default" spec="blackfinplus.cspec" id="default"/>
+  </language>
+
+</language_definitions>
