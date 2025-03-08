@@ -1,0 +1,221 @@
+######################################################################
+########>--------             Variables              --------<########
+######################################################################
+
+# Data registers
+attach variables [ 
+    alu2opSrc alu2opDst alu2opDstCpy
+    cc2dregReg 
+    ccflagYDreg ccflagXDreg
+    ccmvDstDreg ccmvSrcDreg
+    cp3opDstD cp3opSrc1D cp3opSrc0D
+    cpi2opDstD
+    daDst0 daDst1 daSrc0 daSrc1
+    dmDst dmSrc0 dmSrc1
+    dsDst dsSrc0 dsSrc1
+    dsiDst dsiSrc
+    dlsReg
+    ldiDReg
+    lihDReg
+    ldstReg
+    lsfpDReg
+    lsidDReg
+    lspReg
+    l2oDst
+    pgcDReg
+    pprDReg
+    rmvDstDReg rmvSrcDReg
+] [
+    R0 R1 R2 R3 R4 R5 R6 R7
+];
+attach variables [ 
+    alu2opSrcL
+    daDst0L daSrc0L daSrc1L
+    dmDstL dmSrc0L dmSrc1L
+    dsDstL dsSrc0L dsSrc1L
+    dsiDstL dsiSrcL
+    dlsRegL
+    lihDRegL
+    lspRegL
+] [ 
+    R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L
+];
+attach variables [ 
+    daDst0H daSrc0H daSrc1H
+    dmDstH dmSrc0H dmSrc1H
+    dsDstH dsSrc0H dsSrc1H
+    dsiDstH dsiSrcH
+    dlsRegH
+    lihDRegH
+    lspRegH
+] [ 
+    R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H
+];
+attach variables [ 
+    alu2opSrcB 
+] [ 
+    R0.B R1.B R2.B R3.B R4.B R5.B R6.B R7.B
+];
+attach variables [
+    dmDstPair
+] [
+    R10 _ R32 _ R54 _ R76 _
+];
+attach variables [
+    dmDstE
+] [
+    R0 _ R2 _ R4 _ R6 _
+];
+attach variables [
+    dmDstO
+] [
+    R1 _ R3 _ R5 _ R7 _
+];
+
+# Pointer registers
+attach variables [ 
+    ccflagYPreg ccflagXPreg 
+    ccmvDstPreg ccmvSrcPreg
+    cctrlReg
+    cp3opDstP cp3opSrc1P cp3opSrc0P
+    cpi2opDstP
+    ldiPReg
+    lihPReg
+    ldstPReg ldstPtr
+    lsfpPReg lsfpPtr
+    lsidPReg lsidPtr
+    lspPtr lspIdx
+    ldpReg ldpPtr
+    lpiiReg lpiiPtr
+    lpfpReg
+    lopReg
+    pgcPReg
+    p2oSrc p2oDst p2oDstCpy
+    pprPReg
+    rmvDstPReg rmvSrcPReg
+] [
+    P0 P1 P2 P3 P4 P5 SP FP
+];
+attach variables [
+    lihPRegL
+] [
+    P0.L P1.L P2.L P3.L P4.L P5.L SP.L FP.L
+];
+attach variables [
+    lihPRegH
+] [
+    P0.H P1.H P2.H P3.H P4.H P5.H SP.H FP.H
+];
+
+# Index registers
+attach variables [ 
+    dagmdikI dagmdimI 
+    dlsI
+    ldiIReg
+    lihIReg
+    pprIReg
+    rmvDstIReg rmvSrcIReg
+] [
+    I0 I1 I2 I3
+];
+attach variables [
+    lihIRegL
+] [
+    I0.L I1.L I2.L I3.L
+];
+attach variables [
+    lihIRegH
+] [
+    I0.H I1.H I2.H I3.H
+];
+
+# Modify registers
+attach variables [ 
+    dagmdimM 
+    dlsM
+    ldiMReg
+    lihMReg
+    pprMReg
+    rmvDstMReg rmvSrcMReg
+] [
+    M0 M1 M2 M3
+];
+attach variables [
+    lihMRegL
+] [
+    M0.L M1.L M2.L M3.L
+];
+attach variables [
+    lihMRegH
+] [
+    M0.H M1.H M2.H M3.H
+];
+
+# Length Registers
+attach variables [ 
+    ldiLReg
+    lihLReg
+    pprLReg
+    rmvDstLReg rmvSrcLReg
+] [
+    L0 L1 L2 L3
+];
+attach variables [
+    lihLRegL
+] [
+    L0.L L1.L L2.L L3.L
+];
+attach variables [
+    lihLRegH
+] [
+    L0.H L1.H L2.H L3.H
+];
+
+# Base registers
+attach variables [ 
+    ldiBReg
+    lihBReg
+    pprBReg
+    rmvDstBReg rmvSrcBReg
+] [
+    B0 B1 B2 B3
+];
+attach variables [
+    lihBRegL
+] [
+    B0.L B1.L B2.L B3.L
+];
+attach variables [
+    lihBRegH
+] [
+    B0.H B1.H B2.H B3.H
+];
+
+# Accumulator registers
+attach variables [ daA0Hl ] [ A0.L A0.H ];
+attach variables [ daA1Hl ] [ A1.L A1.H ];
+attach variables [ 
+    pprAccReg 
+    rmvDstAccReg rmvSrcAccReg
+] [ 
+    A0.X A0.W A1.X A1.W _ _ ASTAT RETS 
+];
+
+# System registers
+attach variables [ 
+    ldiSysReg2 
+    pprSysReg2
+    rmvDstSysReg2 rmvSrcSysReg2
+] [ 
+    LC0 LB0 LT0 LC1 LB1 LT1 CYCLES CYCLES2 
+];
+attach variables [
+    ldiSysReg3 
+    pprSysReg3
+    rmvDstSysReg3 rmvSrcSysReg3
+] [ 
+    USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT 
+];
+
+# Loop registers
+attach variables [ lopC ] [ LC0 LC1 ];
