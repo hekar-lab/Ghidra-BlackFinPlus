@@ -596,9 +596,9 @@ with : dsSopc=0xc ; dsHls=0x0 {
 }
 
 with : dsSopc=0xd ; dsHls=0x0 {
-:ShiftAlign dsDst = "align8"(dsSrc0, dsSrc1)  is any16 ; dsSop=0x0 & dsDstL & dsSrc0 & dsSrc1 {}
-:ShiftAlign dsDst = "align16"(dsSrc0, dsSrc1) is any16 ; dsSop=0x1 & dsDstL & dsSrc0 & dsSrc1 {}
-:ShiftAlign dsDst = "align24"(dsSrc0, dsSrc1) is any16 ; dsSop=0x2 & dsDstL & dsSrc0 & dsSrc1 {}
+:ShiftAlign dsDst = "align8"(dsSrc0, dsSrc1)  is any16 ; dsSop=0x0 & dsDst & dsSrc0 & dsSrc1 {}
+:ShiftAlign dsDst = "align16"(dsSrc0, dsSrc1) is any16 ; dsSop=0x1 & dsDst & dsSrc0 & dsSrc1 {}
+:ShiftAlign dsDst = "align24"(dsSrc0, dsSrc1) is any16 ; dsSop=0x2 & dsDst & dsSrc0 & dsSrc1 {}
 }
 }
 
@@ -649,25 +649,25 @@ with : dsiSopc=0x00 ; dsiSop=0x2 {
 }
 
 with : dsiSopc=0x01 ; dsiHls=0x0 {
-:AShift16Vec dsiDst = dsiSrc AHSH4 "(V)"   is any16 ; dsiHls=0x0 & dsiDst & AHSH4 & dsiSrc {}
-:AShift16Vec dsiDst = dsiSrc AHSH4 "(V,S)" is any16 ; dsiHls=0x1 & dsiDst & AHSH4 & dsiSrc {}
-:LShift16Vec dsiDst = dsiSrc LHSH4 "(V)"   is any16 ; dsiHls=0x2 & dsiDst & LHSH4 & dsiSrc {}
+:AShift16Vec dsiDst = dsiSrc AHSH4 "(V)"   is any16 ; dsiSop=0x0 & dsiDst & AHSH4 & dsiSrc {}
+:AShift16Vec dsiDst = dsiSrc AHSH4 "(V,S)" is any16 ; dsiSop=0x1 & dsiDst & AHSH4 & dsiSrc {}
+:LShift16Vec dsiDst = dsiSrc LHSH4 "(V)"   is any16 ; dsiSop=0x2 & dsiDst & LHSH4 & dsiSrc {}
 }
 
 with : dsiSopc=0x02 ; dsiHls=0x0 {
-:AShift32   dsiDst = dsiSrc ASH5             is any16 ; dsiHls=0x0 & dsiDst & ASH5 & dsiSrc {}
-:AShift32   dsiDst = dsiSrc ASH5 "(S)"       is any16 ; dsiHls=0x1 & dsiDst & ASH5 & dsiSrc {}
-:LShift     dsiDst = dsiSrc LSH5             is any16 ; dsiHls=0x2 & dsiDst & LSH5 & dsiSrc {}
-:ShiftRot32 dsiDst = "rot" dsiSrc by dsiImm  is any16 ; dsiHls=0x3 & dsiDst & dsiImm & dsiSrc {}
+:AShift32   dsiDst = dsiSrc ASH5              is any16 ; dsiSop=0x0 & dsiDst & ASH5 & dsiSrc {}
+:AShift32   dsiDst = dsiSrc ASH5 "(S)"        is any16 ; dsiSop=0x1 & dsiDst & ASH5 & dsiSrc {}
+:LShift     dsiDst = dsiSrc LSH5              is any16 ; dsiSop=0x2 & dsiDst & LSH5 & dsiSrc {}
+:ShiftRot32 dsiDst = "rot" dsiSrc "by" dsiImm is any16 ; dsiSop=0x3 & dsiDst & dsiImm & dsiSrc {}
 }
 
 with : dsiSopc=0x03 ... {
-:AShiftAcc   "A0 = A0" ASH5          is any16 ; dsiSop=0x0 & dsiHsl=0x0 & ASH5 {}
-:AShiftAcc   "A1 = A1" ASH5          is any16 ; dsiSop=0x0 & dsiHsl=0x1 & ASH5 {}
-:LShiftA     "A0 = A0" LSH5          is any16 ; dsiSop=0x1 & dsiHsl=0x0 & LSH5 {}
-:LShiftA     "A1 = A1" LSH5          is any16 ; dsiSop=0x1 & dsiHsl=0x1 & LSH5 {}
-:ShiftRotAcc "A0 = rot A0 by" dsiImm is any16 ; dsiSop=0x2 & dsiHsl=0x0 & dsiImm {}
-:ShiftRotAcc "A1 = rot A1 by" dsiImm is any16 ; dsiSop=0x2 & dsiHsl=0x1 & dsiImm {}
+:AShiftAcc   "A0 = A0" ASH5          is any16 ; dsiSop=0x0 & dsiHls=0x0 & ASH5 {}
+:AShiftAcc   "A1 = A1" ASH5          is any16 ; dsiSop=0x0 & dsiHls=0x1 & ASH5 {}
+:LShiftA     "A0 = A0" LSH5          is any16 ; dsiSop=0x1 & dsiHls=0x0 & LSH5 {}
+:LShiftA     "A1 = A1" LSH5          is any16 ; dsiSop=0x1 & dsiHls=0x1 & LSH5 {}
+:ShiftRotAcc "A0 = rot A0 by" dsiImm is any16 ; dsiSop=0x2 & dsiHls=0x0 & dsiImm {}
+:ShiftRotAcc "A1 = rot A1 by" dsiImm is any16 ; dsiSop=0x2 & dsiHls=0x1 & dsiImm {}
 }
 }
 
@@ -700,7 +700,7 @@ DSTH: lihMRegH is lihGrp=0x2 & lihReg1=0x1 & lihMRegH {}
 DSTH: lihBRegH is lihGrp=0x3 & lihReg1=0x0 & lihBRegH {}
 DSTH: lihLRegH is lihGrp=0x3 & lihReg1=0x1 & lihLRegH {}
 
-with : opcode08=0xe1 {
+with : opcode08=0xe1 ... {
 :LdImmToDregHL DSTL = lihHword is lihZ=0x0 & lihH=0x0 & lihS=0x0 & DSTL ; lihHword {}
 :LdImmToReg    DST = lihHword  is lihZ=0x0 & lihH=0x0 & lihS=0x1 & DST ; lihHword {}
 :LdImmToReg    DST = lihHword  is lihZ=0x1 & lihH=0x0 & lihS=0x0 & DST ; lihHword {}
@@ -716,22 +716,22 @@ with : opcode08=0xe1 {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode06=0x3b ; lseZeros=0x0 {
-with : lseW=0x0 {
-:LdX32bitToDreg  lseReg = [lsePtr] "(EXCL)"       is lseSz=0x0 & lsZ=0x0 & lseReg & lsePtr {}
-:LdX16bitToDreg  lseReg = "W" [lsePtr] "(Z,EXCL)" is lseSz=0x1 & lsZ=0x0 & lseReg & lsePtr {}
-:LdX16bitToDreg  lseReg = "W" [lsePtr] "(X,EXCL)" is lseSz=0x1 & lsZ=0x1 & lseReg & lsePtr {}
-:LdX08bitToDreg  lseReg = "B" [lsePtr] "(Z,EXCL)" is lseSz=0x2 & lsZ=0x0 & lseReg & lsePtr {}
-:LdX08bitToDreg  lseReg = "B" [lsePtr] "(X,EXCL)" is lseSz=0x2 & lsZ=0x1 & lseReg & lsePtr {}
-:LdX16bitToDregL lseRegL = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lsZ=0x0 & lseRegL & lsePtr {}
-:LdX16bitToDregH lseRegH = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lsZ=0x1 & lseRegH & lsePtr {}
+with : lseW=0x0 ... {
+:LdX32bitToDreg  lseReg = [lsePtr] "(EXCL)"       is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:LdX16bitToDreg  lseReg = "W" [lsePtr] "(Z,EXCL)" is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:LdX16bitToDreg  lseReg = "W" [lsePtr] "(X,EXCL)" is lseSz=0x1 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
+:LdX08bitToDreg  lseReg = "B" [lsePtr] "(Z,EXCL)" is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:LdX08bitToDreg  lseReg = "B" [lsePtr] "(X,EXCL)" is lseSz=0x2 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
+:LdX16bitToDregL lseRegL = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x0 & lseRegL & lsePtr ; any32 {}
+:LdX16bitToDregH lseRegH = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
 }
 
-with : lseW=0x1 {
-:StDregToX32bit  "CC" = ([lsePtr] = lseReg) "(EXCL)"      is lseSz=0x0 & lsZ=0x0 & lseReg & lsePtr {}
-:StDregToX16bit  "CC" = ("W" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lsZ=0x0 & lseReg & lsePtr {}
-:StDregToX08bit  "CC" = ("B" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lsZ=0x0 & lseReg & lsePtr {}
-:StDregHToX16bit "CC" = ("W" [lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lsZ=0x0 & lseRegH & lsePtr {}
-:SyncExcl                                                 is lseSz=0x3 & lsZ=0x1 & lseRegH & lsePtr {}
+with : lseW=0x1 ... {
+:StDregToX32bit  "CC" = ([lsePtr] = lseReg) "(EXCL)"      is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:StDregToX16bit  "CC" = ("W" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:StDregToX08bit  "CC" = ("B" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:StDregHToX16bit "CC" = ("W" [lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lseZ=0x0 & lseRegH & lsePtr ; any32 {}
+:SyncExcl                                                 is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
 }
 }
 
@@ -744,18 +744,18 @@ with : lseW=0x1 {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode06=0x39 ... {
-with lsidW=0x0 {
-:LdM32bitToDreg lsidDreg = [lsidPtr + lsidOff]           is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidOff {}
-:LdM32bitToPreg lsidPreg = [lsidPtr + lsidOff]           is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPreg ; lsidOff {}
-:LdM16bitToDreg lsidDreg = "W" [lsidPtr + lsidOff] "(Z)" is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDreg ; lsidOff {}
-:LdM16bitToDreg lsidDreg = "W" [lsidPtr + lsidOff] "(X)" is lsidZ=0x1 & lsidSz=0x1 & lsidPtr & lsidDreg ; lsidOff {}
-:LdM08bitToDreg lsidDreg = "B" [lsidPtr + lsidOff] "(Z)" is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDreg ; lsidOff {}
-:LdM08bitToDreg lsidDreg = "B" [lsidPtr + lsidOff] "(X)" is lsidZ=0x1 & lsidSz=0x2 & lsidPtr & lsidDreg ; lsidOff {}
+with : lsidW=0x0 ... {
+:LdM32bitToDreg lsidDReg = [lsidPtr + lsidOff]           is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidOff {}
+:LdM32bitToPreg lsidPReg = [lsidPtr + lsidOff]           is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPReg ; lsidOff {}
+:LdM16bitToDreg lsidDReg = "W" [lsidPtr + lsidOff] "(Z)" is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidOff {}
+:LdM16bitToDreg lsidDReg = "W" [lsidPtr + lsidOff] "(X)" is lsidZ=0x1 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidOff {}
+:LdM08bitToDreg lsidDReg = "B" [lsidPtr + lsidOff] "(Z)" is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {}
+:LdM08bitToDreg lsidDReg = "B" [lsidPtr + lsidOff] "(X)" is lsidZ=0x1 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {}
 }
 
-with lsidW=0x1 {
+with : lsidW=0x1 ... {
 :StDregToM32bit  [lsidPtr + lsidOff] = lsidDReg is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidOff {}
-:StPregToM32bit  [lsidPtr + lsidOff] = lsidPreg is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPreg ; lsidOff {}
+:StPregToM32bit  [lsidPtr + lsidOff] = lsidPReg is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPReg ; lsidOff {}
 :StDregLToM16bit "W" [lsidPtr + lsidOff] = lsidDReg is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidOff {}
 :StDregToM08bit  "B" [lsidPtr + lsidOff] = lsidDReg is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {}
 }
@@ -773,7 +773,7 @@ unlinkDesc: "unlink" is epsilon {}
 
 with : opcode15=0x7400 ... {
 :Linkage "link" lnkFrm is lnkR=0x0 ; lnkFrm {}
-:Linkage unlinkDesc    is lnkR=0x1 ; lnkFrm {}
+:Linkage unlinkDesc    is lnkR=0x1 ; lnkFrm & unlinkDesc {}
 }
 
 
@@ -784,23 +784,23 @@ with : opcode15=0x7400 ... {
 ## |imm|.reg.......|.lop...|.eoff..................................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-lopImm: imm is lopImmH ; lopImmL [imm = (lopImmH << 6) + lopImmL]{}
+lopImm: imm is lopImmH ; lopImmL [imm = (lopImmH << 6) + lopImmL;]{}
 
-with opcode09=0x1c1 ... {
+with : opcode09=0x1c1 ... {
 :LoopSetup "lsetup"(lopEoff) lopC = lopImm is (lopRop=0x0 & lopC & lopSoff ; lopEoff) & lopImm {}
 
-with ... lopLop=0x0 {
+with : ... lopLop=0x0 {
 :LoopSetup "lsetup"(lopSoff, lopEoff) lopC                 is lopRop=0x0 & lopC & lopSoff ; lopEoff {}
 :LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
 :LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
 }
 
-with ... lopLop=0x1 {
+with : ... lopLop=0x1 {
 :LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
 :LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
 }
 
-with ... lopLop=0x2 {
+with : ... lopLop=0x2 {
 :LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
 :LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
 }

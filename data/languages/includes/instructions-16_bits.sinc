@@ -345,8 +345,8 @@ with : ldstW=0x1 & ldstSz=0x2 {
 ## | 1 | 0 | 1 |.w.|.op....|.off...........|.ptr.......|.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-lsiiImm2: imm is lsiiOff [imm = lsiiOff << 1] {}
-lsiiImm4: imm is lsiiOff [imm = lsiiOff << 2] {}
+lsiiImm2: imm is lsiiOff [imm = lsiiOff << 1;] {}
+lsiiImm4: imm is lsiiOff [imm = lsiiOff << 2;] {}
 
 with : opcode03=0x5 {
 with : lsiiW=0x0 {
@@ -544,13 +544,13 @@ with : opcode07=0x02 {
 with : ppmW=0x0 {
 :PushPopMul16 (PREGRANGE) = "[SP++]"            is ppmD=0x0 & ppmP=0x1 & PREGRANGE {}
 :PushPopMul16 (DREGRANGE) = "[SP++]"            is ppmD=0x1 & ppmP=0x0 & DREGRANGE {}
-:PushPopMul16 (DREGRANGE, PREGRANGE) = "[SP++]" is ppmD=0x1 & ppmP=0x1 & PREGRANGE {}
+:PushPopMul16 (DREGRANGE, PREGRANGE) = "[SP++]" is ppmD=0x1 & ppmP=0x1 & DREGRANGE & PREGRANGE {}
 }
 
 with : ppmW=0x1 {
 :PushPopMul16 "[--SP]" = (PREGRANGE)            is ppmD=0x0 & ppmP=0x1 & PREGRANGE {}
 :PushPopMul16 "[--SP]" = (DREGRANGE)            is ppmD=0x1 & ppmP=0x0 & DREGRANGE {}
-:PushPopMul16 "[--SP]" = (DREGRANGE, PREGRANGE) is ppmD=0x1 & ppmP=0x1 & PREGRANGE {}
+:PushPopMul16 "[--SP]" = (DREGRANGE, PREGRANGE) is ppmD=0x1 & ppmP=0x1 & DREGRANGE & PREGRANGE {}
 }
 }
 
@@ -567,7 +567,12 @@ PUSHPOPREG: pprIReg    is pprGrp=0x2 & pprReg1=0x0 & pprIReg {}
 PUSHPOPREG: pprMReg    is pprGrp=0x2 & pprReg1=0x1 & pprMReg {} 
 PUSHPOPREG: pprBReg    is pprGrp=0x3 & pprReg1=0x0 & pprBReg {} 
 PUSHPOPREG: pprLReg    is pprGrp=0x3 & pprReg1=0x1 & pprLReg {} 
-PUSHPOPREG: pprAccReg  is pprGrp=0x4 & pprAccReg {} 
+PUSHPOPREG: "A0.X"     is pprGrp=0x4 & pprAccReg=0x0 {} 
+PUSHPOPREG: "A0.W"     is pprGrp=0x4 & pprAccReg=0x1 {} 
+PUSHPOPREG: "A1.X"     is pprGrp=0x4 & pprAccReg=0x2 {} 
+PUSHPOPREG: "A1.W"     is pprGrp=0x4 & pprAccReg=0x3 {} 
+PUSHPOPREG: "ASTAT"    is pprGrp=0x4 & pprAccReg=0x6 {} 
+PUSHPOPREG: "RETS"     is pprGrp=0x4 & pprAccReg=0x7 {} 
 PUSHPOPREG: pprSysReg2 is pprGrp=0x6 & pprSysReg2 {} 
 PUSHPOPREG: pprSysReg3 is pprGrp=0x7 & pprSysReg3 {} 
 
@@ -589,7 +594,12 @@ rmvGDST: rmvDstIReg    is rmvGd=0x2 & rmvDstReg1=0x0 & rmvDstIReg {}
 rmvGDST: rmvDstMReg    is rmvGd=0x2 & rmvDstReg1=0x1 & rmvDstMReg {} 
 rmvGDST: rmvDstBReg    is rmvGd=0x3 & rmvDstReg1=0x0 & rmvDstBReg {} 
 rmvGDST: rmvDstLReg    is rmvGd=0x3 & rmvDstReg1=0x1 & rmvDstLReg {} 
-rmvGDST: rmvDstAccReg  is rmvGd=0x4 & rmvDstAccReg {} 
+rmvGDST: "A0.X"        is rmvGd=0x4 & rmvDstAccReg=0x0 {} 
+rmvGDST: "A0.W"        is rmvGd=0x4 & rmvDstAccReg=0x1 {} 
+rmvGDST: "A1.X"        is rmvGd=0x4 & rmvDstAccReg=0x2 {} 
+rmvGDST: "A1.W"        is rmvGd=0x4 & rmvDstAccReg=0x3 {} 
+rmvGDST: "ASTAT"       is rmvGd=0x4 & rmvDstAccReg=0x6 {} 
+rmvGDST: "RETS"        is rmvGd=0x4 & rmvDstAccReg=0x7 {} 
 rmvGDST: rmvDstSysReg2 is rmvGd=0x6 & rmvDstSysReg2 {} 
 rmvGDST: rmvDstSysReg3 is rmvGd=0x7 & rmvDstSysReg3 {} 
 
@@ -599,7 +609,12 @@ rmvGSRC: rmvSrcIReg    is rmvGs=0x2 & rmvSrcReg1=0x0 & rmvSrcIReg {}
 rmvGSRC: rmvSrcMReg    is rmvGs=0x2 & rmvSrcReg1=0x1 & rmvSrcMReg {} 
 rmvGSRC: rmvSrcBReg    is rmvGs=0x3 & rmvSrcReg1=0x0 & rmvSrcBReg {} 
 rmvGSRC: rmvSrcLReg    is rmvGs=0x3 & rmvSrcReg1=0x1 & rmvSrcLReg {} 
-rmvGSRC: rmvSrcAccReg  is rmvGs=0x4 & rmvSrcAccReg {} 
+rmvGSRC: "A0.X"        is rmvGs=0x4 & rmvSrcAccReg=0x0 {} 
+rmvGSRC: "A0.W"        is rmvGs=0x4 & rmvSrcAccReg=0x1 {} 
+rmvGSRC: "A1.X"        is rmvGs=0x4 & rmvSrcAccReg=0x2 {} 
+rmvGSRC: "A1.W"        is rmvGs=0x4 & rmvSrcAccReg=0x3 {} 
+rmvGSRC: "ASTAT"       is rmvGs=0x4 & rmvSrcAccReg=0x6 {} 
+rmvGSRC: "RETS"        is rmvGs=0x4 & rmvSrcAccReg=0x7 {} 
 rmvGSRC: rmvSrcSysReg2 is rmvGs=0x6 & rmvSrcSysReg2 {} 
 rmvGSRC: rmvSrcSysReg3 is rmvGs=0x7 & rmvSrcSysReg3 {} 
 

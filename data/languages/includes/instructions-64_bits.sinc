@@ -17,10 +17,10 @@ jmpImmA: addr is jmpImmH ; jmpImmL [addr = jmpImmH << 16 + jmpImmL;]{ export *[r
 
 with : (opcode06=0x37 & jmpOpcode=0x0) ... {
 :JumpAbs "jump.a" jmpImmA is jmpC=0x0 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 {}
-:JumpAbs "jump" jmpImmA   is jmpC=0x0 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {}
+:JumpAbs "jump" jmpImm    is jmpC=0x0 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {}
 
 :Call "call.a" jmpImmA is jmpC=0x1 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 {}
-:Call "call" jmpImmA   is jmpC=0x1 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {}
+:Call "call" jmpImm    is jmpC=0x1 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {}
 }
 
 
@@ -48,8 +48,8 @@ with : opcode10=0x368 ... {
 :LdImmToAxW "A1.W" = ldiImm     is ldiGrp=0x4 & ldiReg=0x3 ; ldiImm ; ldiDummy {}
 :LdImmToReg "ASTAT" = ldiImm    is ldiGrp=0x4 & ldiReg=0x6 ; ldiImm ; ldiDummy {}
 :LdImmToReg "RETS" = ldiImm     is ldiGrp=0x4 & ldiReg=0x7 ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiSysReg2 = ldiImm is ldiGrp=0x6 & ldiDReg ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiSysReg3 = ldiImm is ldiGrp=0x7 & ldiDReg ; ldiImm ; ldiDummy {}
+:LdImmToReg ldiSysReg2 = ldiImm is ldiGrp=0x6 & ldiSysReg2 ; ldiImm ; ldiDummy {}
+:LdImmToReg ldiSysReg3 = ldiImm is ldiGrp=0x7 & ldiSysReg3 ; ldiImm ; ldiDummy {}
 }
 
 
