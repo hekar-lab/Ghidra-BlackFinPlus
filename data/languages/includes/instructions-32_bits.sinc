@@ -1,22 +1,240 @@
 ######################################################################
 ########>--------        32 bits instructions        --------<########
-######################################################################
-
-# TODO Main32 A & B separation
+############################## MAIN_32A ##############################
 
 
-## Call function with pcrel address (CallA)
+## 32-bit Slot Nop (NOP32)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 1 | 1 | 1 | 0 | 0 | 0 | 1 |.s.|.sw............................|
-## |.sw.(imm24s2)..................................................|
+## | 1 | 1 | 0 | 0 |.m.| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |
+## | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-callaAddr: addr is callaSwH ; callaSwL [addr = inst_start + (callaSwH << 16 + callaSwL) * 2;]{ export *[ram]:4 addr; }
+:NOP32 is opcode04=0xc & nop32OpcodeH=0x003 ; nop32OpcodeL=0x1800 {} 
 
-with : opcode07=0x71 ... {
-:JumpAbs "jump.l" callaAddr is callaS=0x0 ... & callaAddr {}
-:Call    "call" callaAddr   is callaS=0x1 ... & callaAddr {}
+
+## Multiply Accumulate (Dsp32Mac)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 0 | 0 |.mmod..........|.mm|.p.|.w1|.op1...|
+## |h01|h11|.w0|.op0...|h00|h10|.dst.......|.src0......|.src1......|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+CMODE: ""     is dmMmod=0xd {}
+CMODE: "(IS)" is dmMmod=0xf {}
+
+NCMODE: ""     is dmMmod=0xd {}
+NCMODE: "(T)"  is dmMmod=0xe {}
+NCMODE: "(IS)" is dmMmod=0xf {}
+
+CPAIR: "R1:0" is dmDst=0x0 {}
+CPAIR: "R3:2" is dmDst=0x2 {}
+CPAIR: "R5:4" is dmDst=0x4 {}
+CPAIR: "R7:6" is dmDst=0x6 {}
+
+CMPLXOP: "cmul"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {}
+CMPLXOP: "cmul"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {}
+CMPLXOP: "cmul"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {}
+
+with : dmP=0x0 ; dmW0=0x0 {
+CMPLXMAC: "A1:0" =  CMPLXOP CMODE is (CMODE ; dmOp0=0x0) & CMPLXOP {}
+CMPLXMAC: "A1:0" += CMPLXOP CMODE is (CMODE ; dmOp0=0x1) & CMPLXOP {}
+CMPLXMAC: "A1:0" -= CMPLXOP CMODE is (CMODE ; dmOp0=0x2) & CMPLXOP {}
+}
+
+with : dmP=0x0 ; dmW0=0x1 {
+CMPLXMAC: dmDst = ("A1:0" = CMPLXOP) NCMODE  is (NCMODE ; dmOp0=0x0 & dmDst) & CMPLXOP {}
+CMPLXMAC: dmDst = ("A1:0" += CMPLXOP) NCMODE is (NCMODE ; dmOp0=0x1 & dmDst) & CMPLXOP {}
+CMPLXMAC: dmDst = ("A1:0" -= CMPLXOP) NCMODE is (NCMODE ; dmOp0=0x2 & dmDst) & CMPLXOP {}
+CMPLXMAC: dmDst = CMPLXOP NCMODE             is (NCMODE ; dmOp0=0x3 & dmDst) & CMPLXOP {}
+}
+
+with : dmP=0x1 ; dmW0=0x1 {
+CMPLXMAC: CPAIR = ("A1:0" = CMPLXOP) CMODE  is (CMODE ; dmOp0=0x0 & CPAIR) & CMPLXOP {}
+CMPLXMAC: CPAIR = ("A1:0" += CMPLXOP) CMODE is (CMODE ; dmOp0=0x1 & CPAIR) & CMPLXOP {}
+CMPLXMAC: CPAIR = ("A1:0" -= CMPLXOP) CMODE is (CMODE ; dmOp0=0x2 & CPAIR) & CMPLXOP {}
+CMPLXMAC: CPAIR = CMPLXOP CMODE             is (CMODE ; dmOp0=0x3 & CPAIR) & CMPLXOP {}
+}
+
+MMOD: "S2RND" is dmMmod=0x1 {}
+MMOD: "T"     is dmMmod=0x2 {}
+MMOD: "W32"   is dmMmod=0x3 {}
+MMOD: "FU"    is dmMmod=0x4 {}
+MMOD: "TFU"   is dmMmod=0x6 {}
+MMOD: "IS"    is dmMmod=0x8 {}
+MMOD: "ISS2"  is dmMmod=0x9 {}
+MMOD: "IH"    is dmMmod=0xb {}
+MMOD: "IU"    is dmMmod=0xc {}
+
+MMODX: ""     is dmMmod=0x0 {}
+MMODX: (MMOD) is MMOD {}
+
+MML: ""    is dmMm=0x0 {}
+MML: "(M)" is dmMm=0x1 {}
+
+MMLMMODX: ""         is dmMmod=0x0 & dmMm=0x0 {}
+MMLMMODX: (MMOD)     is MMOD & dmMm=0x0 {}
+MMLMMODX: ("M")      is dmMmod=0x0 & dmMm=0x1 {}
+MMLMMODX: ("M",MMOD) is MMOD & dmMm=0x1 {}
+
+MAC0S: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
+MAC0S: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
+MAC0S: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
+MAC0S: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
+
+MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S {}
+MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S {}
+MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S {}
+
+MAC1S: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
+MAC1S: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
+MAC1S: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
+MAC1S: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
+
+MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S {}
+MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
+MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
+
+with : dmP=0x0 & dmW1=0x0 ; dmW0=0x0 {
+TRADMAC:"Mac16"             MAC0 MMODX           is MMODX & dmOp1=0x3 ; MAC0 {}
+TRADMAC:"Mac16"             MAC1 MMODX           is (MMODX ; dmOp0=0x3) & MAC1 {}
+TRADMAC:"ParaMac16AndMac16" MAC1 MML, MAC0 MMODX is (MMODX & MML ; MAC0) & MAC1 {}
+}
+
+with : dmP=0x0 & dmW1=0x0 ; dmW0=0x1 {
+TRADMAC:"MvA0ToDregL"             dmDstL = "A0" MMODX             is MMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstL {} 
+TRADMAC:"Mac16WithMv"             dmDstL = (MAC0) MMODX           is MMODX & dmOp1=0x3 ; dmDstL & MAC0 {} 
+TRADMAC:"ParaMac16AndMv"          MAC1 MML, dmDstL = "A0" MMODX   is (MMODX & MML ; dmOp0=0x3 & dmDstL) & MAC1 {}
+TRADMAC:"ParaMac16AndMac16WithMv" MAC1 MML, dmDstL = (MAC0) MMODX is (MMODX & MML ; dmDstL & MAC0) & MAC1 {}
+}
+
+with : dmP=0x0 & dmW1=0x1 ; dmW0=0x0 {
+TRADMAC:"MvA1ToDregH"             dmDstH = "A1" MMLMMODX          is MMLMMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstH {} 
+TRADMAC:"ParaMvAndMac16"          dmDstH = "A1" MML, MAC0 MMODX   is MMODX & MML & dmOp1=0x3 ; dmDstH & MAC0 {}
+TRADMAC:"Mac16WithMv"             dmDstH = (MAC1) MMLMMODX        is (MMLMMODX ; dmOp0=0x3 & dmDstH) & MAC1 {}
+TRADMAC:"ParaMac16WithMvAndMac16" dmDstH = (MAC1) MML, MAC0 MMODX is (MMODX & MML ; dmDstH & MAC0) & MAC1 {}
+}
+
+with : dmP=0x0 & dmW1=0x1 ; dmW0=0x1 {
+TRADMAC:"ParaMvA1ToDregHwithMvA0ToDregL" dmDstH = "A1" MML, dmDstL = "A0" MMODX
+    is MMODX & MML & dmOp1=0x3 ; dmOp0=0x3 & dmDstH & dmDstL {}
+TRADMAC:"ParaMvAndMac16WithMv"           dmDstH = "A1" MML, dmDstL = (MAC0) MMODX
+    is MMODX & MML & dmOp1=0x3 ; dmDstH & dmDstL & MAC0 {}
+TRADMAC:"ParaMac16WithMvAndMv"           dmDstH = (MAC1) MML, dmDstL = "A0" MMODX
+    is (MMODX & MML ; dmOp0=0x3 & dmDstH & dmDstL) & MAC1 {}
+TRADMAC:"ParaMac16WithMvAndMac16WithMv"  dmDstH = (MAC1) MML, dmDstL = (MAC0) MMODX
+    is (MMODX & MML ; dmDstH & dmDstL & MAC0) & MAC1 {}
+}
+
+with : dmP=0x1 & dmW1=0x0 ; dmW0=0x1 {
+TRADMAC:"MvA0ToDregE"             dmDstE = "A0" MMODX             is MMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstE {} 
+TRADMAC:"Mac32WithMv"             dmDstE = (MAC0) MMODX           is MMODX & dmOp1=0x3 ; dmDstE & MAC0 {}
+TRADMAC:"ParaMac16AndMv"          MAC1 MML, dmDstE = "A0" MMODX   is (MMODX & MML ; dmOp0=0x3 & dmDstE) & MAC1 {}
+TRADMAC:"ParaMac16AndMac16WithMv" MAC1 MML, dmDstE = (MAC0) MMODX is (MMODX & MML ; dmDstE & MAC0) & MAC1 {}
+}
+
+with : dmP=0x1 & dmW1=0x1 ; dmW0=0x0 {
+TRADMAC:"MvA1ToDregO"             dmDstO = "A1" MMLMMODX          is MMLMMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstO {} 
+TRADMAC:"ParaMvAndMac16"          dmDstO = "A1" MML, MAC0 MMODX   is MMODX & MML & dmOp1=0x3 ; dmDstO & MAC0 {}
+TRADMAC:"Mac32WithMv"             dmDstO = (MAC1) MMLMMODX        is (MMLMMODX ; dmOp0=0x3 & dmDstO) & MAC1 {}
+TRADMAC:"ParaMac16WithMvAndMac16" dmDstO = (MAC1) MML, MAC0 MMODX is (MMODX & MML ; dmDstO & MAC0) & MAC1 {}
+}
+
+with : dmP=0x1 & dmW1=0x1 ; dmW0=0x1 {
+TRADMAC:"ParaMvA1ToDregOwithMvA0ToDregE" dmDstO = "A1" MML, dmDstE = "A0" MMODX
+    is MMODX & MML & dmOp1=0x3 ; dmOp0=0x3 & dmDstO & dmDstE {}
+TRADMAC:"ParaMvAndMac16WithMv"           dmDstO = "A1" MML, dmDstE = (MAC0) MMODX
+    is MMODX & MML & dmOp1=0x3 ; dmDstO & dmDstE & MAC0 {}
+TRADMAC:"ParaMac16WithMvAndMv"           dmDstO = (MAC1) MML, dmDstE = "A0" MMODX
+    is (MMODX & MML ; dmOp0=0x3 & dmDstO & dmDstE) & MAC1 {}
+TRADMAC:"ParaMac16WithMvAndMac16WithMv"  dmDstO = (MAC1) MML, dmDstE = (MAC0) MMODX
+    is (MMODX & MML ; dmDstO & dmDstE & MAC0) & MAC1 {}
+}
+
+with : (opcode04=0xc & dmOpcode=0x0) ... {
+:^TRADMAC is (dmMmod1=0x0 ; any32) & TRADMAC {}
+:^TRADMAC is (dmMmod2=0x2 ; any32) & TRADMAC {}
+:^TRADMAC is (dmMmod=0xc ; any32) & TRADMAC {}
+
+:CmplxMult CMPLXMAC is (dmMmod=0xd ; any32) & CMPLXMAC {}
+:CmplxMult CMPLXMAC is (dmMmod3=0x7 ; any32) & CMPLXMAC {}
+}
+
+
+## Multiply with 3 operands (Dsp32Mult)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 0 | 1 |.mmod..........|.mm|.p.|.w1|.op1...|
+## |h01|h11|.w0|.op0...|h00|h10|.dst.......|.src0......|.src1......|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+MUL0: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
+MUL0: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
+MUL0: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
+MUL0: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
+
+MUL1: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
+MUL1: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
+MUL1: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
+MUL1: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
+
+M32MMODX: ""          is dmMmod=0x0 {}
+M32MMODX: "(T)"       is dmMmod=0x1 {}
+M32MMODX: "(IS)"      is dmMmod=0x2 {}
+M32MMODX: "(IS,NS)"   is dmMmod=0x3 {}
+M32MMODX: "(FU)"      is dmMmod=0x4 {}
+M32MMODX: "(TFU)"     is dmMmod=0x5 {}
+M32MMODX: "(IU)"      is dmMmod=0x6 {}
+M32MMODX: "(IU,NS)"   is dmMmod=0x7 {}
+M32MMODX: "(M)"       is dmMmod=0x8 {}
+M32MMODX: "(M,T)"     is dmMmod=0x9 {}
+M32MMODX: "(M,IS)"    is dmMmod=0xa {}
+M32MMODX: "(M,IS,NS)" is dmMmod=0xb {}
+
+MPAIR: "R1:0" is dmDst=0x0 {}
+MPAIR: "R3:2" is dmDst=0x2 {}
+MPAIR: "R5:4" is dmDst=0x4 {}
+MPAIR: "R7:6" is dmDst=0x6 {}
+
+with : (opcode04=0xc & dmOpcode=0x1) ... {
+with : dmP=0x0 & dmOp1=0x0 ; dmOp0=0x0 {
+:Mult16              dmDstL = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstL & MUL0 {}
+:Mult16              dmDstH = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstH & MUL1 {}
+:ParaMult16AndMult16 dmDstH = MUL1 MML, dmDstL = MUL0 MMODX 
+    is MMODX & MML & dmW1=0x1 ; dmW0=0x1 & dmDstL & dmDstH & MUL0 & MUL1 {}
+}
+
+with : dmP=0x1 & dmOp1=0x0 ; dmOp0=0x0 {
+:Mult16     dmDstE = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstE & MUL0 {}
+:Mult16     dmDstO = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstO & MUL1 {}
+:MvAxToDreg dmDstO = MUL1 MML, dmDstE = MUL0 MMODX 
+    is MMODX & MML & dmW1=0x1 ; dmW0=0x1 & dmDstE & dmDstO & MUL0 & MUL1 {}
+}
+
+with : dmMm=0x0 & dmP=0x0 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x0 {
+:Mac32 "A1:0" = dmSrc0 * dmSrc1 M32MMODX  is M32MMODX ; dmOp0=0x0 & dmSrc0 & dmSrc1 {}
+:Mac32 "A1:0" += dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x1 & dmSrc0 & dmSrc1 {}
+:Mac32 "A1:0" -= dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x2 & dmSrc0 & dmSrc1 {}
+}
+
+with : dmMm=0x0 & dmP=0x0 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 {
+:Mac32WithMv dmDst = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & dmDst & dmSrc0 & dmSrc1 {}
+:Mac32WithMv dmDst = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & dmDst & dmSrc0 & dmSrc1 {}
+:Mac32WithMv dmDst = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & dmDst & dmSrc0 & dmSrc1 {}
+:MvAxToDreg  dmDst = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & dmDst {}
+}
+
+with : dmMm=0x0 & dmP=0x1 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 {
+:Mac32WithMv MPAIR = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & MPAIR & dmSrc0 & dmSrc1 {}
+:Mac32WithMv MPAIR = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & MPAIR & dmSrc0 & dmSrc1 {}
+:Mac32WithMv MPAIR = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & MPAIR & dmSrc0 & dmSrc1 {}
+:MvAxToDreg  MPAIR = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & MPAIR {}
+}
+
+with : dmMm=0x1 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 & dmOp0=0x0 {
+:Mult32 dmDst = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; dmDst & dmSrc0 & dmSrc1 {}
+:Mult32 MPAIR = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; MPAIR & dmSrc0 & dmSrc1 {}
+}
 }
 
 
@@ -262,231 +480,6 @@ with : daHl=0x0 & daAopc=0x19 ; daX=0x0 {
 }
 
 
-## Multiply Accumulate (Dsp32Mac)
-##
-## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 1 | 1 | 0 | 0 |.m.| 0 | 0 |.mmod..........|.mm|.p.|.w1|.op1...|
-## |h01|h11|.w0|.op0...|h00|h10|.dst.......|.src0......|.src1......|
-## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-
-CMODE: ""     is dmMmod=0xd {}
-CMODE: "(IS)" is dmMmod=0xf {}
-
-NCMODE: ""     is dmMmod=0xd {}
-NCMODE: "(T)"  is dmMmod=0xe {}
-NCMODE: "(IS)" is dmMmod=0xf {}
-
-CPAIR: "R1:0" is dmDst=0x0 {}
-CPAIR: "R3:2" is dmDst=0x2 {}
-CPAIR: "R5:4" is dmDst=0x4 {}
-CPAIR: "R7:6" is dmDst=0x6 {}
-
-CMPLXOP: "cmul"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {}
-CMPLXOP: "cmul"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {}
-CMPLXOP: "cmul"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {}
-
-with : dmP=0x0 ; dmW0=0x0 {
-CMPLXMAC: "A1:0" =  CMPLXOP CMODE is (CMODE ; dmOp0=0x0) & CMPLXOP {}
-CMPLXMAC: "A1:0" += CMPLXOP CMODE is (CMODE ; dmOp0=0x1) & CMPLXOP {}
-CMPLXMAC: "A1:0" -= CMPLXOP CMODE is (CMODE ; dmOp0=0x2) & CMPLXOP {}
-}
-
-with : dmP=0x0 ; dmW0=0x1 {
-CMPLXMAC: dmDst = ("A1:0" = CMPLXOP) NCMODE  is (NCMODE ; dmOp0=0x0 & dmDst) & CMPLXOP {}
-CMPLXMAC: dmDst = ("A1:0" += CMPLXOP) NCMODE is (NCMODE ; dmOp0=0x1 & dmDst) & CMPLXOP {}
-CMPLXMAC: dmDst = ("A1:0" -= CMPLXOP) NCMODE is (NCMODE ; dmOp0=0x2 & dmDst) & CMPLXOP {}
-CMPLXMAC: dmDst = CMPLXOP NCMODE             is (NCMODE ; dmOp0=0x3 & dmDst) & CMPLXOP {}
-}
-
-with : dmP=0x1 ; dmW0=0x1 {
-CMPLXMAC: CPAIR = ("A1:0" = CMPLXOP) CMODE  is (CMODE ; dmOp0=0x0 & CPAIR) & CMPLXOP {}
-CMPLXMAC: CPAIR = ("A1:0" += CMPLXOP) CMODE is (CMODE ; dmOp0=0x1 & CPAIR) & CMPLXOP {}
-CMPLXMAC: CPAIR = ("A1:0" -= CMPLXOP) CMODE is (CMODE ; dmOp0=0x2 & CPAIR) & CMPLXOP {}
-CMPLXMAC: CPAIR = CMPLXOP CMODE             is (CMODE ; dmOp0=0x3 & CPAIR) & CMPLXOP {}
-}
-
-MMOD: "S2RND" is dmMmod=0x1 {}
-MMOD: "T"     is dmMmod=0x2 {}
-MMOD: "W32"   is dmMmod=0x3 {}
-MMOD: "FU"    is dmMmod=0x4 {}
-MMOD: "TFU"   is dmMmod=0x6 {}
-MMOD: "IS"    is dmMmod=0x8 {}
-MMOD: "ISS2"  is dmMmod=0x9 {}
-MMOD: "IH"    is dmMmod=0xb {}
-MMOD: "IU"    is dmMmod=0xc {}
-
-MMODX: ""     is dmMmod=0x0 {}
-MMODX: (MMOD) is MMOD {}
-
-MML: ""    is dmMm=0x0 {}
-MML: "(M)" is dmMm=0x1 {}
-
-MMLMMODX: ""         is dmMmod=0x0 & dmMm=0x0 {}
-MMLMMODX: (MMOD)     is MMOD & dmMm=0x0 {}
-MMLMMODX: ("M")      is dmMmod=0x0 & dmMm=0x1 {}
-MMLMMODX: ("M",MMOD) is MMOD & dmMm=0x1 {}
-
-MAC0S: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
-MAC0S: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
-MAC0S: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
-MAC0S: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
-
-MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S {}
-MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S {}
-MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S {}
-
-MAC1S: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
-MAC1S: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
-MAC1S: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
-MAC1S: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
-
-MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S {}
-MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
-MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
-
-with : dmP=0x0 & dmW1=0x0 ; dmW0=0x0 {
-TRADMAC:"Mac16"             MAC0 MMODX           is MMODX & dmOp1=0x3 ; MAC0 {}
-TRADMAC:"Mac16"             MAC1 MMODX           is (MMODX ; dmOp0=0x3) & MAC1 {}
-TRADMAC:"ParaMac16AndMac16" MAC1 MML, MAC0 MMODX is (MMODX & MML ; MAC0) & MAC1 {}
-}
-
-with : dmP=0x0 & dmW1=0x0 ; dmW0=0x1 {
-TRADMAC:"MvA0ToDregL"             dmDstL = "A0" MMODX             is MMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstL {} 
-TRADMAC:"Mac16WithMv"             dmDstL = (MAC0) MMODX           is MMODX & dmOp1=0x3 ; dmDstL & MAC0 {} 
-TRADMAC:"ParaMac16AndMv"          MAC1 MML, dmDstL = "A0" MMODX   is (MMODX & MML ; dmOp0=0x3 & dmDstL) & MAC1 {}
-TRADMAC:"ParaMac16AndMac16WithMv" MAC1 MML, dmDstL = (MAC0) MMODX is (MMODX & MML ; dmDstL & MAC0) & MAC1 {}
-}
-
-with : dmP=0x0 & dmW1=0x1 ; dmW0=0x0 {
-TRADMAC:"MvA1ToDregH"             dmDstH = "A1" MMLMMODX          is MMLMMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstH {} 
-TRADMAC:"ParaMvAndMac16"          dmDstH = "A1" MML, MAC0 MMODX   is MMODX & MML & dmOp1=0x3 ; dmDstH & MAC0 {}
-TRADMAC:"Mac16WithMv"             dmDstH = (MAC1) MMLMMODX        is (MMLMMODX ; dmOp0=0x3 & dmDstH) & MAC1 {}
-TRADMAC:"ParaMac16WithMvAndMac16" dmDstH = (MAC1) MML, MAC0 MMODX is (MMODX & MML ; dmDstH & MAC0) & MAC1 {}
-}
-
-with : dmP=0x0 & dmW1=0x1 ; dmW0=0x1 {
-TRADMAC:"ParaMvA1ToDregHwithMvA0ToDregL" dmDstH = "A1" MML, dmDstL = "A0" MMODX
-    is MMODX & MML & dmOp1=0x3 ; dmOp0=0x3 & dmDstH & dmDstL {}
-TRADMAC:"ParaMvAndMac16WithMv"           dmDstH = "A1" MML, dmDstL = (MAC0) MMODX
-    is MMODX & MML & dmOp1=0x3 ; dmDstH & dmDstL & MAC0 {}
-TRADMAC:"ParaMac16WithMvAndMv"           dmDstH = (MAC1) MML, dmDstL = "A0" MMODX
-    is (MMODX & MML ; dmOp0=0x3 & dmDstH & dmDstL) & MAC1 {}
-TRADMAC:"ParaMac16WithMvAndMac16WithMv"  dmDstH = (MAC1) MML, dmDstL = (MAC0) MMODX
-    is (MMODX & MML ; dmDstH & dmDstL & MAC0) & MAC1 {}
-}
-
-with : dmP=0x1 & dmW1=0x0 ; dmW0=0x1 {
-TRADMAC:"MvA0ToDregE"             dmDstE = "A0" MMODX             is MMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstE {} 
-TRADMAC:"Mac32WithMv"             dmDstE = (MAC0) MMODX           is MMODX & dmOp1=0x3 ; dmDstE & MAC0 {}
-TRADMAC:"ParaMac16AndMv"          MAC1 MML, dmDstE = "A0" MMODX   is (MMODX & MML ; dmOp0=0x3 & dmDstE) & MAC1 {}
-TRADMAC:"ParaMac16AndMac16WithMv" MAC1 MML, dmDstE = (MAC0) MMODX is (MMODX & MML ; dmDstE & MAC0) & MAC1 {}
-}
-
-with : dmP=0x1 & dmW1=0x1 ; dmW0=0x0 {
-TRADMAC:"MvA1ToDregO"             dmDstO = "A1" MMLMMODX          is MMLMMODX & dmOp1=0x3 ; dmOp0=0x3 & dmDstO {} 
-TRADMAC:"ParaMvAndMac16"          dmDstO = "A1" MML, MAC0 MMODX   is MMODX & MML & dmOp1=0x3 ; dmDstO & MAC0 {}
-TRADMAC:"Mac32WithMv"             dmDstO = (MAC1) MMLMMODX        is (MMLMMODX ; dmOp0=0x3 & dmDstO) & MAC1 {}
-TRADMAC:"ParaMac16WithMvAndMac16" dmDstO = (MAC1) MML, MAC0 MMODX is (MMODX & MML ; dmDstO & MAC0) & MAC1 {}
-}
-
-with : dmP=0x1 & dmW1=0x1 ; dmW0=0x1 {
-TRADMAC:"ParaMvA1ToDregOwithMvA0ToDregE" dmDstO = "A1" MML, dmDstE = "A0" MMODX
-    is MMODX & MML & dmOp1=0x3 ; dmOp0=0x3 & dmDstO & dmDstE {}
-TRADMAC:"ParaMvAndMac16WithMv"           dmDstO = "A1" MML, dmDstE = (MAC0) MMODX
-    is MMODX & MML & dmOp1=0x3 ; dmDstO & dmDstE & MAC0 {}
-TRADMAC:"ParaMac16WithMvAndMv"           dmDstO = (MAC1) MML, dmDstE = "A0" MMODX
-    is (MMODX & MML ; dmOp0=0x3 & dmDstO & dmDstE) & MAC1 {}
-TRADMAC:"ParaMac16WithMvAndMac16WithMv"  dmDstO = (MAC1) MML, dmDstE = (MAC0) MMODX
-    is (MMODX & MML ; dmDstO & dmDstE & MAC0) & MAC1 {}
-}
-
-with : (opcode04=0xc & dmOpcode=0x0) ... {
-:^TRADMAC is (dmMmod1=0x0 ; any32) & TRADMAC {}
-:^TRADMAC is (dmMmod2=0x2 ; any32) & TRADMAC {}
-:^TRADMAC is (dmMmod=0xc ; any32) & TRADMAC {}
-
-:CmplxMult CMPLXMAC is (dmMmod=0xd ; any32) & CMPLXMAC {}
-:CmplxMult CMPLXMAC is (dmMmod3=0x7 ; any32) & CMPLXMAC {}
-}
-
-
-## Multiply with 3 operands (Dsp32Mult)
-##
-## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 1 | 1 | 0 | 0 |.m.| 0 | 1 |.mmod..........|.mm|.p.|.w1|.op1...|
-## |h01|h11|.w0|.op0...|h00|h10|.dst.......|.src0......|.src1......|
-## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-
-MUL0: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
-MUL0: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
-MUL0: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
-MUL0: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
-
-MUL1: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
-MUL1: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
-MUL1: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
-MUL1: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
-
-M32MMODX: ""          is dmMmod=0x0 {}
-M32MMODX: "(T)"       is dmMmod=0x1 {}
-M32MMODX: "(IS)"      is dmMmod=0x2 {}
-M32MMODX: "(IS,NS)"   is dmMmod=0x3 {}
-M32MMODX: "(FU)"      is dmMmod=0x4 {}
-M32MMODX: "(TFU)"     is dmMmod=0x5 {}
-M32MMODX: "(IU)"      is dmMmod=0x6 {}
-M32MMODX: "(IU,NS)"   is dmMmod=0x7 {}
-M32MMODX: "(M)"       is dmMmod=0x8 {}
-M32MMODX: "(M,T)"     is dmMmod=0x9 {}
-M32MMODX: "(M,IS)"    is dmMmod=0xa {}
-M32MMODX: "(M,IS,NS)" is dmMmod=0xb {}
-
-MPAIR: "R1:0" is dmDst=0x0 {}
-MPAIR: "R3:2" is dmDst=0x2 {}
-MPAIR: "R5:4" is dmDst=0x4 {}
-MPAIR: "R7:6" is dmDst=0x6 {}
-
-with : (opcode04=0xc & dmOpcode=0x1) ... {
-with : dmP=0x0 & dmOp1=0x0 ; dmOp0=0x0 {
-:Mult16              dmDstL = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstL & MUL0 {}
-:Mult16              dmDstH = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstH & MUL1 {}
-:ParaMult16AndMult16 dmDstH = MUL1 MML, dmDstL = MUL0 MMODX 
-    is MMODX & MML & dmW1=0x1 ; dmW0=0x1 & dmDstL & dmDstH & MUL0 & MUL1 {}
-}
-
-with : dmP=0x1 & dmOp1=0x0 ; dmOp0=0x0 {
-:Mult16     dmDstE = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstE & MUL0 {}
-:Mult16     dmDstO = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstO & MUL1 {}
-:MvAxToDreg dmDstO = MUL1 MML, dmDstE = MUL0 MMODX 
-    is MMODX & MML & dmW1=0x1 ; dmW0=0x1 & dmDstE & dmDstO & MUL0 & MUL1 {}
-}
-
-with : dmMm=0x0 & dmP=0x0 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x0 {
-:Mac32 "A1:0" = dmSrc0 * dmSrc1 M32MMODX  is M32MMODX ; dmOp0=0x0 & dmSrc0 & dmSrc1 {}
-:Mac32 "A1:0" += dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x1 & dmSrc0 & dmSrc1 {}
-:Mac32 "A1:0" -= dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x2 & dmSrc0 & dmSrc1 {}
-}
-
-with : dmMm=0x0 & dmP=0x0 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 {
-:Mac32WithMv dmDst = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & dmDst & dmSrc0 & dmSrc1 {}
-:Mac32WithMv dmDst = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & dmDst & dmSrc0 & dmSrc1 {}
-:Mac32WithMv dmDst = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & dmDst & dmSrc0 & dmSrc1 {}
-:MvAxToDreg  dmDst = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & dmDst {}
-}
-
-with : dmMm=0x0 & dmP=0x1 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 {
-:Mac32WithMv MPAIR = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & MPAIR & dmSrc0 & dmSrc1 {}
-:Mac32WithMv MPAIR = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & MPAIR & dmSrc0 & dmSrc1 {}
-:Mac32WithMv MPAIR = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & MPAIR & dmSrc0 & dmSrc1 {}
-:MvAxToDreg  MPAIR = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & MPAIR {}
-}
-
-with : dmMm=0x1 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 & dmOp0=0x0 {
-:Mult32 dmDst = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; dmDst & dmSrc0 & dmSrc1 {}
-:Mult32 MPAIR = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; MPAIR & dmSrc0 & dmSrc1 {}
-}
-}
-
-
 ## Shift (Dsp32Shf)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
@@ -672,6 +665,41 @@ with : dsiSopc=0x03 ... {
 }
 
 
+######################################################################
+########>--------        32 bits instructions        --------<########
+############################## MAIN_32B ##############################
+
+
+## Virtually Zero Overhead Loop Mechanism (LoopSetup)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |.rop...|.c.|.soff..........|
+## |imm|.reg.......|.lop...|.eoff..................................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+lopImm: imm is lopImmH ; lopImmL [imm = (lopImmH << 6) + lopImmL;]{}
+
+with : opcode09=0x1c1 ... {
+:LoopSetup "lsetup"(lopEoff) lopC = lopImm is (lopRop=0x0 & lopC & lopSoff ; lopEoff) & lopImm {}
+
+with : ... lopLop=0x0 {
+:LoopSetup "lsetup"(lopSoff, lopEoff) lopC                 is lopRop=0x0 & lopC & lopSoff ; lopEoff {}
+:LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+}
+
+with : ... lopLop=0x1 {
+:LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+}
+
+with : ... lopLop=0x2 {
+:LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+}
+}
+
+
 ## Load Immediate Half Word (LdImmHalf)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
@@ -708,31 +736,18 @@ with : opcode08=0xe1 ... {
 }
 
 
-## Long Load/Store with indexed addressing (LdStExcl)
+## Call function with pcrel address (CallA)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 1 | 1 | 1 | 0 | 1 | 1 |.w.|.z.|.sz....|.ptr.......|.reg.......|
-## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+## | 1 | 1 | 1 | 0 | 0 | 0 | 1 |.s.|.sw............................|
+## |.sw.(imm24s2)..................................................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-with : opcode06=0x3b ; lseZeros=0x0 {
-with : lseW=0x0 ... {
-:LdX32bitToDreg  lseReg = [lsePtr] "(EXCL)"       is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:LdX16bitToDreg  lseReg = "W" [lsePtr] "(Z,EXCL)" is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:LdX16bitToDreg  lseReg = "W" [lsePtr] "(X,EXCL)" is lseSz=0x1 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
-:LdX08bitToDreg  lseReg = "B" [lsePtr] "(Z,EXCL)" is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:LdX08bitToDreg  lseReg = "B" [lsePtr] "(X,EXCL)" is lseSz=0x2 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
-:LdX16bitToDregL lseRegL = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x0 & lseRegL & lsePtr ; any32 {}
-:LdX16bitToDregH lseRegH = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
-}
+callaAddr: addr is callaSwH ; callaSwL [addr = inst_start + (callaSwH << 16 + callaSwL) * 2;]{ export *[ram]:4 addr; }
 
-with : lseW=0x1 ... {
-:StDregToX32bit  "CC" = ([lsePtr] = lseReg) "(EXCL)"      is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:StDregToX16bit  "CC" = ("W" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:StDregToX08bit  "CC" = ("B" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:StDregHToX16bit "CC" = ("W" [lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lseZ=0x0 & lseRegH & lsePtr ; any32 {}
-:SyncExcl                                                 is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
-}
+with : opcode07=0x71 ... {
+:JumpAbs "jump.l" callaAddr is callaS=0x0 ... & callaAddr {}
+:Call    "call" callaAddr   is callaS=0x1 ... & callaAddr {}
 }
 
 
@@ -777,41 +792,31 @@ with : opcode15=0x7400 ... {
 }
 
 
-## Virtually Zero Overhead Loop Mechanism (LoopSetup)
+## Long Load/Store with indexed addressing (LdStExcl)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |.rop...|.c.|.soff..........|
-## |imm|.reg.......|.lop...|.eoff..................................|
+## | 1 | 1 | 1 | 0 | 1 | 1 |.w.|.z.|.sz....|.ptr.......|.reg.......|
+## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-lopImm: imm is lopImmH ; lopImmL [imm = (lopImmH << 6) + lopImmL;]{}
-
-with : opcode09=0x1c1 ... {
-:LoopSetup "lsetup"(lopEoff) lopC = lopImm is (lopRop=0x0 & lopC & lopSoff ; lopEoff) & lopImm {}
-
-with : ... lopLop=0x0 {
-:LoopSetup "lsetup"(lopSoff, lopEoff) lopC                 is lopRop=0x0 & lopC & lopSoff ; lopEoff {}
-:LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
-:LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+with : opcode06=0x3b ; lseZeros=0x0 {
+with : lseW=0x0 ... {
+:LdX32bitToDreg  lseReg = [lsePtr] "(EXCL)"       is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:LdX16bitToDreg  lseReg = "W" [lsePtr] "(Z,EXCL)" is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:LdX16bitToDreg  lseReg = "W" [lsePtr] "(X,EXCL)" is lseSz=0x1 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
+:LdX08bitToDreg  lseReg = "B" [lsePtr] "(Z,EXCL)" is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:LdX08bitToDreg  lseReg = "B" [lsePtr] "(X,EXCL)" is lseSz=0x2 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
+:LdX16bitToDregL lseRegL = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x0 & lseRegL & lsePtr ; any32 {}
+:LdX16bitToDregH lseRegH = "W" [lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
 }
 
-with : ... lopLop=0x1 {
-:LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
-:LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
-}
-
-with : ... lopLop=0x2 {
-:LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
-:LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+with : lseW=0x1 ... {
+:StDregToX32bit  "CC" = ([lsePtr] = lseReg) "(EXCL)"      is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:StDregToX16bit  "CC" = ("W" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:StDregToX08bit  "CC" = ("B" [lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
+:StDregHToX16bit "CC" = ("W" [lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lseZ=0x0 & lseRegH & lsePtr ; any32 {}
+:SyncExcl                                                 is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
 }
 }
 
 
-## 32-bit Slot Nop (NOP32)
-##
-## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 1 | 1 | 0 | 0 |.m.| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |
-## | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-
-:NOP32 is opcode04=0xc & nop32OpcodeH=0x003 ; nop32OpcodeL=0x1800 {} 
