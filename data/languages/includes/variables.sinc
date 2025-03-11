@@ -18,8 +18,11 @@ attach variables [
     ldiDReg
     lihDReg
     ldstReg
+    lsiiDReg
     lsfpDReg
     lsidDReg
+    lsaDReg
+    lseReg
     lspReg
     l2oDst
     pgcDReg
@@ -36,6 +39,8 @@ attach variables [
     dsiDstL dsiSrcL
     dlsRegL
     lihDRegL
+    lsaDRegL
+    lseRegL
     lspRegL
 ] [ 
     R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L
@@ -47,6 +52,8 @@ attach variables [
     dsiDstH dsiSrcH
     dlsRegH
     lihDRegH
+    lsaDRegH
+    lseRegH
     lspRegH
 ] [ 
     R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H
@@ -82,8 +89,11 @@ attach variables [
     ldiPReg
     lihPReg
     ldstPReg ldstPtr
+    lsiiPReg
     lsfpPReg 
     lsidPReg lsidPtr
+    lsaPReg
+    lsePtr
     lspPtr lspIdx
     ldpReg ldpPtr
     lpiiReg lpiiPtr

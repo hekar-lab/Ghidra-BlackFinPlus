@@ -354,11 +354,11 @@ with : daHl=0x0 & daAopc=0x4 ; daX=0x0 {
 :AddSub32Dual addsubdualPt1, addsubdualPt2 SAT is (any16 ; daAop=0x2 & SAT) & addsubdualPt1 & addsubdualPt2 {}
 }
 
-with : daAopc=0x05 ; daS=0x0 & daX=0x0 {
-:AddSubRnd12 daDstHl = daSrc0 + daSrc1 "(rnd12)" is (any16 ; daAop=0x0 & daSrc0 & daSrc1) & daDstHl {}
-:AddSubRnd12 daDstHl = daSrc0 - daSrc1 "(rnd12)" is (any16 ; daAop=0x1 & daSrc0 & daSrc1) & daDstHl {}
-:AddSubRnd20 daDstHl = daSrc0 + daSrc1 "(rnd20)" is (any16 ; daAop=0x2 & daSrc0 & daSrc1) & daDstHl {}
-:AddSubRnd20 daDstHl = daSrc0 - daSrc1 "(rnd20)" is (any16 ; daAop=0x3 & daSrc0 & daSrc1) & daDstHl {}
+with : daAopc=0x05 ; daS=0x0 {
+:AddSubRnd12 daDstHl = daSrc0 + daSrc1 "(rnd12)" is (any16 ; daAop=0x0 & daX=0x0 & daSrc0 & daSrc1) & daDstHl {}
+:AddSubRnd12 daDstHl = daSrc0 - daSrc1 "(rnd12)" is (any16 ; daAop=0x1 & daX=0x0 & daSrc0 & daSrc1) & daDstHl {}
+:AddSubRnd20 daDstHl = daSrc0 + daSrc1 "(rnd20)" is (any16 ; daAop=0x2 & daX=0x1 & daSrc0 & daSrc1) & daDstHl {}
+:AddSubRnd20 daDstHl = daSrc0 - daSrc1 "(rnd20)" is (any16 ; daAop=0x3 & daX=0x1 & daSrc0 & daSrc1) & daDstHl {}
 }
 
 with : daHl=0x0 & daAopc=0x06 ; daS=0x0 & daX=0x0 {
@@ -475,7 +475,7 @@ with : daHl=0x0 & daAopc=0x18 ; daX=0x0 {
 
 with : daHl=0x0 & daAopc=0x19 ; daX=0x0 {
 :AddSubAC0 daDst0 = daSrc0 + daSrc1 + "AC0" SAT     is any16 ; daAop=0x0 & SAT & daDst0 & daSrc0 & daSrc1 {}
-:AddSubAC0 daDst0 = daSrc0 + daSrc1 + "AC0 - 1" SAT is any16 ; daAop=0x1 & SAT & daDst0 & daSrc0 & daSrc1 {}
+:AddSubAC0 daDst0 = daSrc0 - daSrc1 + "AC0 - 1" SAT is any16 ; daAop=0x1 & SAT & daDst0 & daSrc0 & daSrc1 {}
 }
 }
 
@@ -684,18 +684,18 @@ with : opcode09=0x1c1 ... {
 
 with : ... lopLop=0x0 {
 :LoopSetup "lsetup"(lopSoff, lopEoff) lopC                 is lopRop=0x0 & lopC & lopSoff ; lopEoff {}
-:LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
-:LoopSetup "lsetup"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetup"(lopSoff, lopEoff) lopC = lopReg        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetup"(lopSoff, lopEoff) lopC = lopReg ">> 1" is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
 }
 
 with : ... lopLop=0x1 {
-:LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
-:LoopSetup "lsetupz"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetupz"(lopSoff, lopEoff) lopC = lopReg        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetupz"(lopSoff, lopEoff) lopC = lopReg ">> 1" is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
 }
 
 with : ... lopLop=0x2 {
-:LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg lopC        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
-:LoopSetup "lsetupez"(lopSoff, lopEoff) = lopReg ">> 1" lopC is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetuplez"(lopSoff, lopEoff) lopC = lopReg        is lopRop=0x1 & lopC & lopSoff ; lopReg & lopEoff {}
+:LoopSetup "lsetuplez"(lopSoff, lopEoff) lopC = lopReg ">> 1" is lopRop=0x3 & lopC & lopSoff ; lopReg & lopEoff {}
 }
 }
 
@@ -729,10 +729,10 @@ DSTH: lihBRegH is lihGrp=0x3 & lihReg1=0x0 & lihBRegH {}
 DSTH: lihLRegH is lihGrp=0x3 & lihReg1=0x1 & lihLRegH {}
 
 with : opcode08=0xe1 ... {
-:LdImmToDregHL DSTL = lihHword is lihZ=0x0 & lihH=0x0 & lihS=0x0 & DSTL ; lihHword {}
-:LdImmToReg    DST = lihHword  is lihZ=0x0 & lihH=0x0 & lihS=0x1 & DST ; lihHword {}
-:LdImmToReg    DST = lihHword  is lihZ=0x1 & lihH=0x0 & lihS=0x0 & DST ; lihHword {}
-:LdImmToDregHL DSTH = lihHword is lihZ=0x0 & lihH=0x1 & lihS=0x0 & DSTH ; lihHword {}
+:LdImmToDregHL DSTL = lihHword      is lihZ=0x0 & lihH=0x0 & lihS=0x0 & DSTL ; lihHword {}
+:LdImmToReg    DST = lihHword "(X)" is lihZ=0x0 & lihH=0x0 & lihS=0x1 & DST ; lihHword {}
+:LdImmToReg    DST = lihHword "(Z)" is lihZ=0x1 & lihH=0x0 & lihS=0x0 & DST ; lihHword {}
+:LdImmToDregHL DSTH = lihHword      is lihZ=0x0 & lihH=0x1 & lihS=0x0 & DSTH ; lihHword {}
 }
 
 
