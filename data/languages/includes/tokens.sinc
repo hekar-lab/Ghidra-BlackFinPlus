@@ -24,12 +24,12 @@ define token inst16 (16)
 	alu2opSrcL    = ( 3, 5)
 	alu2opSrcB    = ( 3, 5)
 	alu2opDst     = ( 0, 2)
-	alu2opDstCpy  = ( 0, 2)
+	alu2opDstCp   = ( 0, 2)
 
 # BrCC Tokens
 	brccT         = (11,11)
 	brccB         = (10,10)
-	brccOff       = ( 0, 9)
+	brccOff       = ( 0, 9) signed
 
 # CC2Dreg Tokens
 	cc2dregOpc    = ( 3, 4)
@@ -314,7 +314,7 @@ define token inst16 (16)
     rmvSrcLReg    = ( 0, 1)
 
 # UJump Tokens
-    ujmpOff       = (0, 11)
+    ujmpOff       = (0, 11) signed
 ;
 
 define token inst32 (16)
@@ -393,7 +393,8 @@ define token inst32 (16)
     ldiImmH    = ( 0,15)
 
 # LdImmHalf Tokens
-    lihHword   = ( 0,15)
+    lihUHword   = ( 0,15)
+    lihIHword   = ( 0,15) signed
 
 # LdStAbs Tokens
     lsaImmH    = ( 0,15)
@@ -402,7 +403,7 @@ define token inst32 (16)
     lseZeros   = ( 0,15)
 
 # LdStIdxI Tokens
-    lsidOff    = ( 0,15)
+    lsidOff    = ( 0,15) signed
 
 # Linkage Tokens
     lnkFrm     = ( 0,15)

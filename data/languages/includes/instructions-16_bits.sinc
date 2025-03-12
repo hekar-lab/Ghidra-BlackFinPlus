@@ -19,20 +19,20 @@
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with returnDesc : pgcOpc=0x1{
-: "rts" is pgcReg=0x0 {}
-: "rti" is pgcReg=0x1 {}
-: "rtx" is pgcReg=0x2 {}
-: "rtn" is pgcReg=0x3 {}
-: "rte" is pgcReg=0x4 {}
+: "RTS" is pgcReg=0x0 {}
+: "RTI" is pgcReg=0x1 {}
+: "RTX" is pgcReg=0x2 {}
+: "RTN" is pgcReg=0x3 {}
+: "RTE" is pgcReg=0x4 {}
 }
 
 with syncDesc : pgcOpc=0x2{
-: "idle"  is pgcReg=0x0 {}
-: "csync" is pgcReg=0x3 {}
-: "ssync" is pgcReg=0x4 {}
+: "IDLE"  is pgcReg=0x0 {}
+: "CSYNC" is pgcReg=0x3 {}
+: "SSYNC" is pgcReg=0x4 {}
 }
 
-modeDesc: "emuexcpt" is pgcOpc=0x2 & pgcReg=0x5 {}
+modeDesc: "EMUEXCPT" is pgcOpc=0x2 & pgcReg=0x5 {}
 
 with : opcode08=0x00 {
 :Return returnDesc is returnDesc {}
@@ -40,18 +40,18 @@ with : opcode08=0x00 {
 :Mode   modeDesc   is modeDesc {}
 
 with : pgcReg1=0x0 {
-:IMaskMv "cli" pgcDReg           is pgcOpc=0x3 & pgcDReg {}
-:IMaskMv "sti" pgcDReg           is pgcOpc=0x4 & pgcDReg {}
-:Jump    "jump" (pgcPReg)        is pgcOpc=0x5 & pgcPReg {}
-:Call    "call" (pgcPReg)        is pgcOpc=0x6 & pgcPReg {}
-:Call    "call" ("PC" + pgcPReg) is pgcOpc=0x7 & pgcPReg {}
-:Jump    "jump" ("PC" + pgcPReg) is pgcOpc=0x8 & pgcPReg {}
-:TestSet "testset" (pgcPReg)     is pgcOpc=0xb & pgcPReg {}
-:Sync    "sti idle" pgcDReg      is pgcOpc=0xc & pgcDReg {}
+:IMaskMv "CLI" pgcDReg           is pgcOpc=0x3 & pgcDReg {}
+:IMaskMv "STI" pgcDReg           is pgcOpc=0x4 & pgcDReg {}
+:Jump    "JUMP" (pgcPReg)        is pgcOpc=0x5 & pgcPReg {}
+:Call    "CALL" (pgcPReg)        is pgcOpc=0x6 & pgcPReg {}
+:Call    "CALL" ("PC" + pgcPReg) is pgcOpc=0x7 & pgcPReg {}
+:Jump    "JUMP" ("PC" + pgcPReg) is pgcOpc=0x8 & pgcPReg {}
+:TestSet "TESTSET" (pgcPReg)     is pgcOpc=0xb & pgcPReg {}
+:Sync    "STI IDLE" pgcDReg      is pgcOpc=0xc & pgcDReg {}
 }
 
-:Raise "raise" pgcReg is pgcOpc=0x9 & pgcReg {}
-:Raise "excpt" pgcReg is pgcOpc=0xa & pgcReg {}
+:Raise "RAISE" pgcReg is pgcOpc=0x9 & pgcReg {}
+:Raise "EXCPT" pgcReg is pgcOpc=0xa & pgcReg {}
 }
 
 
@@ -108,10 +108,10 @@ PREGA: cctrlReg   is cctrlA=0x0 & cctrlReg {}
 PREGA: cctrlReg++ is cctrlA=0x1 & cctrlReg {}
 
 with : opcode10=0x009 {
-:CacheCtrl "prefetch" [PREGA] is cctrlOpc=0x0 & PREGA {}
-:CacheCtrl "flushinv" [PREGA] is cctrlOpc=0x1 & PREGA {}
-:CacheCtrl "flush" [PREGA]    is cctrlOpc=0x2 & PREGA {}
-:CacheCtrl "iflush" [PREGA]   is cctrlOpc=0x3 & PREGA {}
+:CacheCtrl "PREFETCH" [PREGA] is cctrlOpc=0x0 & PREGA {}
+:CacheCtrl "FLUSHINV" [PREGA] is cctrlOpc=0x1 & PREGA {}
+:CacheCtrl "FLUSH" [PREGA]    is cctrlOpc=0x2 & PREGA {}
+:CacheCtrl "IFLUSH" [PREGA]   is cctrlOpc=0x3 & PREGA {}
 }
 
 
@@ -257,23 +257,25 @@ CompAccAux: "CC = A0 <= A1" is ccflagOpc=0x7 {}
 ## | 0 | 0 | 0 | 1 |.t.|.b.|.off.(imm10s2).........................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-brccAddr: addr is brccOff [addr = inst_start + brccOff * 2;]{ export *[ram]:4 addr; }
+brccAddr: addr is brccOff [addr = inst_start + (brccOff << 1);]{ export *[ram]:4 addr; }
 
 with : opcode04=0x1 {
-:BrCC "if !CC jump" brccAddr        is brccT=0x0 & brccB=0x0 & brccAddr {}
-:BrCC "if !CC jump" brccAddr "(BP)" is brccT=0x0 & brccB=0x1 & brccAddr {}
-:BrCC "if CC jump" brccAddr         is brccT=0x1 & brccB=0x0 & brccAddr {}
-:BrCC "if CC jump" brccAddr "(BP)"  is brccT=0x1 & brccB=0x1 & brccAddr {}
+:BrCC "if !CC JUMP" brccAddr        is brccT=0x0 & brccB=0x0 & brccAddr {}
+:BrCC "if !CC JUMP" brccAddr "(BP)" is brccT=0x0 & brccB=0x1 & brccAddr {}
+:BrCC "if CC JUMP" brccAddr         is brccT=0x1 & brccB=0x0 & brccAddr {}
+:BrCC "if CC JUMP" brccAddr "(BP)"  is brccT=0x1 & brccB=0x1 & brccAddr {}
 }
 
 
 ## Unconditional Branch PC relative with 12bit offset (UJump)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 0 | 0 | 1 | 0 |.off...........................................|
+## | 0 | 0 | 1 | 0 |.off.(imm12nxs2)...............................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-:JumpAbs "jump.s" ujmpOff is opcode04=0x2 & ujmpOff {}
+ujmpImm: imm is ujmpOff [imm = ujmpOff << 1;]{}
+
+:JumpAbs "JUMP.S" ujmpImm is opcode04=0x2 & ujmpImm {}
 
 
 ## Register to register transfer operation (RegMv)
@@ -322,20 +324,20 @@ rmvGSRC: rmvSrcSysReg3 is rmvGs=0x7 & rmvSrcSysReg3 {}
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode06=0x10 {
-:AShift32       alu2opDst ">>>=" alu2opSrc                    is alu2opOpc=0x0 & alu2opSrc & alu2opDst {}
-:LShift         alu2opDst ">>=" alu2opSrc                     is alu2opOpc=0x1 & alu2opSrc & alu2opDst {}
-:LShift         alu2opDst "<<=" alu2opSrc                     is alu2opOpc=0x2 & alu2opSrc & alu2opDst {}
-:MultInt        alu2opDst *= alu2opSrc                        is alu2opOpc=0x3 & alu2opSrc & alu2opDst {}
-:AddSubShift    alu2opDst = (alu2opSrc + alu2opDstCpy) "<< 1" is alu2opOpc=0x4 & alu2opSrc & alu2opDst & alu2opDstCpy {}
-:AddSubShift    alu2opDst = (alu2opSrc + alu2opDstCpy) "<< 2" is alu2opOpc=0x5 & alu2opSrc & alu2opDst & alu2opDstCpy {}
-:Divide         "divq" (alu2opDst, alu2opSrc)                 is alu2opOpc=0x8 & alu2opSrc & alu2opDst {}
-:Divide         "divs" (alu2opDst, alu2opSrc)                 is alu2opOpc=0x9 & alu2opSrc & alu2opDst {}
-:MvDregLToDreg  alu2opDst = alu2opSrcL "(X)"                  is alu2opOpc=0xa & alu2opSrcL & alu2opDst {}
-:MvDregLToDreg  alu2opDst = alu2opSrcL "(Z)"                  is alu2opOpc=0xb & alu2opSrcL & alu2opDst {}
-:MvDregBToDreg  alu2opDst = alu2opSrcB "(X)"                  is alu2opOpc=0xc & alu2opSrcB & alu2opDst {}
-:MvDregBToDreg  alu2opDst = alu2opSrcB "(Z)"                  is alu2opOpc=0xd & alu2opSrcB & alu2opDst {}
-:Neg32          alu2opDst = -alu2opSrc                        is alu2opOpc=0xe & alu2opSrc & alu2opDst {}
-:Not32          alu2opDst = "~"alu2opSrc                      is alu2opOpc=0xf & alu2opSrc & alu2opDst {}
+:AShift32       alu2opDst ">>>=" alu2opSrc                     is alu2opOpc=0x0 & alu2opSrc & alu2opDst {}
+:LShift         alu2opDst ">>=" alu2opSrc                      is alu2opOpc=0x1 & alu2opSrc & alu2opDst {}
+:LShift         alu2opDst "<<=" alu2opSrc                      is alu2opOpc=0x2 & alu2opSrc & alu2opDst {}
+:MultInt        alu2opDst *= alu2opSrc                         is alu2opOpc=0x3 & alu2opSrc & alu2opDst {}
+:AddSubShift    alu2opDst = (alu2opSrc + alu2opDstCp) "<< 0x1" is alu2opOpc=0x4 & alu2opSrc & alu2opDst & alu2opDstCp {}
+:AddSubShift    alu2opDst = (alu2opSrc + alu2opDstCp) "<< 0x2" is alu2opOpc=0x5 & alu2opSrc & alu2opDst & alu2opDstCp {}
+:Divide         "DIVQ" (alu2opDst, alu2opSrc)                  is alu2opOpc=0x8 & alu2opSrc & alu2opDst {}
+:Divide         "DIVS" (alu2opDst, alu2opSrc)                  is alu2opOpc=0x9 & alu2opSrc & alu2opDst {}
+:MvDregLToDreg  alu2opDst = alu2opSrcL "(X)"                   is alu2opOpc=0xa & alu2opSrcL & alu2opDst {}
+:MvDregLToDreg  alu2opDst = alu2opSrcL "(Z)"                   is alu2opOpc=0xb & alu2opSrcL & alu2opDst {}
+:MvDregBToDreg  alu2opDst = alu2opSrcB "(X)"                   is alu2opOpc=0xc & alu2opSrcB & alu2opDst {}
+:MvDregBToDreg  alu2opDst = alu2opSrcB "(Z)"                   is alu2opOpc=0xd & alu2opSrcB & alu2opDst {}
+:Neg32          alu2opDst = -alu2opSrc                         is alu2opOpc=0xe & alu2opSrc & alu2opDst {}
+:Not32          alu2opDst = "~"alu2opSrc                       is alu2opOpc=0xf & alu2opSrc & alu2opDst {}
 }
 
 
@@ -346,14 +348,14 @@ with : opcode06=0x10 {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode07=0x22 {
-:DagAdd32       p2oDst -= p2oSrc                     is p2oOpc=0x0 & p2oSrc & p2oDst {}
-:LShiftPtr      p2oDst = p2oSrc "<< 2"               is p2oOpc=0x1 & p2oSrc & p2oDst {}
-:LShiftPtr      p2oDst = p2oSrc "<< 1"               is p2oOpc=0x2 & p2oSrc & p2oDst {}
-:LShiftPtr      p2oDst = p2oSrc ">> 2"               is p2oOpc=0x3 & p2oSrc & p2oDst {}
-:LShiftPtr      p2oDst = p2oSrc ">> 1"               is p2oOpc=0x4 & p2oSrc & p2oDst {}
-:DagAdd32       p2oDst += p2oSrc "(BREV)"            is p2oOpc=0x5 & p2oSrc & p2oDst {}
-:DagAddSubShift p2oDst = (p2oDstCpy + p2oSrc) "<< 1" is p2oOpc=0x6 & p2oSrc & p2oDst & p2oDstCpy {}
-:DagAddSubShift p2oDst = (p2oDstCpy + p2oSrc) "<< 2" is p2oOpc=0x7 & p2oSrc & p2oDst & p2oDstCpy {}
+:DagAdd32       p2oDst -= p2oSrc                       is p2oOpc=0x0 & p2oSrc & p2oDst {}
+:LShiftPtr      p2oDst = p2oSrc "<< 0x2"               is p2oOpc=0x1 & p2oSrc & p2oDst {}
+:LShiftPtr      p2oDst = p2oSrc "<< 0x1"               is p2oOpc=0x2 & p2oSrc & p2oDst {}
+:LShiftPtr      p2oDst = p2oSrc ">> 0x2"               is p2oOpc=0x3 & p2oSrc & p2oDst {}
+:LShiftPtr      p2oDst = p2oSrc ">> 0x1"               is p2oOpc=0x4 & p2oSrc & p2oDst {}
+:DagAdd32       p2oDst += p2oSrc "(BREV)"              is p2oOpc=0x5 & p2oSrc & p2oDst {}
+:DagAddSubShift p2oDst = (p2oDstCpy + p2oSrc) "<< 0x1" is p2oOpc=0x6 & p2oSrc & p2oDst & p2oDstCpy {}
+:DagAddSubShift p2oDst = (p2oDstCpy + p2oSrc) "<< 0x2" is p2oOpc=0x7 & p2oSrc & p2oDst & p2oDstCpy {}
 }
 
 
@@ -364,11 +366,11 @@ with : opcode07=0x22 {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode05=0x09 {
-:ShiftBitTst  "CC = !bittst"(l2oDst, l2oSrc) is l2oOpc=0x0 & l2oSrc & l2oDst {}
-:ShiftBitTst  "CC = bittst"(l2oDst, l2oSrc)  is l2oOpc=0x1 & l2oSrc & l2oDst {}
-:Shift_BitMod "bitset"(l2oDst, l2oSrc)       is l2oOpc=0x2 & l2oSrc & l2oDst {}
-:Shift_BitMod "bittgl"(l2oDst, l2oSrc)       is l2oOpc=0x3 & l2oSrc & l2oDst {}
-:Shift_BitMod "bitclr"(l2oDst, l2oSrc)       is l2oOpc=0x4 & l2oSrc & l2oDst {}
+:ShiftBitTst  "CC = !BITTST"(l2oDst, l2oSrc) is l2oOpc=0x0 & l2oSrc & l2oDst {}
+:ShiftBitTst  "CC = BITTST"(l2oDst, l2oSrc)  is l2oOpc=0x1 & l2oSrc & l2oDst {}
+:Shift_BitMod "BITSET"(l2oDst, l2oSrc)       is l2oOpc=0x2 & l2oSrc & l2oDst {}
+:Shift_BitMod "BITTGL"(l2oDst, l2oSrc)       is l2oOpc=0x3 & l2oSrc & l2oDst {}
+:Shift_BitMod "BITCLR"(l2oDst, l2oSrc)       is l2oOpc=0x4 & l2oSrc & l2oDst {}
 :AShift32     l2oDst ">>>=" l2oSrc           is l2oOpc=0x5 & l2oSrc & l2oDst {}
 :LShift       l2oDst ">>=" l2oSrc            is l2oOpc=0x6 & l2oSrc & l2oDst {}
 :LShift       l2oDst "<<=" l2oSrc            is l2oOpc=0x7 & l2oSrc & l2oDst {}
@@ -382,14 +384,14 @@ with : opcode05=0x09 {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode04=0x5 {
-:AddSub32 cp3opDstD = cp3opSrc0D + cp3opSrc1D         is cp3opOpc=0x0 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
-:AddSub32 cp3opDstD = cp3opSrc0D - cp3opSrc1D         is cp3opOpc=0x1 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
-:Logic32  cp3opDstD = cp3opSrc0D & cp3opSrc1D         is cp3opOpc=0x2 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
-:Logic32  cp3opDstD = cp3opSrc0D | cp3opSrc1D         is cp3opOpc=0x3 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
-:Logic32  cp3opDstD = cp3opSrc0D ^ cp3opSrc1D         is cp3opOpc=0x4 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
-:DagAdd32 cp3opDstP = cp3opSrc0P + cp3opSrc1P         is cp3opOpc=0x5 & cp3opDstP & cp3opSrc0P & cp3opSrc1P {}
-:PtrOp    cp3opDstP = cp3opSrc0P + (cp3opSrc1P "<<1") is cp3opOpc=0x6 & cp3opDstP & cp3opSrc0P & cp3opSrc1P {}
-:PtrOp    cp3opDstP = cp3opSrc0P + (cp3opSrc1P "<<2") is cp3opOpc=0x7 & cp3opDstP & cp3opSrc0P & cp3opSrc1P {}
+:AddSub32 cp3opDstD = cp3opSrc0D + cp3opSrc1D            is cp3opOpc=0x0 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
+:AddSub32 cp3opDstD = cp3opSrc0D - cp3opSrc1D            is cp3opOpc=0x1 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
+:Logic32  cp3opDstD = cp3opSrc0D & cp3opSrc1D            is cp3opOpc=0x2 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
+:Logic32  cp3opDstD = cp3opSrc0D | cp3opSrc1D            is cp3opOpc=0x3 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
+:Logic32  cp3opDstD = cp3opSrc0D ^ cp3opSrc1D            is cp3opOpc=0x4 & cp3opDstD & cp3opSrc0D & cp3opSrc1D {}
+:DagAdd32 cp3opDstP = cp3opSrc0P + cp3opSrc1P            is cp3opOpc=0x5 & cp3opDstP & cp3opSrc0P & cp3opSrc1P {}
+:PtrOp    cp3opDstP = cp3opSrc0P + (cp3opSrc1P "<< 0x1") is cp3opOpc=0x6 & cp3opDstP & cp3opSrc0P & cp3opSrc1P {}
+:PtrOp    cp3opDstP = cp3opSrc0P + (cp3opSrc1P "<< 0x2") is cp3opOpc=0x7 & cp3opDstP & cp3opSrc0P & cp3opSrc1P {}
 }
 
 
@@ -430,17 +432,17 @@ with : opcode05=0x0d {
 
 with : opcode04=0x8 {
 with : lspW=0x0 {
-:LdM32bitToDreg  lspReg = [lspPtr++lspIdx]           is lspAop=0x0 & lspReg & lspIdx & lspPtr {}
-:LdM16bitToDregL lspRegL = "W" [lspPtr++lspIdx]      is lspAop=0x1 & lspRegL & lspIdx & lspPtr {}
-:LdM16bitToDregH lspRegH = "W" [lspPtr++lspIdx]      is lspAop=0x2 & lspRegH & lspIdx & lspPtr {}
-:LdM16bitToDreg  lspReg = "W" [lspPtr++lspIdx] "(Z)" is lspAop=0x3 & lspReg & lspIdx & lspPtr {}
+:LdM32bitToDreg  lspReg = [lspPtr++lspIdx]          is lspAop=0x0 & lspReg & lspIdx & lspPtr {}
+:LdM16bitToDregL lspRegL = "W"[lspPtr++lspIdx]      is lspAop=0x1 & lspRegL & lspIdx & lspPtr {}
+:LdM16bitToDregH lspRegH = "W"[lspPtr++lspIdx]      is lspAop=0x2 & lspRegH & lspIdx & lspPtr {}
+:LdM16bitToDreg  lspReg = "W"[lspPtr++lspIdx] "(Z)" is lspAop=0x3 & lspReg & lspIdx & lspPtr {}
 }
 
 with : lspW=0x1 {
-:StDregToM32bit  [lspPtr++lspIdx] = lspReg           is lspAop=0x0 & lspReg & lspIdx & lspPtr {}
-:StDregLToM16bit "W" [lspPtr++lspIdx] = lspRegL      is lspAop=0x1 & lspRegL & lspIdx & lspPtr {}
-:StDregHToM16bit "W" [lspPtr++lspIdx] = lspRegH      is lspAop=0x2 & lspRegH & lspIdx & lspPtr {}
-:LdM16bitToDreg  lspReg = "W" [lspPtr++lspIdx] "(X)" is lspAop=0x3 & lspReg & lspIdx & lspPtr {}
+:StDregToM32bit  [lspPtr++lspIdx] = lspReg          is lspAop=0x0 & lspReg & lspIdx & lspPtr {}
+:StDregLToM16bit "W"[lspPtr++lspIdx] = lspRegL      is lspAop=0x1 & lspRegL & lspIdx & lspPtr {}
+:StDregHToM16bit "W"[lspPtr++lspIdx] = lspRegH      is lspAop=0x2 & lspRegH & lspIdx & lspPtr {}
+:LdM16bitToDreg  lspReg = "W"[lspPtr++lspIdx] "(X)" is lspAop=0x3 & lspReg & lspIdx & lspPtr {}
 }
 }
 
@@ -459,21 +461,21 @@ with : ldstW=0x0 & ldstSz=0x0 {
 }
 
 with : ldstW=0x0 & ldstSz=0x1 {
-:LdM16bitToDreg ldstReg = "W" [ldstPtr++] "(Z)" is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:LdM16bitToDreg ldstReg = "W" [ldstPtr--] "(Z)" is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:LdM16bitToDreg ldstReg = "W" [ldstPtr] "(Z)"   is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:LdM16bitToDreg ldstReg = "W" [ldstPtr++] "(X)" is ldstAop=0x0 & ldstZ=0x1 & ldstPtr & ldstReg {}
-:LdM16bitToDreg ldstReg = "W" [ldstPtr--] "(X)" is ldstAop=0x1 & ldstZ=0x1 & ldstPtr & ldstReg {}
-:LdM16bitToDreg ldstReg = "W" [ldstPtr] "(X)"   is ldstAop=0x2 & ldstZ=0x1 & ldstPtr & ldstReg {}
+:LdM16bitToDreg ldstReg = "W"[ldstPtr++] "(Z)" is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:LdM16bitToDreg ldstReg = "W"[ldstPtr--] "(Z)" is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:LdM16bitToDreg ldstReg = "W"[ldstPtr] "(Z)"   is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:LdM16bitToDreg ldstReg = "W"[ldstPtr++] "(X)" is ldstAop=0x0 & ldstZ=0x1 & ldstPtr & ldstReg {}
+:LdM16bitToDreg ldstReg = "W"[ldstPtr--] "(X)" is ldstAop=0x1 & ldstZ=0x1 & ldstPtr & ldstReg {}
+:LdM16bitToDreg ldstReg = "W"[ldstPtr] "(X)"   is ldstAop=0x2 & ldstZ=0x1 & ldstPtr & ldstReg {}
 }
 
 with : ldstW=0x0 & ldstSz=0x2 {
-:LdM08bitToDreg ldstReg = "B" [ldstPtr++] "(Z)" is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:LdM08bitToDreg ldstReg = "B" [ldstPtr--] "(Z)" is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:LdM08bitToDreg ldstReg = "B" [ldstPtr] "(Z)"   is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:LdM08bitToDreg ldstReg = "B" [ldstPtr++] "(X)" is ldstAop=0x0 & ldstZ=0x1 & ldstPtr & ldstReg {}
-:LdM08bitToDreg ldstReg = "B" [ldstPtr--] "(X)" is ldstAop=0x1 & ldstZ=0x1 & ldstPtr & ldstReg {}
-:LdM08bitToDreg ldstReg = "B" [ldstPtr] "(X)"   is ldstAop=0x2 & ldstZ=0x1 & ldstPtr & ldstReg {}
+:LdM08bitToDreg ldstReg = "B"[ldstPtr++] "(Z)" is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:LdM08bitToDreg ldstReg = "B"[ldstPtr--] "(Z)" is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:LdM08bitToDreg ldstReg = "B"[ldstPtr] "(Z)"   is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:LdM08bitToDreg ldstReg = "B"[ldstPtr++] "(X)" is ldstAop=0x0 & ldstZ=0x1 & ldstPtr & ldstReg {}
+:LdM08bitToDreg ldstReg = "B"[ldstPtr--] "(X)" is ldstAop=0x1 & ldstZ=0x1 & ldstPtr & ldstReg {}
+:LdM08bitToDreg ldstReg = "B"[ldstPtr] "(X)"   is ldstAop=0x2 & ldstZ=0x1 & ldstPtr & ldstReg {}
 }
 
 with : ldstW=0x1 & ldstSz=0x0 {
@@ -486,15 +488,15 @@ with : ldstW=0x1 & ldstSz=0x0 {
 }
 
 with : ldstW=0x1 & ldstSz=0x1 {
-:StDregLToM16bit "W" [ldstPtr++] = ldstReg  is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:StDregLToM16bit "W" [ldstPtr--] = ldstReg  is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:StDregLToM16bit "W" [ldstPtr] = ldstReg    is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:StDregLToM16bit "W"[ldstPtr++] = ldstReg  is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:StDregLToM16bit "W"[ldstPtr--] = ldstReg  is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:StDregLToM16bit "W"[ldstPtr] = ldstReg    is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
 }
 
 with : ldstW=0x1 & ldstSz=0x2 {
-:StDregLToM08bit "B" [ldstPtr++] = ldstReg  is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:StDregLToM08bit "B" [ldstPtr--] = ldstReg  is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
-:StDregLToM08bit "B" [ldstPtr] = ldstReg    is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:StDregLToM08bit "B"[ldstPtr++] = ldstReg  is ldstAop=0x0 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:StDregLToM08bit "B"[ldstPtr--] = ldstReg  is ldstAop=0x1 & ldstZ=0x0 & ldstPtr & ldstReg {}
+:StDregLToM08bit "B"[ldstPtr] = ldstReg    is ldstAop=0x2 & ldstZ=0x0 & ldstPtr & ldstReg {}
 }
 }
 
@@ -524,13 +526,13 @@ with : dlsW=0x0 {
 :LdM32bitToDreg dlsReg = [dlsI--] is dlsAop=0x1 & dlsM=0x0 & dlsI & dlsReg {}
 :LdM32bitToDreg dlsReg = [dlsI]   is dlsAop=0x2 & dlsM=0x0 & dlsI & dlsReg {}
 
-:LdM16bitToDregL dlsRegL = "W" [dlsI++] is dlsAop=0x0 & dlsM=0x1 & dlsI & dlsRegL {}
-:LdM16bitToDregL dlsRegL = "W" [dlsI--] is dlsAop=0x1 & dlsM=0x1 & dlsI & dlsRegL {}
-:LdM16bitToDregL dlsRegL = "W" [dlsI]   is dlsAop=0x2 & dlsM=0x1 & dlsI & dlsRegL {}
+:LdM16bitToDregL dlsRegL = "W"[dlsI++] is dlsAop=0x0 & dlsM=0x1 & dlsI & dlsRegL {}
+:LdM16bitToDregL dlsRegL = "W"[dlsI--] is dlsAop=0x1 & dlsM=0x1 & dlsI & dlsRegL {}
+:LdM16bitToDregL dlsRegL = "W"[dlsI]   is dlsAop=0x2 & dlsM=0x1 & dlsI & dlsRegL {}
 
-:LdM16bitToDregH dlsRegH = "W" [dlsI++] is dlsAop=0x0 & dlsM=0x2 & dlsI & dlsRegH {}
-:LdM16bitToDregH dlsRegH = "W" [dlsI--] is dlsAop=0x1 & dlsM=0x2 & dlsI & dlsRegH {}
-:LdM16bitToDregH dlsRegH = "W" [dlsI]   is dlsAop=0x2 & dlsM=0x2 & dlsI & dlsRegH {}
+:LdM16bitToDregH dlsRegH = "W"[dlsI++] is dlsAop=0x0 & dlsM=0x2 & dlsI & dlsRegH {}
+:LdM16bitToDregH dlsRegH = "W"[dlsI--] is dlsAop=0x1 & dlsM=0x2 & dlsI & dlsRegH {}
+:LdM16bitToDregH dlsRegH = "W"[dlsI]   is dlsAop=0x2 & dlsM=0x2 & dlsI & dlsRegH {}
 
 :LdM32bitToDreg dlsReg = [dlsI++dlsM] is dlsAop=0x3 & dlsM & dlsI & dlsReg {}
 }
@@ -540,13 +542,13 @@ with : dlsW=0x1 {
 :StDregToM32bit [dlsI--] = dlsReg is dlsAop=0x1 & dlsM=0x0 & dlsI & dlsReg {}
 :StDregToM32bit [dlsI] = dlsReg   is dlsAop=0x2 & dlsM=0x0 & dlsI & dlsReg {}
 
-:StDregLToM16bit "W" [dlsI++] = dlsRegL is dlsAop=0x0 & dlsM=0x1 & dlsI & dlsRegL {}
-:StDregLToM16bit "W" [dlsI--] = dlsRegL is dlsAop=0x1 & dlsM=0x1 & dlsI & dlsRegL {}
-:StDregLToM16bit "W" [dlsI] = dlsRegL   is dlsAop=0x2 & dlsM=0x1 & dlsI & dlsRegL {}
+:StDregLToM16bit "W"[dlsI++] = dlsRegL is dlsAop=0x0 & dlsM=0x1 & dlsI & dlsRegL {}
+:StDregLToM16bit "W"[dlsI--] = dlsRegL is dlsAop=0x1 & dlsM=0x1 & dlsI & dlsRegL {}
+:StDregLToM16bit "W"[dlsI] = dlsRegL   is dlsAop=0x2 & dlsM=0x1 & dlsI & dlsRegL {}
 
-:StDregHToM16bit "W" [dlsI++] = dlsRegH is dlsAop=0x0 & dlsM=0x2 & dlsI & dlsRegH {}
-:StDregHToM16bit "W" [dlsI--] = dlsRegH is dlsAop=0x1 & dlsM=0x2 & dlsI & dlsRegH {}
-:StDregHToM16bit "W" [dlsI] = dlsRegH   is dlsAop=0x2 & dlsM=0x2 & dlsI & dlsRegH {}
+:StDregHToM16bit "W"[dlsI++] = dlsRegH is dlsAop=0x0 & dlsM=0x2 & dlsI & dlsRegH {}
+:StDregHToM16bit "W"[dlsI--] = dlsRegH is dlsAop=0x1 & dlsM=0x2 & dlsI & dlsRegH {}
+:StDregHToM16bit "W"[dlsI] = dlsRegH   is dlsAop=0x2 & dlsM=0x2 & dlsI & dlsRegH {}
 
 :StDregToM32bit [dlsI++dlsM] = dlsReg is dlsAop=0x3 & dlsM & dlsI & dlsReg {}
 }
@@ -573,10 +575,10 @@ with : opcode08=0x9e & dagmdimOpcode=0x3 {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 with : opcode12=0x9f6 {
-:DagAddImm dagmdikI += "2" is dagmdikOpc=0x0 & dagmdikI {}
-:DagAddImm dagmdikI -= "2" is dagmdikOpc=0x1 & dagmdikI {}
-:DagAddImm dagmdikI += "4" is dagmdikOpc=0x2 & dagmdikI {}
-:DagAddImm dagmdikI -= "4" is dagmdikOpc=0x3 & dagmdikI {}
+:DagAddImm dagmdikI += "0x2" is dagmdikOpc=0x0 & dagmdikI {}
+:DagAddImm dagmdikI -= "0x2" is dagmdikOpc=0x1 & dagmdikI {}
+:DagAddImm dagmdikI += "0x4" is dagmdikOpc=0x2 & dagmdikI {}
+:DagAddImm dagmdikI -= "0x4" is dagmdikOpc=0x3 & dagmdikI {}
 }
 
 
@@ -591,15 +593,15 @@ lsiiImm4: imm is lsiiOff [imm = lsiiOff << 2;] {}
 
 with : opcode03=0x5 {
 with : lsiiW=0x0 {
-:LdM32bitToDreg lsiiDReg = [lsiiPtr + lsiiImm4]           is lsiiOp=0x0 & lsiiImm4 & lsiiDReg & lsiiPtr {}
-:LdM16bitToDreg lsiiDReg = "W" [lsiiPtr + lsiiImm2] "(Z)" is lsiiOp=0x1 & lsiiImm2 & lsiiDReg & lsiiPtr {}
-:LdM16bitToDreg lsiiDReg = "W" [lsiiPtr + lsiiImm2] "(X)" is lsiiOp=0x2 & lsiiImm2 & lsiiDReg & lsiiPtr {}
+:LdM32bitToDreg lsiiDReg = [lsiiPtr + lsiiImm4]          is lsiiOp=0x0 & lsiiImm4 & lsiiDReg & lsiiPtr {}
+:LdM16bitToDreg lsiiDReg = "W"[lsiiPtr + lsiiImm2] "(Z)" is lsiiOp=0x1 & lsiiImm2 & lsiiDReg & lsiiPtr {}
+:LdM16bitToDreg lsiiDReg = "W"[lsiiPtr + lsiiImm2] "(X)" is lsiiOp=0x2 & lsiiImm2 & lsiiDReg & lsiiPtr {}
 }
 
 with : lsiiW=0x1 {
-:StDregToM32bit  [lsiiPtr + lsiiImm4] = lsiiDReg     is lsiiOp=0x0 & lsiiImm4 & lsiiDReg & lsiiPtr {}
-:StDregLToM16bit "W" [lsiiPtr + lsiiImm2] = lsiiDReg is lsiiOp=0x1 & lsiiImm2 & lsiiDReg & lsiiPtr {}
-:StPregToM32bit  [lsiiPtr + lsiiImm4] = lsiiPReg     is lsiiOp=0x3 & lsiiImm4 & lsiiPReg & lsiiPtr {}
+:StDregToM32bit  [lsiiPtr + lsiiImm4] = lsiiDReg    is lsiiOp=0x0 & lsiiImm4 & lsiiDReg & lsiiPtr {}
+:StDregLToM16bit "W"[lsiiPtr + lsiiImm2] = lsiiDReg is lsiiOp=0x1 & lsiiImm2 & lsiiDReg & lsiiPtr {}
+:StPregToM32bit  [lsiiPtr + lsiiImm4] = lsiiPReg    is lsiiOp=0x3 & lsiiImm4 & lsiiPReg & lsiiPtr {}
 }
 }
 
@@ -610,7 +612,9 @@ with : lsiiW=0x1 {
 ## | 1 | 0 | 1 | 0 | 1 | 1 |.off...........|.ptr.......|.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-:LdM32bitToPreg lpiiReg = [lpiiPtr + lpiiOff] is opcode06=0x2b & lpiiOff & lpiiPtr & lpiiReg {}
+lpiiImm4: imm is lpiiOff [imm = lpiiOff << 2;]{}
+
+:LdM32bitToPreg lpiiReg = [lpiiPtr + lpiiImm4] is opcode06=0x2b & lpiiImm4 & lpiiPtr & lpiiReg {}
 
 
 ## Load/Store indexed with small immediate offset FP (LdStIIFP)
@@ -619,10 +623,12 @@ with : lsiiW=0x1 {
 ## | 1 | 0 | 1 | 1 | 1 | 0 |.w.|.off...............|.g.|.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
+lsfpImm: imm is lsfpOff [imm = 0x80 - (lsfpOff << 2);]{}
+
 with : opcode06=0x2e {
-:LdM32bitToDreg lsfpDReg = ["FP" - lsfpOff] is lsfpW=0x0 & lsfpOff & lsfpG=0x0 & lsfpDReg {}
-:StDregToM32bit ["FP" - lsfpOff] = lsfpDReg is lsfpW=0x1 & lsfpOff & lsfpG=0x0 & lsfpDReg {}
-:StDregToM32bit ["FP" - lsfpOff] = lsfpPReg is lsfpW=0x1 & lsfpOff & lsfpG=0x1 & lsfpPReg {}
+:LdM32bitToDreg lsfpDReg = ["FP" - lsfpImm] is lsfpW=0x0 & lsfpImm & lsfpG=0x0 & lsfpDReg {}
+:StDregToM32bit ["FP" - lsfpImm] = lsfpDReg is lsfpW=0x1 & lsfpImm & lsfpG=0x0 & lsfpDReg {}
+:StDregToM32bit ["FP" - lsfpImm] = lsfpPReg is lsfpW=0x1 & lsfpImm & lsfpG=0x1 & lsfpPReg {}
 }
 
 
@@ -632,6 +638,8 @@ with : opcode06=0x2e {
 ## | 1 | 0 | 1 | 1 | 1 | 0 | 0 |.off...............| 1 |.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-:LdM32bitToDreg lpfpReg = ["FP" - lpfpOff] is opcode07=0x5c & lpfpOff & lpfpOne=0x1 & lpfpReg {}
+lpfpImm: imm is lpfpOff [imm = 0x80 - (lpfpOff << 2);]{}
+
+:LdM32bitToDreg lpfpReg = ["FP" - lpfpImm] is opcode07=0x5c & lpfpImm & lpfpOne=0x1 & lpfpReg {}
 
 

@@ -4,7 +4,7 @@
 
 # Data registers
 attach variables [ 
-    alu2opSrc alu2opDst alu2opDstCpy
+    alu2opSrc alu2opDst alu2opDstCp
     cc2dregReg 
     ccflagYDreg ccflagXDreg
     ccmvDstDreg ccmvSrcDreg
@@ -89,7 +89,7 @@ attach variables [
     ldiPReg
     lihPReg
     ldstPReg ldstPtr
-    lsiiPReg
+    lsiiPReg lsiiPtr
     lsfpPReg 
     lsidPReg lsidPtr
     lsaPReg
