@@ -2,7 +2,7 @@
     <constraint loader="Executable and Linking Format (ELF)" compilerSpecID="default">
         <constraint primary="106" processor="ADSP-BF7xx" />
     </constraint>
-    <!-- <constraint loader="Blackfin+ Boot Stream" compilerSpecID="default">
+    <constraint loader="Blackfin+ Boot Stream" compilerSpecID="default">
         <constraint primary="1" processor="ADSP-BF7xx" />
-    </constraint> -->
+    </constraint>
 </opinions>

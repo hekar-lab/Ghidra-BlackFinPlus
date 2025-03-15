@@ -6,4 +6,10 @@
   </properties>
 
   <programcounter register="PC"/>
+
+  <!-- <default_symbols>
+  </default_symbols>
+
+  <default_memory_blocks>
+  </default_memory_blocks> -->
 </processor_spec>

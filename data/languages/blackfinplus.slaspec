@@ -2,7 +2,9 @@ define endian=little;
 define alignment=2;
 
 define space ram type=ram_space size=4 default;
-define space register type=register_space size=1;
+define space register type=register_space size=2;
+
+@define IMASK "0x1FC02104" # Core MMR Address of the Interrupt Mask Register
 
 @include "includes/registers.sinc"
 
@@ -10,6 +12,52 @@ define space register type=register_space size=1;
 
 @include "includes/variables.sinc"
 
+macro push(reg) {
+    SP = SP - 4;
+    *SP = reg;
+}
+
+macro pop(reg) {
+    reg = *SP;
+    SP = SP + 4;
+}
+
+# Hardware loops
+
+HwLoop: is loop0active=0 & loop1active=0 {}
+HwLoop: is loop0active=1 & loop1active=0 {
+    if (LC0 == 0) goto inst_next;
+    LC0 = LC0 - 1;
+    if (LC0 == 0) goto inst_next;
+    goto [LT0];
+}
+HwLoop: is loop0active=0 & loop1active=1 {
+    if (LC1 == 0) goto inst_next;
+    LC1 = LC1 - 1;
+    if (LC1 == 0) goto inst_next;
+    goto [LT1];
+}
+HwLoop: is loop0active=1 & loop1active=1 {
+    if (LC1 == 0) goto <check_loop0>;
+    LC1 = LC1 - 1;
+    if (LC1 == 0) goto <check_loop0>;
+    goto [LT1];
+<check_loop0>
+    if (LC0 == 0) goto inst_next;
+    LC0 = LC0 - 1;
+    if (LC0 == 0) goto inst_next;
+    goto [LT0];
+}
+
+# Build instructions
+
+:^instruction is phase=0 & HwLoop & instruction [ phase=1; ]{ 
+    build instruction; 
+    build HwLoop;
+}
+
+with : phase=1 {
 @include "includes/instructions-16_bits.sinc"
 @include "includes/instructions-32_bits.sinc"
 @include "includes/instructions-64_bits.sinc"
+}

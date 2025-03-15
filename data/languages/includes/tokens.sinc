@@ -255,6 +255,9 @@ define token inst16 (16)
 # NOP32 Tokens
 	nop32OpcodeH  = ( 0,10)
 
+# Multi
+    multi         = (11,11)
+
 # ProgCtrl Tokens
     pgcOpc        = ( 4, 7)
     pgcReg        = ( 0, 3)

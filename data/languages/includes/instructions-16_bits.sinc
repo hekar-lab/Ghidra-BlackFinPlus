@@ -18,21 +18,28 @@
 ## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |.opc...........|.reg...........|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
+define pcodeop idle;
+define pcodeop csync;
+define pcodeop ssync;
+define pcodeop emuexcpt;
+define pcodeop raise;
+define pcodeop excpt;
+
 with returnDesc : pgcOpc=0x1{
-: "RTS" is pgcReg=0x0 {}
-: "RTI" is pgcReg=0x1 {}
-: "RTX" is pgcReg=0x2 {}
-: "RTN" is pgcReg=0x3 {}
-: "RTE" is pgcReg=0x4 {}
+: "RTS" is pgcReg=0x0 { return [RETS]; }
+: "RTI" is pgcReg=0x1 { return [RETI]; }
+: "RTX" is pgcReg=0x2 { return [RETX]; }
+: "RTN" is pgcReg=0x3 { return [RETN]; }
+: "RTE" is pgcReg=0x4 { return [RETE]; }
 }
 
 with syncDesc : pgcOpc=0x2{
-: "IDLE"  is pgcReg=0x0 {}
-: "CSYNC" is pgcReg=0x3 {}
-: "SSYNC" is pgcReg=0x4 {}
+: "IDLE"  is pgcReg=0x0 { idle(); }
+: "CSYNC" is pgcReg=0x3 { csync(); }
+: "SSYNC" is pgcReg=0x4 { ssync(); }
 }
 
-modeDesc: "EMUEXCPT" is pgcOpc=0x2 & pgcReg=0x5 {}
+modeDesc: "EMUEXCPT" is pgcOpc=0x2 & pgcReg=0x5 { emuexcpt(); }
 
 with : opcode08=0x00 {
 :Return returnDesc is returnDesc {}
@@ -40,18 +47,36 @@ with : opcode08=0x00 {
 :Mode   modeDesc   is modeDesc {}
 
 with : pgcReg1=0x0 {
-:IMaskMv "CLI" pgcDReg           is pgcOpc=0x3 & pgcDReg {}
-:IMaskMv "STI" pgcDReg           is pgcOpc=0x4 & pgcDReg {}
-:Jump    "JUMP" (pgcPReg)        is pgcOpc=0x5 & pgcPReg {}
-:Call    "CALL" (pgcPReg)        is pgcOpc=0x6 & pgcPReg {}
-:Call    "CALL" ("PC" + pgcPReg) is pgcOpc=0x7 & pgcPReg {}
-:Jump    "JUMP" ("PC" + pgcPReg) is pgcOpc=0x8 & pgcPReg {}
-:TestSet "TESTSET" (pgcPReg)     is pgcOpc=0xb & pgcPReg {}
-:Sync    "STI IDLE" pgcDReg      is pgcOpc=0xc & pgcDReg {}
+:IMaskMv "CLI" pgcDReg           is pgcOpc=0x3 & pgcDReg {
+    local imaskAddr:4 = $(IMASK);
+    pgcDReg = *[ram]:4 imaskAddr;
+    *[ram]:4 imaskAddr = 0;
+}
+:IMaskMv "STI" pgcDReg           is pgcOpc=0x4 & pgcDReg {
+    local imaskAddr:4 = $(IMASK);
+    *[ram]:4 imaskAddr = pgcDReg;
+}
+:Jump    "JUMP" (pgcPReg)        is pgcOpc=0x5 & pgcPReg { goto [pgcPReg]; }
+:Call    "CALL" (pgcPReg)        is pgcOpc=0x6 & pgcPReg { RETS = inst_next; call [pgcPReg]; }
+:Call    "CALL" ("PC" + pgcPReg) is pgcOpc=0x7 & pgcPReg { RETS = inst_next; call [PC + pgcPReg]; }
+:Jump    "JUMP" ("PC" + pgcPReg) is pgcOpc=0x8 & pgcPReg { goto [PC + pgcPReg]; }
+:TestSet "TESTSET" (pgcPReg)     is pgcOpc=0xb & pgcPReg {
+    local testVal = *[ram]:1 pgcPReg;
+    CC = 0x0;
+    if (testVal != 0x00) goto <pgc_testset_nz>;
+    CC = 0x1;
+    <pgc_testset_nz>
+    *[ram]:1 pgcPReg = testVal | 0x80;
+}
+:Sync    "STI IDLE" pgcDReg      is pgcOpc=0xc & pgcDReg {
+    local imaskAddr:4 = $(IMASK);
+    *[ram]:4 imaskAddr = pgcDReg;
+    idle();
+}
 }
 
-:Raise "RAISE" pgcReg is pgcOpc=0x9 & pgcReg {}
-:Raise "EXCPT" pgcReg is pgcOpc=0xa & pgcReg {}
+:Raise "RAISE" pgcReg is pgcOpc=0x9 & pgcReg { raise(pgcReg:1); }
+:Raise "EXCPT" pgcReg is pgcOpc=0xa & pgcReg { excpt(pgcReg:1); }
 }
 
 
@@ -61,24 +86,39 @@ with : pgcReg1=0x0 {
 ## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |.w.|.grp.......|.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-PUSHPOPREG: pprDReg    is pprGrp=0x0 & pprDReg {} 
-PUSHPOPREG: pprPReg    is pprGrp=0x1 & pprPReg {} 
-PUSHPOPREG: pprIReg    is pprGrp=0x2 & pprReg1=0x0 & pprIReg {} 
-PUSHPOPREG: pprMReg    is pprGrp=0x2 & pprReg1=0x1 & pprMReg {} 
-PUSHPOPREG: pprBReg    is pprGrp=0x3 & pprReg1=0x0 & pprBReg {} 
-PUSHPOPREG: pprLReg    is pprGrp=0x3 & pprReg1=0x1 & pprLReg {} 
-PUSHPOPREG: "A0.X"     is pprGrp=0x4 & pprAccReg=0x0 {} 
-PUSHPOPREG: "A0.W"     is pprGrp=0x4 & pprAccReg=0x1 {} 
-PUSHPOPREG: "A1.X"     is pprGrp=0x4 & pprAccReg=0x2 {} 
-PUSHPOPREG: "A1.W"     is pprGrp=0x4 & pprAccReg=0x3 {} 
-PUSHPOPREG: "ASTAT"    is pprGrp=0x4 & pprAccReg=0x6 {} 
-PUSHPOPREG: "RETS"     is pprGrp=0x4 & pprAccReg=0x7 {} 
-PUSHPOPREG: pprSysReg2 is pprGrp=0x6 & pprSysReg2 {} 
-PUSHPOPREG: pprSysReg3 is pprGrp=0x7 & pprSysReg3 {} 
+PUSHREG: pprDReg    is pprGrp=0x0 & pprDReg { push(pprDReg); } 
+PUSHREG: pprPReg    is pprGrp=0x1 & pprPReg { push(pprPReg); } 
+PUSHREG: pprIReg    is pprGrp=0x2 & pprReg1=0x0 & pprIReg { push(pprIReg); } 
+PUSHREG: pprMReg    is pprGrp=0x2 & pprReg1=0x1 & pprMReg { push(pprMReg); } 
+PUSHREG: pprBReg    is pprGrp=0x3 & pprReg1=0x0 & pprBReg { push(pprBReg); } 
+PUSHREG: pprLReg    is pprGrp=0x3 & pprReg1=0x1 & pprLReg { push(pprLReg); } 
+PUSHREG: "A0.X"     is pprGrp=0x4 & pprAccReg=0x0 { push(A0.X); } 
+PUSHREG: "A0.W"     is pprGrp=0x4 & pprAccReg=0x1 { push(A0.W); } 
+PUSHREG: "A1.X"     is pprGrp=0x4 & pprAccReg=0x2 { push(A1.X); } 
+PUSHREG: "A1.W"     is pprGrp=0x4 & pprAccReg=0x3 { push(A1.W); } 
+PUSHREG: "ASTAT"    is pprGrp=0x4 & pprAccReg=0x6 { push(ASTAT); } 
+PUSHREG: "RETS"     is pprGrp=0x4 & pprAccReg=0x7 { push(RETS); } 
+PUSHREG: pprSysReg2 is pprGrp=0x6 & pprSysReg2 { push(pprSysReg2); } 
+PUSHREG: pprSysReg3 is pprGrp=0x7 & pprSysReg3 { push(pprSysReg3); } 
+
+POPREG: pprDReg    is pprGrp=0x0 & pprDReg { pop(pprDReg); } 
+POPREG: pprPReg    is pprGrp=0x1 & pprPReg { pop(pprPReg); } 
+POPREG: pprIReg    is pprGrp=0x2 & pprReg1=0x0 & pprIReg { pop(pprIReg); } 
+POPREG: pprMReg    is pprGrp=0x2 & pprReg1=0x1 & pprMReg { pop(pprMReg); } 
+POPREG: pprBReg    is pprGrp=0x3 & pprReg1=0x0 & pprBReg { pop(pprBReg); } 
+POPREG: pprLReg    is pprGrp=0x3 & pprReg1=0x1 & pprLReg { pop(pprLReg); } 
+POPREG: "A0.X"     is pprGrp=0x4 & pprAccReg=0x0 { pop(A0.X); } 
+POPREG: "A0.W"     is pprGrp=0x4 & pprAccReg=0x1 { pop(A0.W); } 
+POPREG: "A1.X"     is pprGrp=0x4 & pprAccReg=0x2 { pop(A1.X); } 
+POPREG: "A1.W"     is pprGrp=0x4 & pprAccReg=0x3 { pop(A1.W); } 
+POPREG: "ASTAT"    is pprGrp=0x4 & pprAccReg=0x6 { pop(ASTAT); } 
+POPREG: "RETS"     is pprGrp=0x4 & pprAccReg=0x7 { pop(RETS); } 
+POPREG: pprSysReg2 is pprGrp=0x6 & pprSysReg2 { pop(pprSysReg2); } 
+POPREG: pprSysReg3 is pprGrp=0x7 & pprSysReg3 { pop(pprSysReg3); } 
 
 with : opcode09=0x002 {
-:Pop  PUSHPOPREG = "[SP++]" is pprW=0x0 & PUSHPOPREG {}
-:Push "[--SP]" = PUSHPOPREG is pprW=0x1 & PUSHPOPREG {}
+:Pop  POPREG = "[SP++]" is pprW=0x0 & POPREG {}
+:Push "[--SP]" = PUSHREG is pprW=0x1 & PUSHREG {}
 }
 
 
@@ -91,10 +131,10 @@ with : opcode09=0x002 {
 mvtoccDesc: "CC = !CC" is epsilon {}
 
 with : opcode11=0x010 {
-:CCToDreg cc2dregReg = "CC"  is cc2dregOpc=0x0 & cc2dregReg {}
-:MvToCC   "CC" = cc2dregReg  is cc2dregOpc=0x1 & cc2dregReg {}
-:CCToDreg cc2dregReg = "!CC" is cc2dregOpc=0x2 & cc2dregReg {}
-:MvToCC   mvtoccDesc         is cc2dregOpc=0x3 & mvtoccDesc {}
+:CCToDreg cc2dregReg = "CC"  is cc2dregOpc=0x0 & cc2dregReg { cc2dregReg = zext(CC); }
+:MvToCC   "CC" = cc2dregReg  is cc2dregOpc=0x1 & cc2dregReg { CC = (cc2dregReg != 0); }
+:CCToDreg cc2dregReg = "!CC" is cc2dregOpc=0x2 & cc2dregReg { cc2dregReg = zext(!CC); }
+:MvToCC   mvtoccDesc         is cc2dregOpc=0x3 & mvtoccDesc { CC = !CC; }
 }
 
 
@@ -104,14 +144,24 @@ with : opcode11=0x010 {
 ## | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 |.a.|.opc...|.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-PREGA: cctrlReg   is cctrlA=0x0 & cctrlReg {}
-PREGA: cctrlReg++ is cctrlA=0x1 & cctrlReg {}
+define pcodeop prefetch;
+define pcodeop flushinv;
+define pcodeop flush;
+define pcodeop iflush;
+
+PREGA: cctrlReg   is cctrlA=0x0 & cctrlReg { export cctrlReg; }
+PREGA: cctrlReg++ is cctrlA=0x1 & cctrlReg {
+    local prevVal:4 = cctrlReg;
+    # Increment by cache line length = 64 bits * 4 = 32 bytes
+    cctrlReg = cctrlReg + 0x20; 
+    export prevVal;
+}
 
 with : opcode10=0x009 {
-:CacheCtrl "PREFETCH" [PREGA] is cctrlOpc=0x0 & PREGA {}
-:CacheCtrl "FLUSHINV" [PREGA] is cctrlOpc=0x1 & PREGA {}
-:CacheCtrl "FLUSH" [PREGA]    is cctrlOpc=0x2 & PREGA {}
-:CacheCtrl "IFLUSH" [PREGA]   is cctrlOpc=0x3 & PREGA {}
+:CacheCtrl "PREFETCH" [PREGA] is cctrlOpc=0x0 & PREGA { prefetch(PREGA); }
+:CacheCtrl "FLUSHINV" [PREGA] is cctrlOpc=0x1 & PREGA { flushinv(PREGA); }
+:CacheCtrl "FLUSH" [PREGA]    is cctrlOpc=0x2 & PREGA { flush(PREGA); }
+:CacheCtrl "IFLUSH" [PREGA]   is cctrlOpc=0x3 & PREGA { iflush(PREGA); }
 }
 
 

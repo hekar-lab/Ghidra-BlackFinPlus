@@ -3,6 +3,7 @@
 ############################## MAIN_32A ##############################
 
 
+with Mult32 : {
 ## 32-bit Slot Nop (NOP32)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
@@ -10,7 +11,7 @@
 ## | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-:NOP32 is opcode04=0xc & nop32OpcodeH=0x003 ; nop32OpcodeL=0x1800 {} 
+:"NOP32" is opcode04=0xc & nop32OpcodeH=0x003 ; nop32OpcodeL=0x1800 {} 
 
 
 ## Multiply Accumulate (Dsp32Mac)
@@ -156,8 +157,8 @@ with : (opcode04=0xc & dmOpcode=0x0) ... {
 :^TRADMAC is (dmMmod2=0x2 ; any32) & TRADMAC {}
 :^TRADMAC is (dmMmod=0xc ; any32) & TRADMAC {}
 
-:CmplxMult CMPLXMAC is (dmMmod=0xd ; any32) & CMPLXMAC {}
-:CmplxMult CMPLXMAC is (dmMmod3=0x7 ; any32) & CMPLXMAC {}
+:"CmplxMult" CMPLXMAC is (dmMmod=0xd ; any32) & CMPLXMAC {}
+:"CmplxMult" CMPLXMAC is (dmMmod3=0x7 ; any32) & CMPLXMAC {}
 }
 
 
@@ -198,42 +199,42 @@ MPAIR: "R7:6" is dmDst=0x6 {}
 
 with : (opcode04=0xc & dmOpcode=0x1) ... {
 with : dmP=0x0 & dmOp1=0x0 ; dmOp0=0x0 {
-:Mult16              dmDstL = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstL & MUL0 {}
-:Mult16              dmDstH = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstH & MUL1 {}
-:ParaMult16AndMult16 dmDstH = MUL1 MML, dmDstL = MUL0 MMODX 
+:"Mult16"              dmDstL = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstL & MUL0 {}
+:"Mult16"              dmDstH = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstH & MUL1 {}
+:"ParaMult16AndMult16" dmDstH = MUL1 MML, dmDstL = MUL0 MMODX 
     is MMODX & MML & dmW1=0x1 ; dmW0=0x1 & dmDstL & dmDstH & MUL0 & MUL1 {}
 }
 
 with : dmP=0x1 & dmOp1=0x0 ; dmOp0=0x0 {
-:Mult16     dmDstE = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstE & MUL0 {}
-:Mult16     dmDstO = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstO & MUL1 {}
-:MvAxToDreg dmDstO = MUL1 MML, dmDstE = MUL0 MMODX 
+:"Mult16"     dmDstE = MUL0 MMODX    is MMODX & dmMm=0x0 & dmW1=0x0 ; dmW0=0x1 & dmDstE & MUL0 {}
+:"Mult16"     dmDstO = MUL1 MMLMMODX is MMLMMODX & dmW1=0x1 ; dmW0=0x0 & dmDstO & MUL1 {}
+:"MvAxToDreg" dmDstO = MUL1 MML, dmDstE = MUL0 MMODX 
     is MMODX & MML & dmW1=0x1 ; dmW0=0x1 & dmDstE & dmDstO & MUL0 & MUL1 {}
 }
 
 with : dmMm=0x0 & dmP=0x0 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x0 {
-:Mac32 "A1:0" = dmSrc0 * dmSrc1 M32MMODX  is M32MMODX ; dmOp0=0x0 & dmSrc0 & dmSrc1 {}
-:Mac32 "A1:0" += dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x1 & dmSrc0 & dmSrc1 {}
-:Mac32 "A1:0" -= dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x2 & dmSrc0 & dmSrc1 {}
+:"Mac32" "A1:0" = dmSrc0 * dmSrc1 M32MMODX  is M32MMODX ; dmOp0=0x0 & dmSrc0 & dmSrc1 {}
+:"Mac32" "A1:0" += dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x1 & dmSrc0 & dmSrc1 {}
+:"Mac32" "A1:0" -= dmSrc0 * dmSrc1 M32MMODX is M32MMODX ; dmOp0=0x2 & dmSrc0 & dmSrc1 {}
 }
 
 with : dmMm=0x0 & dmP=0x0 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 {
-:Mac32WithMv dmDst = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & dmDst & dmSrc0 & dmSrc1 {}
-:Mac32WithMv dmDst = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & dmDst & dmSrc0 & dmSrc1 {}
-:Mac32WithMv dmDst = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & dmDst & dmSrc0 & dmSrc1 {}
-:MvAxToDreg  dmDst = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & dmDst {}
+:"Mac32WithMv" dmDst = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & dmDst & dmSrc0 & dmSrc1 {}
+:"Mac32WithMv" dmDst = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & dmDst & dmSrc0 & dmSrc1 {}
+:"Mac32WithMv" dmDst = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & dmDst & dmSrc0 & dmSrc1 {}
+:"MvAxToDreg"  dmDst = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & dmDst {}
 }
 
 with : dmMm=0x0 & dmP=0x1 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 {
-:Mac32WithMv MPAIR = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & MPAIR & dmSrc0 & dmSrc1 {}
-:Mac32WithMv MPAIR = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & MPAIR & dmSrc0 & dmSrc1 {}
-:Mac32WithMv MPAIR = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & MPAIR & dmSrc0 & dmSrc1 {}
-:MvAxToDreg  MPAIR = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & MPAIR {}
+:"Mac32WithMv" MPAIR = ("A1:0" = dmSrc0 * dmSrc1) M32MMODX  is M32MMODX ; dmOp0=0x0 & MPAIR & dmSrc0 & dmSrc1 {}
+:"Mac32WithMv" MPAIR = ("A1:0" += dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x1 & MPAIR & dmSrc0 & dmSrc1 {}
+:"Mac32WithMv" MPAIR = ("A1:0" -= dmSrc0 * dmSrc1) M32MMODX is M32MMODX ; dmOp0=0x2 & MPAIR & dmSrc0 & dmSrc1 {}
+:"MvAxToDreg"  MPAIR = "A1:0" M32MMODX                      is M32MMODX ; dmOp0=0x3 & MPAIR {}
 }
 
 with : dmMm=0x1 & dmW1=0x0 & dmOp1=0x1 ; dmW0=0x1 & dmOp0=0x0 {
-:Mult32 dmDst = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; dmDst & dmSrc0 & dmSrc1 {}
-:Mult32 MPAIR = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; MPAIR & dmSrc0 & dmSrc1 {}
+:"Mult32" dmDst = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; dmDst & dmSrc0 & dmSrc1 {}
+:"Mult32" MPAIR = dmSrc0 * dmSrc1 M32MMODX is M32MMODX & dmP=0x0 ; MPAIR & dmSrc0 & dmSrc1 {}
 }
 }
 
@@ -331,153 +332,153 @@ absaccDesc: "A1 = ABS A1" is daHl=0x1 ; daAop=0x1 {}
 absaccDesc: "A1 = ABS A1, A0 = ABS A0" is daHl=0x0 ; daAop=0x3 {}
 
 with : (opcode04=0xc & daOpcode=0x2) ... {
-:AddSubVec16 daDst0 = daSrc0 AOPL daSrc1 SX is daAopc=0x00 ; (AOPL & SX & daDst0 & daSrc0 & daSrc1) {}
-:AddSubVec16 addsubvecPt1, addsubvecPt2 SXA is (daAopc=0x01 ; SXA) & addsubvecPt1 & addsubvecPt2 {}
+:"AddSubVec16" daDst0 = daSrc0 AOPL daSrc1 SX is daAopc=0x00 ; (AOPL & SX & daDst0 & daSrc0 & daSrc1) {}
+:"AddSubVec16" addsubvecPt1, addsubvecPt2 SXA is (daAopc=0x01 ; SXA) & addsubvecPt1 & addsubvecPt2 {}
 
 with : daAopc=0x02 ... {
-:AddSub16 daDstHl = daSrc0L + daSrc1L SAT is (any16 ; daAop=0x0 & SAT & daX=0x0 & daSrc0L & daSrc1L) & daDstHl {}
-:AddSub16 daDstHl = daSrc0L + daSrc1H SAT is (any16 ; daAop=0x1 & SAT & daX=0x0 & daSrc0L & daSrc1H) & daDstHl {}
-:AddSub16 daDstHl = daSrc0H + daSrc1L SAT is (any16 ; daAop=0x2 & SAT & daX=0x0 & daSrc0H & daSrc1L) & daDstHl {}
-:AddSub16 daDstHl = daSrc0H + daSrc1H SAT is (any16 ; daAop=0x3 & SAT & daX=0x0 & daSrc0H & daSrc1H) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0L + daSrc1L SAT is (any16 ; daAop=0x0 & SAT & daX=0x0 & daSrc0L & daSrc1L) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0L + daSrc1H SAT is (any16 ; daAop=0x1 & SAT & daX=0x0 & daSrc0L & daSrc1H) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0H + daSrc1L SAT is (any16 ; daAop=0x2 & SAT & daX=0x0 & daSrc0H & daSrc1L) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0H + daSrc1H SAT is (any16 ; daAop=0x3 & SAT & daX=0x0 & daSrc0H & daSrc1H) & daDstHl {}
 }
 
 with : daAopc=0x03 ... {
-:AddSub16 daDstHl = daSrc0L - daSrc1L SAT is (any16 ; daAop=0x0 & SAT & daX=0x0 & daSrc0L & daSrc1L) & daDstHl {}
-:AddSub16 daDstHl = daSrc0L - daSrc1H SAT is (any16 ; daAop=0x1 & SAT & daX=0x0 & daSrc0L & daSrc1H) & daDstHl {}
-:AddSub16 daDstHl = daSrc0H - daSrc1L SAT is (any16 ; daAop=0x2 & SAT & daX=0x0 & daSrc0H & daSrc1L) & daDstHl {}
-:AddSub16 daDstHl = daSrc0H - daSrc1H SAT is (any16 ; daAop=0x3 & SAT & daX=0x0 & daSrc0H & daSrc1H) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0L - daSrc1L SAT is (any16 ; daAop=0x0 & SAT & daX=0x0 & daSrc0L & daSrc1L) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0L - daSrc1H SAT is (any16 ; daAop=0x1 & SAT & daX=0x0 & daSrc0L & daSrc1H) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0H - daSrc1L SAT is (any16 ; daAop=0x2 & SAT & daX=0x0 & daSrc0H & daSrc1L) & daDstHl {}
+:"AddSub16" daDstHl = daSrc0H - daSrc1H SAT is (any16 ; daAop=0x3 & SAT & daX=0x0 & daSrc0H & daSrc1H) & daDstHl {}
 }
 
 with : daHl=0x0 & daAopc=0x4 ; daX=0x0 {
-:AddSub32 daDst0 = daSrc0 + daSrc1 SAT is any16 ; daAop=0x0 & SAT & daDst0 & daSrc0 & daSrc1 {}
-:AddSub32 daDst0 = daSrc0 - daSrc1 SAT is any16 ; daAop=0x1 & SAT & daDst0 & daSrc0 & daSrc1 {}
-:AddSub32Dual addsubdualPt1, addsubdualPt2 SAT is (any16 ; daAop=0x2 & SAT) & addsubdualPt1 & addsubdualPt2 {}
+:"AddSub32" daDst0 = daSrc0 + daSrc1 SAT is any16 ; daAop=0x0 & SAT & daDst0 & daSrc0 & daSrc1 {}
+:"AddSub32" daDst0 = daSrc0 - daSrc1 SAT is any16 ; daAop=0x1 & SAT & daDst0 & daSrc0 & daSrc1 {}
+:"AddSub32Dual" addsubdualPt1, addsubdualPt2 SAT is (any16 ; daAop=0x2 & SAT) & addsubdualPt1 & addsubdualPt2 {}
 }
 
 with : daAopc=0x05 ; daS=0x0 {
-:AddSubRnd12 daDstHl = daSrc0 + daSrc1 "(RND12)" is (any16 ; daAop=0x0 & daX=0x0 & daSrc0 & daSrc1) & daDstHl {}
-:AddSubRnd12 daDstHl = daSrc0 - daSrc1 "(RND12)" is (any16 ; daAop=0x1 & daX=0x0 & daSrc0 & daSrc1) & daDstHl {}
-:AddSubRnd20 daDstHl = daSrc0 + daSrc1 "(RND20)" is (any16 ; daAop=0x2 & daX=0x1 & daSrc0 & daSrc1) & daDstHl {}
-:AddSubRnd20 daDstHl = daSrc0 - daSrc1 "(RND20)" is (any16 ; daAop=0x3 & daX=0x1 & daSrc0 & daSrc1) & daDstHl {}
+:"AddSubRnd12" daDstHl = daSrc0 + daSrc1 "(RND12)" is (any16 ; daAop=0x0 & daX=0x0 & daSrc0 & daSrc1) & daDstHl {}
+:"AddSubRnd12" daDstHl = daSrc0 - daSrc1 "(RND12)" is (any16 ; daAop=0x1 & daX=0x0 & daSrc0 & daSrc1) & daDstHl {}
+:"AddSubRnd20" daDstHl = daSrc0 + daSrc1 "(RND20)" is (any16 ; daAop=0x2 & daX=0x1 & daSrc0 & daSrc1) & daDstHl {}
+:"AddSubRnd20" daDstHl = daSrc0 - daSrc1 "(RND20)" is (any16 ; daAop=0x3 & daX=0x1 & daSrc0 & daSrc1) & daDstHl {}
 }
 
 with : daHl=0x0 & daAopc=0x06 ; daS=0x0 & daX=0x0 {
-:Max16Vec daDst0 = "MAX"(daSrc0, daSrc1) "(V)" is (any16 ; daAop=0x0 & daDst0 & daSrc0 & daSrc1) {}
-:Min16Vec daDst0 = "MIN"(daSrc0, daSrc1) "(V)" is (any16 ; daAop=0x1 & daDst0 & daSrc0 & daSrc1) {}
-:Abs2x16  daDst0 = "ABS" daSrc0 "(V)"          is (any16 ; daAop=0x2 & daDst0 & daSrc0 & daSrc1) {}
+:"Max16Vec" daDst0 = "MAX"(daSrc0, daSrc1) "(V)" is (any16 ; daAop=0x0 & daDst0 & daSrc0 & daSrc1) {}
+:"Min16Vec" daDst0 = "MIN"(daSrc0, daSrc1) "(V)" is (any16 ; daAop=0x1 & daDst0 & daSrc0 & daSrc1) {}
+:"Abs2x16"  daDst0 = "ABS" daSrc0 "(V)"          is (any16 ; daAop=0x2 & daDst0 & daSrc0 & daSrc1) {}
 }
 
 with : daHl=0x0 & daAopc=0x07 ; daX=0x0 {
-:Max32 daDst0 = "MAX"(daSrc0, daSrc1) is (any16 ; daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {}
-:Min32 daDst0 = "MIN"(daSrc0, daSrc1) is (any16 ; daAop=0x1 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {}
-:Abs32 daDst0 = "ABS" daSrc0          is (any16 ; daAop=0x2 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {}
-:Neg32 daDst0 = -daSrc0 SAT           is (any16 ; daAop=0x3 & SAT & daDst0 & daSrc0 & daSrc1) {}
+:"Max32" daDst0 = "MAX"(daSrc0, daSrc1) is (any16 ; daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {}
+:"Min32" daDst0 = "MIN"(daSrc0, daSrc1) is (any16 ; daAop=0x1 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {}
+:"Abs32" daDst0 = "ABS" daSrc0          is (any16 ; daAop=0x2 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {}
+:"Neg32" daDst0 = -daSrc0 SAT           is (any16 ; daAop=0x3 & SAT & daDst0 & daSrc0 & daSrc1) {}
 }
 
 with : daHl=0x0 & daAopc=0x08 ; daX=0x0 {
-:LdImmToAx       axmovDesc is any16 ; axmovDesc & daAop=0x0 & daS=0x0 {}
-:ALU_SatAcc0     axmovDesc is any16 ; axmovDesc & daAop=0x0 & daS=0x1 {}
-:LdImmToAx       axmovDesc is any16 ; axmovDesc & daAop=0x1 & daS=0x0 {}
-:ALU_SatAcc1     axmovDesc is any16 ; axmovDesc & daAop=0x1 & daS=0x1 {}
-:LdImmToAxDual   axmovDesc is any16 ; axmovDesc & daAop=0x2 & daS=0x0 {}
-:ALU_SatAccDual  axmovDesc is any16 ; axmovDesc & daAop=0x2 & daS=0x1 {}
-:MvAxToAx        axmovDesc is any16 ; axmovDesc & daAop=0x3 & daS=0x0 {}
-:MvAxToAx        axmovDesc is any16 ; axmovDesc & daAop=0x3 & daS=0x1 {}
+:"LdImmToAx"       axmovDesc is any16 ; axmovDesc & daAop=0x0 & daS=0x0 {}
+:"ALU_SatAcc0"     axmovDesc is any16 ; axmovDesc & daAop=0x0 & daS=0x1 {}
+:"LdImmToAx"       axmovDesc is any16 ; axmovDesc & daAop=0x1 & daS=0x0 {}
+:"ALU_SatAcc1"     axmovDesc is any16 ; axmovDesc & daAop=0x1 & daS=0x1 {}
+:"LdImmToAxDual"   axmovDesc is any16 ; axmovDesc & daAop=0x2 & daS=0x0 {}
+:"ALU_SatAccDual"  axmovDesc is any16 ; axmovDesc & daAop=0x2 & daS=0x1 {}
+:"MvAxToAx"        axmovDesc is any16 ; axmovDesc & daAop=0x3 & daS=0x0 {}
+:"MvAxToAx"        axmovDesc is any16 ; axmovDesc & daAop=0x3 & daS=0x1 {}
 }
 
 with : daAopc=0x09 ... {
-:MvDregHLToAxHL daA0Hl = daSrcHl       is (daA0Hl; daAop=0x0 & daS=0x0 & daX=0x0) & daSrcHl {}
-:MvDregToAx     "A0" = daSrc0 XMODE    is daHl=0x0; daAop=0x0 & daS=0x1 & XMODE & daSrc0 {}
-:MvDregLToAxX   "A0.X" = daSrc0L       is daHl=0x0; daAop=0x1 & daS=0x0 & daX=0x0 & daSrc0L {}
-:MvDregHLToAxHL daA1Hl = daSrcHl       is (daA1Hl; daAop=0x2 & daS=0x0 & daX=0x0) & daSrcHl {}
-:MvDregToAx     "A1" = daSrc0 XMODE    is daHl=0x0; daAop=0x2 & daS=0x1 & XMODE & daSrc0 {}
-:MvDregLToAxX   "A1.X" = daSrc0L       is daHl=0x0; daAop=0x3 & daS=0x0 & daX=0x0 & daSrc0L {}
+:"MvDregHLToAxHL" daA0Hl = daSrcHl       is (daA0Hl; daAop=0x0 & daS=0x0 & daX=0x0) & daSrcHl {}
+:"MvDregToAx"     "A0" = daSrc0 XMODE    is daHl=0x0; daAop=0x0 & daS=0x1 & XMODE & daSrc0 {}
+:"MvDregLToAxX"   "A0.X" = daSrc0L       is daHl=0x0; daAop=0x1 & daS=0x0 & daX=0x0 & daSrc0L {}
+:"MvDregHLToAxHL" daA1Hl = daSrcHl       is (daA1Hl; daAop=0x2 & daS=0x0 & daX=0x0) & daSrcHl {}
+:"MvDregToAx"     "A1" = daSrc0 XMODE    is daHl=0x0; daAop=0x2 & daS=0x1 & XMODE & daSrc0 {}
+:"MvDregLToAxX"   "A1.X" = daSrc0L       is daHl=0x0; daAop=0x3 & daS=0x0 & daX=0x0 & daSrc0L {}
 }
 
 with : daAopc=0x0a ... {
-:MvAxXToDregL daDst0L = "A0.X" is daHl=0x0; daAop=0x0 & daS=0x0 & daX=0x0 & daDst0L {}
-:MvAxXToDregL daDst0L = "A1.X" is daHl=0x0; daAop=0x1 & daS=0x0 & daX=0x0 & daDst0L {}
+:"MvAxXToDregL" daDst0L = "A0.X" is daHl=0x0; daAop=0x0 & daS=0x0 & daX=0x0 & daDst0L {}
+:"MvAxXToDregL" daDst0L = "A1.X" is daHl=0x0; daAop=0x1 & daS=0x0 & daX=0x0 & daDst0L {}
 }
 
 with : daAopc=0x0b ... {
-:AddAccExt daDst0 = "(A0 += A1)"  is daHl=0x0 ; daAop=0x0 & daS=0x0 & daX=0x0 & daDst0 {}
-:AddAccExt daDstHl = "(A0 += A1)" is (any16 ; daAop=0x1 & daS=0x0 & daX=0x0 & daDst0) & daDstHl {}
-:AddSubAcc addsubaccDesc is addsubaccDesc {}
+:"AddAccExt" daDst0 = "(A0 += A1)"  is daHl=0x0 ; daAop=0x0 & daS=0x0 & daX=0x0 & daDst0 {}
+:"AddAccExt" daDstHl = "(A0 += A1)" is (any16 ; daAop=0x1 & daS=0x0 & daX=0x0 & daDst0) & daDstHl {}
+:"AddSubAcc" addsubaccDesc is addsubaccDesc {}
 }
 
 with : daAopc=0x0c ; daS=0x0 & daX=0x0 {
-:AddOnSign daDst0H = daDst0L = "sign"(daSrc0H) * daSrc1H + "sign"(daSrc0L) * daSrc1L
+:"AddOnSign" daDst0H = daDst0L = "sign"(daSrc0H) * daSrc1H + "sign"(daSrc0L) * daSrc1L
     is daHl=0x0; daAop=0x0 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L {}
-:AddAccHalf  daDst0 = "A1.L + A1.H", daDst1 = "A0.L + A0.H" is daHl=0x0; daAop=0x1 & daDst0 & daDst1 {}
-:Pass32Rnd16 daDstHl = daSrc0 "(RND)" is (any16 ; daAop=0x3 & daSrc0) & daDstHl {}
+:"AddAccHalf"  daDst0 = "A1.L + A1.H", daDst1 = "A0.L + A0.H" is daHl=0x0; daAop=0x1 & daDst0 & daDst1 {}
+:"Pass32Rnd16" daDstHl = daSrc0 "(RND)" is (any16 ; daAop=0x3 & daSrc0) & daDstHl {}
 }
 
 with : daHl=0x0 & daAopc=0x0d ; daS=0x0 & daX=0x0 {
-:Search (daDst0, daDst1) = "SEARCH" daSrc0 "(GT)" is any16 ; daAop=0x0 & daDst0 & daDst1 & daSrc0 {}
-:Search (daDst0, daDst1) = "SEARCH" daSrc0 "(GE)" is any16 ; daAop=0x1 & daDst0 & daDst1 & daSrc0 {}
-:Search (daDst0, daDst1) = "SEARCH" daSrc0 "(LT)" is any16 ; daAop=0x2 & daDst0 & daDst1 & daSrc0 {}
-:Search (daDst0, daDst1) = "SEARCH" daSrc0 "(LE)" is any16 ; daAop=0x3 & daDst0 & daDst1 & daSrc0 {}
+:"Search" (daDst0, daDst1) = "SEARCH" daSrc0 "(GT)" is any16 ; daAop=0x0 & daDst0 & daDst1 & daSrc0 {}
+:"Search" (daDst0, daDst1) = "SEARCH" daSrc0 "(GE)" is any16 ; daAop=0x1 & daDst0 & daDst1 & daSrc0 {}
+:"Search" (daDst0, daDst1) = "SEARCH" daSrc0 "(LT)" is any16 ; daAop=0x2 & daDst0 & daDst1 & daSrc0 {}
+:"Search" (daDst0, daDst1) = "SEARCH" daSrc0 "(LE)" is any16 ; daAop=0x3 & daDst0 & daDst1 & daSrc0 {}
 }
 
 with : daAopc=0x0e ; daS=0x0 & daX=0x0 {
-:NegAcc0    negaccDesc is (any16 ; daAop=0x0) & negaccDesc {}
-:NegAcc1    negaccDesc is (any16 ; daAop=0x1) & negaccDesc {}
-:NegAccDual negaccDesc is (any16 ; daAop=0x3) & negaccDesc {}
+:"NegAcc0"    negaccDesc is (any16 ; daAop=0x0) & negaccDesc {}
+:"NegAcc1"    negaccDesc is (any16 ; daAop=0x1) & negaccDesc {}
+:"NegAccDual" negaccDesc is (any16 ; daAop=0x3) & negaccDesc {}
 }
 
-:Neg16Vec daDst0 = -daSrc0 "(V)" is daHl=0x0 & daAopc=0x0f ; daAop=0x3 & daS=0x0 & daX=0x0 & daSrc0 & daDst0 {}
+:"Neg16Vec" daDst0 = -daSrc0 "(V)" is daHl=0x0 & daAopc=0x0f ; daAop=0x3 & daS=0x0 & daX=0x0 & daSrc0 & daDst0 {}
 
 with : daAopc=0x10 ... {
-:AbsAcc0    absaccDesc is (any16 ; daAop=0x0 & daS=0x0 & daX=0x0) & absaccDesc {}
-:AbsAcc1    absaccDesc is (any16 ; daAop=0x1 & daS=0x0 & daX=0x0) & absaccDesc {}
-:AbsAccDual absaccDesc is (any16 ; daAop=0x3 & daS=0x0 & daX=0x0) & absaccDesc {}
+:"AbsAcc0"    absaccDesc is (any16 ; daAop=0x0 & daS=0x0 & daX=0x0) & absaccDesc {}
+:"AbsAcc1"    absaccDesc is (any16 ; daAop=0x1 & daS=0x0 & daX=0x0) & absaccDesc {}
+:"AbsAccDual" absaccDesc is (any16 ; daAop=0x3 & daS=0x0 & daX=0x0) & absaccDesc {}
 
-:MvDregToAxDual "A1" = daSrc0 SMODE, "A0" = daSrc1 XMODE is daHl=0x1 ; daAop=0x3 & SMODE & XMODE & daSrc0 & daSrc1 {}
+:"MvDregToAxDual" "A1" = daSrc0 SMODE, "A0" = daSrc1 XMODE is daHl=0x1 ; daAop=0x3 & SMODE & XMODE & daSrc0 & daSrc1 {}
 }
 
 with : daHl=0x0 & daAopc=0x11 ; daX=0x0 {
-:AddSubAccExt daDst0 = "A1 + A0", daDst1 = "A1 - A0" SAT is any16 ; daAop=0x0 & SAT & daDst0 & daDst1 {}
-:AddSubAccExt daDst0 = "A0 + A1", daDst1 = "A0 - A1" SAT is any16 ; daAop=0x1 & SAT & daDst0 & daDst1 {}
+:"AddSubAccExt" daDst0 = "A1 + A0", daDst1 = "A1 - A0" SAT is any16 ; daAop=0x0 & SAT & daDst0 & daDst1 {}
+:"AddSubAccExt" daDst0 = "A0 + A1", daDst1 = "A0 - A1" SAT is any16 ; daAop=0x1 & SAT & daDst0 & daDst1 {}
 }
 
 with : daHl=0x0 & daAopc=0x12 ; daX=0x0 {
-:SAD8Vec "saa"(PAIR0, PAIR1) RS is (any16 ; daAop=0x0 & RS & PAIR0 & PAIR1) {}
+:"SAD8Vec" "saa"(PAIR0, PAIR1) RS is (any16 ; daAop=0x0 & RS & PAIR0 & PAIR1) {}
 
-:DisAlignExcept is (any16 ; daAop=0x3 & daS=0x0) {}
+:"DisAlignExcept" is (any16 ; daAop=0x3 & daS=0x0) {}
 }
 
 with : daHl=0x0 & daAopc=0x14 ; daX=0x0 {
-:Avg8Vec daDst0 = "byteop1p"(PAIR0, PAIR1) RS  is (any16 ; daAop=0x0 & RS & PAIR0 & PAIR1 & daDst0) {}
-:Avg8Vec daDst0 = "byteop1p"(PAIR0, PAIR1) ("T"RSC) is (any16 ; daAop=0x1 & RSC & PAIR0 & PAIR1 & daDst0) {}
+:"Avg8Vec" daDst0 = "byteop1p"(PAIR0, PAIR1) RS  is (any16 ; daAop=0x0 & RS & PAIR0 & PAIR1 & daDst0) {}
+:"Avg8Vec" daDst0 = "byteop1p"(PAIR0, PAIR1) ("T"RSC) is (any16 ; daAop=0x1 & RSC & PAIR0 & PAIR1 & daDst0) {}
 }
 
 with : daHl=0x0 & daAopc=0x15 ; daX=0x0 {
-:AddSub4x8 (daDst0, daDst1) = "BYTEOP16P"(PAIR0, PAIR1) RS  
+:"AddSub4x8" (daDst0, daDst1) = "BYTEOP16P"(PAIR0, PAIR1) RS  
     is (any16 ; daAop=0x0 & RS & PAIR0 & PAIR1 & daDst0 & daDst1) {}
-:AddSub4x8 (daDst0, daDst1) = "BYTEOP16PM"(PAIR0, PAIR1) RS 
+:"AddSub4x8" (daDst0, daDst1) = "BYTEOP16PM"(PAIR0, PAIR1) RS 
     is (any16 ; daAop=0x1 & RS & PAIR0 & PAIR1 & daDst0 & daDst1) {}
 }
 
 with : daAopc=0x16 ; daX=0x0 {
-:Avg4x8Vec daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("RNDL"RSC) is (daHl=0x0 ; daAop=0x0 & RSC & PAIR0 & PAIR1 & daDst0) {}
-:Avg4x8Vec daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("RNDH"RSC) is (daHl=0x1 ; daAop=0x0 & RSC & PAIR0 & PAIR1 & daDst0) {}
-:Avg4x8Vec daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("TL"RSC)   is (daHl=0x0 ; daAop=0x1 & RSC & PAIR0 & PAIR1 & daDst0) {}
-:Avg4x8Vec daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("TH"RSC)   is (daHl=0x1 ; daAop=0x1 & RSC & PAIR0 & PAIR1 & daDst0) {}
+:"Avg4x8Vec" daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("RNDL"RSC) is (daHl=0x0 ; daAop=0x0 & RSC & PAIR0 & PAIR1 & daDst0) {}
+:"Avg4x8Vec" daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("RNDH"RSC) is (daHl=0x1 ; daAop=0x0 & RSC & PAIR0 & PAIR1 & daDst0) {}
+:"Avg4x8Vec" daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("TL"RSC)   is (daHl=0x0 ; daAop=0x1 & RSC & PAIR0 & PAIR1 & daDst0) {}
+:"Avg4x8Vec" daDst0 = "BYTEOP2P"(PAIR0, PAIR1) ("TH"RSC)   is (daHl=0x1 ; daAop=0x1 & RSC & PAIR0 & PAIR1 & daDst0) {}
 }
 
 with : daAopc=0x17 ; daAop=0x0 & daX=0x0 {
-:AddClip daDst0 = "BYTEOP3P"(PAIR0, PAIR1) ("LO"RSC) is (daHl=0x0 ; RSC & PAIR0 & PAIR1 & daDst0) {}
-:AddClip daDst0 = "BYTEOP3P"(PAIR0, PAIR1) ("HI"RSC) is (daHl=0x1 ; RSC & PAIR0 & PAIR1 & daDst0) {}
+:"AddClip" daDst0 = "BYTEOP3P"(PAIR0, PAIR1) ("LO"RSC) is (daHl=0x0 ; RSC & PAIR0 & PAIR1 & daDst0) {}
+:"AddClip" daDst0 = "BYTEOP3P"(PAIR0, PAIR1) ("HI"RSC) is (daHl=0x1 ; RSC & PAIR0 & PAIR1 & daDst0) {}
 }
 
 with : daHl=0x0 & daAopc=0x18 ; daX=0x0 {
-:BytePack   daDst0 = "BYTEPACK"(daSrc0, daSrc1) is any16 ; daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1 {}
-:ByteUnPack daDst0 = "BYTEUNPACK" PAIR0 RS      is any16 ; daAop=0x1 & RS & PAIR0 & daDst0 {}
+:"BytePack"   daDst0 = "BYTEPACK"(daSrc0, daSrc1) is any16 ; daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1 {}
+:"ByteUnPack" daDst0 = "BYTEUNPACK" PAIR0 RS      is any16 ; daAop=0x1 & RS & PAIR0 & daDst0 {}
 }
 
 with : daHl=0x0 & daAopc=0x19 ; daX=0x0 {
-:AddSubAC0 daDst0 = daSrc0 + daSrc1 + "AC0" SAT       is any16 ; daAop=0x0 & SAT & daDst0 & daSrc0 & daSrc1 {}
-:AddSubAC0 daDst0 = daSrc0 - daSrc1 + "AC0 - 0x1" SAT is any16 ; daAop=0x1 & SAT & daDst0 & daSrc0 & daSrc1 {}
+:"AddSubAC0" daDst0 = daSrc0 + daSrc1 + "AC0" SAT       is any16 ; daAop=0x0 & SAT & daDst0 & daSrc0 & daSrc1 {}
+:"AddSubAC0" daDst0 = daSrc0 - daSrc1 + "AC0 - 0x1" SAT is any16 ; daAop=0x1 & SAT & daDst0 & daSrc0 & daSrc1 {}
 }
 }
 
@@ -493,107 +494,107 @@ bxorshiftnfDesc: "A0 = BXORSHIFT(A0, A1, CC)" is dsSop=0x0 {}
 
 with : opcode04=0xc & dsOpcode1=0xc ; dsOpcode2=0x0 {
 with : dsSopc=0x0 ; dsSop=0x0 {
-:AShift16 dsDstL = "ASHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x0 & dsDstL & dsSrc1L & dsSrc0L {}
-:AShift16 dsDstL = "ASHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x1 & dsDstL & dsSrc1H & dsSrc0L {}
-:AShift16 dsDstH = "ASHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x2 & dsDstH & dsSrc1L & dsSrc0L {}
-:AShift16 dsDstH = "ASHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x3 & dsDstH & dsSrc1H & dsSrc0L {}
+:"AShift16" dsDstL = "ASHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x0 & dsDstL & dsSrc1L & dsSrc0L {}
+:"AShift16" dsDstL = "ASHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x1 & dsDstL & dsSrc1H & dsSrc0L {}
+:"AShift16" dsDstH = "ASHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x2 & dsDstH & dsSrc1L & dsSrc0L {}
+:"AShift16" dsDstH = "ASHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x3 & dsDstH & dsSrc1H & dsSrc0L {}
 }
 
 with : dsSopc=0x0 ; dsSop=0x1 {
-:AShift16 dsDstL = "ASHIFT" dsSrc1L "BY" dsSrc0L "(S)" is any16 ; dsHls=0x0 & dsDstL & dsSrc1L & dsSrc0L {}
-:AShift16 dsDstL = "ASHIFT" dsSrc1H "BY" dsSrc0L "(S)" is any16 ; dsHls=0x1 & dsDstL & dsSrc1H & dsSrc0L {}
-:AShift16 dsDstH = "ASHIFT" dsSrc1L "BY" dsSrc0L "(S)" is any16 ; dsHls=0x2 & dsDstH & dsSrc1L & dsSrc0L {}
-:AShift16 dsDstH = "ASHIFT" dsSrc1H "BY" dsSrc0L "(S)" is any16 ; dsHls=0x3 & dsDstH & dsSrc1H & dsSrc0L {}
+:"AShift16" dsDstL = "ASHIFT" dsSrc1L "BY" dsSrc0L "(S)" is any16 ; dsHls=0x0 & dsDstL & dsSrc1L & dsSrc0L {}
+:"AShift16" dsDstL = "ASHIFT" dsSrc1H "BY" dsSrc0L "(S)" is any16 ; dsHls=0x1 & dsDstL & dsSrc1H & dsSrc0L {}
+:"AShift16" dsDstH = "ASHIFT" dsSrc1L "BY" dsSrc0L "(S)" is any16 ; dsHls=0x2 & dsDstH & dsSrc1L & dsSrc0L {}
+:"AShift16" dsDstH = "ASHIFT" dsSrc1H "BY" dsSrc0L "(S)" is any16 ; dsHls=0x3 & dsDstH & dsSrc1H & dsSrc0L {}
 }
 
 with : dsSopc=0x0 ; dsSop=0x2 {
-:LShift16 dsDstL = "LSHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x0 & dsDstL & dsSrc1L & dsSrc0L {}
-:LShift16 dsDstL = "LSHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x1 & dsDstL & dsSrc1H & dsSrc0L {}
-:LShift16 dsDstH = "LSHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x2 & dsDstH & dsSrc1L & dsSrc0L {}
-:LShift16 dsDstH = "LSHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x3 & dsDstH & dsSrc1H & dsSrc0L {}
+:"LShift16" dsDstL = "LSHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x0 & dsDstL & dsSrc1L & dsSrc0L {}
+:"LShift16" dsDstL = "LSHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x1 & dsDstL & dsSrc1H & dsSrc0L {}
+:"LShift16" dsDstH = "LSHIFT" dsSrc1L "BY" dsSrc0L is any16 ; dsHls=0x2 & dsDstH & dsSrc1L & dsSrc0L {}
+:"LShift16" dsDstH = "LSHIFT" dsSrc1H "BY" dsSrc0L is any16 ; dsHls=0x3 & dsDstH & dsSrc1H & dsSrc0L {}
 }
 
 with : dsSopc=0x1 ; dsHls=0x0 {
-:AShift16Vec dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L "(V)"   is any16 ; dsSop=0x0 & dsDst & dsSrc1 & dsSrc0L {}
-:AShift16Vec dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L "(V,S)" is any16 ; dsSop=0x1 & dsDst & dsSrc1 & dsSrc0L {}
-:LShift16Vec dsDst = "LSHIFT" dsSrc1 "BY" dsSrc0L "(V)"   is any16 ; dsSop=0x2 & dsDst & dsSrc1 & dsSrc0L {}
+:"AShift16Vec" dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L "(V)"   is any16 ; dsSop=0x0 & dsDst & dsSrc1 & dsSrc0L {}
+:"AShift16Vec" dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L "(V,S)" is any16 ; dsSop=0x1 & dsDst & dsSrc1 & dsSrc0L {}
+:"LShift16Vec" dsDst = "LSHIFT" dsSrc1 "BY" dsSrc0L "(V)"   is any16 ; dsSop=0x2 & dsDst & dsSrc1 & dsSrc0L {}
 }
 
 with : dsSopc=0x2 ; dsHls=0x0 {
-:AShift32   dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L       is any16 ; dsSop=0x0 & dsDst & dsSrc1 & dsSrc0L {}
-:AShift32   dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L "(S)" is any16 ; dsSop=0x1 & dsDst & dsSrc1 & dsSrc0L {}
-:LShift32   dsDst = "LSHIFT" dsSrc1 "BY" dsSrc0L       is any16 ; dsSop=0x2 & dsDst & dsSrc1 & dsSrc0L {}
-:ShiftRot32 dsDst = "ROT" dsSrc1 "BY" dsSrc0L          is any16 ; dsSop=0x3 & dsDst & dsSrc1 & dsSrc0L {}
+:"AShift32"   dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L       is any16 ; dsSop=0x0 & dsDst & dsSrc1 & dsSrc0L {}
+:"AShift32"   dsDst = "ASHIFT" dsSrc1 "BY" dsSrc0L "(S)" is any16 ; dsSop=0x1 & dsDst & dsSrc1 & dsSrc0L {}
+:"LShift32"   dsDst = "LSHIFT" dsSrc1 "BY" dsSrc0L       is any16 ; dsSop=0x2 & dsDst & dsSrc1 & dsSrc0L {}
+:"ShiftRot32" dsDst = "ROT" dsSrc1 "BY" dsSrc0L          is any16 ; dsSop=0x3 & dsDst & dsSrc1 & dsSrc0L {}
 }
 
 with : dsSopc=0x3 ... {
-:AShiftAcc   "A0 = ASHIFT A0 BY" dsSrc0L is any16 ; dsSop=0x0 & dsHls=0x0 & dsSrc0L {}
-:AShiftAcc   "A1 = ASHIFT A1 BY" dsSrc0L is any16 ; dsSop=0x0 & dsHls=0x1 & dsSrc0L {}
-:LShiftA     "A0 = LSHIFT A0 BY" dsSrc0L is any16 ; dsSop=0x1 & dsHls=0x0 & dsSrc0L {}
-:LShiftA     "A1 = LSHIFT A1 BY" dsSrc0L is any16 ; dsSop=0x1 & dsHls=0x1 & dsSrc0L {}
-:ShiftRotAcc "A0 = ROT A0 BY" dsSrc0L    is any16 ; dsSop=0x2 & dsHls=0x0 & dsSrc0L {}
-:ShiftRotAcc "A1 = ROT A1 BY" dsSrc0L    is any16 ; dsSop=0x2 & dsHls=0x1 & dsSrc0L {}
+:"AShiftAcc"   "A0 = ASHIFT A0 BY" dsSrc0L is any16 ; dsSop=0x0 & dsHls=0x0 & dsSrc0L {}
+:"AShiftAcc"   "A1 = ASHIFT A1 BY" dsSrc0L is any16 ; dsSop=0x0 & dsHls=0x1 & dsSrc0L {}
+:"LShiftA"     "A0 = LSHIFT A0 BY" dsSrc0L is any16 ; dsSop=0x1 & dsHls=0x0 & dsSrc0L {}
+:"LShiftA"     "A1 = LSHIFT A1 BY" dsSrc0L is any16 ; dsSop=0x1 & dsHls=0x1 & dsSrc0L {}
+:"ShiftRotAcc" "A0 = ROT A0 BY" dsSrc0L    is any16 ; dsSop=0x2 & dsHls=0x0 & dsSrc0L {}
+:"ShiftRotAcc" "A1 = ROT A1 BY" dsSrc0L    is any16 ; dsSop=0x2 & dsHls=0x1 & dsSrc0L {}
 }
 
 with : dsSopc=0x4 ; dsHls=0x0 {
-:Pack16Vec dsDst = "PACK"(dsSrc0L, dsSrc1L) is any16 ; dsSop=0x0 & dsDst & dsSrc0L & dsSrc1L {}
-:Pack16Vec dsDst = "PACK"(dsSrc0L, dsSrc1H) is any16 ; dsSop=0x1 & dsDst & dsSrc0L & dsSrc1H {}
-:Pack16Vec dsDst = "PACK"(dsSrc0H, dsSrc1L) is any16 ; dsSop=0x2 & dsDst & dsSrc0H & dsSrc1L {}
-:Pack16Vec dsDst = "PACK"(dsSrc0H, dsSrc1H) is any16 ; dsSop=0x3 & dsDst & dsSrc0H & dsSrc1H {}
+:"Pack16Vec" dsDst = "PACK"(dsSrc0L, dsSrc1L) is any16 ; dsSop=0x0 & dsDst & dsSrc0L & dsSrc1L {}
+:"Pack16Vec" dsDst = "PACK"(dsSrc0L, dsSrc1H) is any16 ; dsSop=0x1 & dsDst & dsSrc0L & dsSrc1H {}
+:"Pack16Vec" dsDst = "PACK"(dsSrc0H, dsSrc1L) is any16 ; dsSop=0x2 & dsDst & dsSrc0H & dsSrc1L {}
+:"Pack16Vec" dsDst = "PACK"(dsSrc0H, dsSrc1H) is any16 ; dsSop=0x3 & dsDst & dsSrc0H & dsSrc1H {}
 }
 
 with : dsSopc=0x5 ; dsHls=0x0 {
-:ShiftSignBits32 dsDstL = "SIGNBITS" dsSrc0  is any16 ; dsSop=0x0 & dsDstL & dsSrc0 {}
-:ShiftSignBits32 dsDstL = "SIGNBITS" dsSrc0L is any16 ; dsSop=0x1 & dsDstL & dsSrc0L {}
-:ShiftSignBits32 dsDstL = "SIGNBITS" dsSrc0H is any16 ; dsSop=0x2 & dsDstL & dsSrc0H {}
+:"ShiftSignBits32" dsDstL = "SIGNBITS" dsSrc0  is any16 ; dsSop=0x0 & dsDstL & dsSrc0 {}
+:"ShiftSignBits32" dsDstL = "SIGNBITS" dsSrc0L is any16 ; dsSop=0x1 & dsDstL & dsSrc0L {}
+:"ShiftSignBits32" dsDstL = "SIGNBITS" dsSrc0H is any16 ; dsSop=0x2 & dsDstL & dsSrc0H {}
 }
 
 with : dsSopc=0x6 ; dsHls=0x0 {
-:ShiftSignBitsAcc dsDstL = "SIGNBITS A0" is any16 ; dsSop=0x0 & dsDstL {}
-:ShiftSignBitsAcc dsDstL = "SIGNBITS A1" is any16 ; dsSop=0x1 & dsDstL {}
-:ShiftOnes        dsDstL = "ONES" dsSrc0 is any16 ; dsSop=0x2 & dsDstL & dsSrc0 {}
+:"ShiftSignBitsAcc" dsDstL = "SIGNBITS A0" is any16 ; dsSop=0x0 & dsDstL {}
+:"ShiftSignBitsAcc" dsDstL = "SIGNBITS A1" is any16 ; dsSop=0x1 & dsDstL {}
+:"ShiftOnes"        dsDstL = "ONES" dsSrc0 is any16 ; dsSop=0x2 & dsDstL & dsSrc0 {}
 }
 
 with : dsSopc=0x7 ; dsHls=0x0 {
-:ShiftExpAdj32 dsDstL = "EXPADJ"(dsSrc0, dsSrc1L)       is any16 ; dsSop=0x0 & dsDstL & dsSrc0 & dsSrc1L {}
-:ShiftExpAdj32 dsDstL = "EXPADJ"(dsSrc0, dsSrc1L) "(V)" is any16 ; dsSop=0x1 & dsDstL & dsSrc0 & dsSrc1L {}
-:ShiftExpAdj32 dsDstL = "EXPADJ"(dsSrc0L, dsSrc1L)      is any16 ; dsSop=0x2 & dsDstL & dsSrc0L & dsSrc1L {}
-:ShiftExpAdj32 dsDstL = "EXPADJ"(dsSrc0H, dsSrc1L)      is any16 ; dsSop=0x3 & dsDstL & dsSrc0H & dsSrc1L {}
+:"ShiftExpAdj32" dsDstL = "EXPADJ"(dsSrc0, dsSrc1L)       is any16 ; dsSop=0x0 & dsDstL & dsSrc0 & dsSrc1L {}
+:"ShiftExpAdj32" dsDstL = "EXPADJ"(dsSrc0, dsSrc1L) "(V)" is any16 ; dsSop=0x1 & dsDstL & dsSrc0 & dsSrc1L {}
+:"ShiftExpAdj32" dsDstL = "EXPADJ"(dsSrc0L, dsSrc1L)      is any16 ; dsSop=0x2 & dsDstL & dsSrc0L & dsSrc1L {}
+:"ShiftExpAdj32" dsDstL = "EXPADJ"(dsSrc0H, dsSrc1L)      is any16 ; dsSop=0x3 & dsDstL & dsSrc0H & dsSrc1L {}
 }
 
 with : dsSopc=0x8 ; dsHls=0x0 {
-:BitMux "bitmux"(dsSrc0, dsSrc1, "A0") "(ASR)" is any16 ; dsSop=0x0 & dsSrc0 & dsSrc1 {}
-:BitMux "bitmux"(dsSrc0, dsSrc1, "A0") "(ASL)" is any16 ; dsSop=0x1 & dsSrc0 & dsSrc1 {}
+:"BitMux" "bitmux"(dsSrc0, dsSrc1, "A0") "(ASR)" is any16 ; dsSop=0x0 & dsSrc0 & dsSrc1 {}
+:"BitMux" "bitmux"(dsSrc0, dsSrc1, "A0") "(ASL)" is any16 ; dsSop=0x1 & dsSrc0 & dsSrc1 {}
 }
 
 with : dsSopc=0x9 ; dsHls=0x0 {
-:ShiftVitMax     dsDstL = "VIT_MAX"(dsSrc0) "(ASL)"         is any16 ; dsSop=0x0 & dsDstL & dsSrc0 {}
-:ShiftVitMax     dsDstL = "VIT_MAX"(dsSrc0) "(ASR)"         is any16 ; dsSop=0x1 & dsDstL & dsSrc0 {}
-:ShiftDualVitMax dsDstL = "VIT_MAX"(dsSrc0, dsSrc1) "(ASL)" is any16 ; dsSop=0x2 & dsDstL & dsSrc0 & dsSrc1 {}
-:ShiftDualVitMax dsDstL = "VIT_MAX"(dsSrc0, dsSrc1) "(ASR)" is any16 ; dsSop=0x3 & dsDstL & dsSrc0 & dsSrc1 {}
+:"ShiftVitMax"     dsDstL = "VIT_MAX"(dsSrc0) "(ASL)"         is any16 ; dsSop=0x0 & dsDstL & dsSrc0 {}
+:"ShiftVitMax"     dsDstL = "VIT_MAX"(dsSrc0) "(ASR)"         is any16 ; dsSop=0x1 & dsDstL & dsSrc0 {}
+:"ShiftDualVitMax" dsDstL = "VIT_MAX"(dsSrc0, dsSrc1) "(ASL)" is any16 ; dsSop=0x2 & dsDstL & dsSrc0 & dsSrc1 {}
+:"ShiftDualVitMax" dsDstL = "VIT_MAX"(dsSrc0, dsSrc1) "(ASR)" is any16 ; dsSop=0x3 & dsDstL & dsSrc0 & dsSrc1 {}
 }
 
 with : dsSopc=0xa ; dsHls=0x0 {
-:ShiftExtract dsDst = "EXTRACT"(dsSrc0, dsSrc1L) "(Z)" is any16 ; dsSop=0x0 & dsDst & dsSrc0 & dsSrc1L {}
-:ShiftExtract dsDst = "EXTRACT"(dsSrc0, dsSrc1L) "(X)" is any16 ; dsSop=0x1 & dsDst & dsSrc0 & dsSrc1L {}
-:ShiftDeposit dsDst = "EXTRACT"(dsSrc0, dsSrc1)        is any16 ; dsSop=0x2 & dsDst & dsSrc0 & dsSrc1 {}
-:ShiftDeposit dsDst = "EXTRACT"(dsSrc0, dsSrc1) "(X)"  is any16 ; dsSop=0x3 & dsDst & dsSrc0 & dsSrc1 {}
+:"ShiftExtract" dsDst = "EXTRACT"(dsSrc0, dsSrc1L) "(Z)" is any16 ; dsSop=0x0 & dsDst & dsSrc0 & dsSrc1L {}
+:"ShiftExtract" dsDst = "EXTRACT"(dsSrc0, dsSrc1L) "(X)" is any16 ; dsSop=0x1 & dsDst & dsSrc0 & dsSrc1L {}
+:"ShiftDeposit" dsDst = "EXTRACT"(dsSrc0, dsSrc1)        is any16 ; dsSop=0x2 & dsDst & dsSrc0 & dsSrc1 {}
+:"ShiftDeposit" dsDst = "EXTRACT"(dsSrc0, dsSrc1) "(X)"  is any16 ; dsSop=0x3 & dsDst & dsSrc0 & dsSrc1 {}
 }
 
 with : dsSopc=0xb ; dsHls=0x0 {
-:BXORNF dsDstL = "CC" = "BXORSHIFT"("A0", dsSrc0) is any16 ; dsSop=0x0 & dsDstL & dsSrc0 {}
-:BXORNF dsDstL = "CC" = "BXOR"("A0", dsSrc0)      is any16 ; dsSop=0x1 & dsDstL & dsSrc0 {}
+:"BXORNF" dsDstL = "CC" = "BXORSHIFT"("A0", dsSrc0) is any16 ; dsSop=0x0 & dsDstL & dsSrc0 {}
+:"BXORNF" dsDstL = "CC" = "BXOR"("A0", dsSrc0)      is any16 ; dsSop=0x1 & dsDstL & dsSrc0 {}
 }
 
 with : dsSopc=0xc ; dsHls=0x0 {
-:BXORShiftNF bxorshiftnfDesc                    is any16 ; bxorshiftnfDesc {}
-:BXOR        dsDstL = "CC" = "BXOR(A0, A1, CC)" is any16 ; dsSop=0x1 & dsDstL{}
+:"BXORShiftNF" bxorshiftnfDesc                    is any16 ; bxorshiftnfDesc {}
+:"BXOR"        dsDstL = "CC" = "BXOR(A0, A1, CC)" is any16 ; dsSop=0x1 & dsDstL{}
 }
 
 with : dsSopc=0xd ; dsHls=0x0 {
-:ShiftAlign dsDst = "ALIGN8"(dsSrc0, dsSrc1)  is any16 ; dsSop=0x0 & dsDst & dsSrc0 & dsSrc1 {}
-:ShiftAlign dsDst = "ALIGN16"(dsSrc0, dsSrc1) is any16 ; dsSop=0x1 & dsDst & dsSrc0 & dsSrc1 {}
-:ShiftAlign dsDst = "ALIGN24"(dsSrc0, dsSrc1) is any16 ; dsSop=0x2 & dsDst & dsSrc0 & dsSrc1 {}
+:"ShiftAlign" dsDst = "ALIGN8"(dsSrc0, dsSrc1)  is any16 ; dsSop=0x0 & dsDst & dsSrc0 & dsSrc1 {}
+:"ShiftAlign" dsDst = "ALIGN16"(dsSrc0, dsSrc1) is any16 ; dsSop=0x1 & dsDst & dsSrc0 & dsSrc1 {}
+:"ShiftAlign" dsDst = "ALIGN24"(dsSrc0, dsSrc1) is any16 ; dsSop=0x2 & dsDst & dsSrc0 & dsSrc1 {}
 }
 }
 
@@ -626,49 +627,56 @@ LSH5: ">>" dsiNegImm5 is dsiImmP1=0x1 & dsiNegImm5 {}
 
 with : (opcode04=0xc & dsiOpcode=0xd) ... {
 with : dsiSopc=0x00 ; dsiSop=0x0 {
-:AShift16 dsiDstL = dsiSrcL AHSH4 is any16 ; dsiHls=0x0 & dsiDstL & AHSH4 & dsiSrcL {}
-:AShift16 dsiDstL = dsiSrcH AHSH4 is any16 ; dsiHls=0x1 & dsiDstL & AHSH4 & dsiSrcH {}
-:AShift16 dsiDstH = dsiSrcL AHSH4 is any16 ; dsiHls=0x2 & dsiDstH & AHSH4 & dsiSrcL {}
-:AShift16 dsiDstH = dsiSrcH AHSH4 is any16 ; dsiHls=0x3 & dsiDstH & AHSH4 & dsiSrcH {}
+:"AShift16" dsiDstL = dsiSrcL AHSH4 is any16 ; dsiHls=0x0 & dsiDstL & AHSH4 & dsiSrcL {}
+:"AShift16" dsiDstL = dsiSrcH AHSH4 is any16 ; dsiHls=0x1 & dsiDstL & AHSH4 & dsiSrcH {}
+:"AShift16" dsiDstH = dsiSrcL AHSH4 is any16 ; dsiHls=0x2 & dsiDstH & AHSH4 & dsiSrcL {}
+:"AShift16" dsiDstH = dsiSrcH AHSH4 is any16 ; dsiHls=0x3 & dsiDstH & AHSH4 & dsiSrcH {}
 }
 
 with : dsiSopc=0x00 ; dsiSop=0x1 {
-:AShift16 dsiDstL = dsiSrcL AHSH4 "(S)" is any16 ; dsiHls=0x0 & dsiDstL & AHSH4 & dsiSrcL {}
-:AShift16 dsiDstL = dsiSrcH AHSH4 "(S)" is any16 ; dsiHls=0x1 & dsiDstL & AHSH4 & dsiSrcH {}
-:AShift16 dsiDstH = dsiSrcL AHSH4 "(S)" is any16 ; dsiHls=0x2 & dsiDstH & AHSH4 & dsiSrcL {}
-:AShift16 dsiDstH = dsiSrcH AHSH4 "(S)" is any16 ; dsiHls=0x3 & dsiDstH & AHSH4 & dsiSrcH {}
+:"AShift16" dsiDstL = dsiSrcL AHSH4 "(S)" is any16 ; dsiHls=0x0 & dsiDstL & AHSH4 & dsiSrcL {}
+:"AShift16" dsiDstL = dsiSrcH AHSH4 "(S)" is any16 ; dsiHls=0x1 & dsiDstL & AHSH4 & dsiSrcH {}
+:"AShift16" dsiDstH = dsiSrcL AHSH4 "(S)" is any16 ; dsiHls=0x2 & dsiDstH & AHSH4 & dsiSrcL {}
+:"AShift16" dsiDstH = dsiSrcH AHSH4 "(S)" is any16 ; dsiHls=0x3 & dsiDstH & AHSH4 & dsiSrcH {}
 }
 
 with : dsiSopc=0x00 ; dsiSop=0x2 {
-:LShift16 dsiDstL = dsiSrcL LHSH4 is any16 ; dsiHls=0x0 & dsiDstL & LHSH4 & dsiSrcL {}
-:LShift16 dsiDstL = dsiSrcH LHSH4 is any16 ; dsiHls=0x1 & dsiDstL & LHSH4 & dsiSrcH {}
-:LShift16 dsiDstH = dsiSrcL LHSH4 is any16 ; dsiHls=0x2 & dsiDstH & LHSH4 & dsiSrcL {}
-:LShift16 dsiDstH = dsiSrcH LHSH4 is any16 ; dsiHls=0x3 & dsiDstH & LHSH4 & dsiSrcH {}
+:"LShift16" dsiDstL = dsiSrcL LHSH4 is any16 ; dsiHls=0x0 & dsiDstL & LHSH4 & dsiSrcL {}
+:"LShift16" dsiDstL = dsiSrcH LHSH4 is any16 ; dsiHls=0x1 & dsiDstL & LHSH4 & dsiSrcH {}
+:"LShift16" dsiDstH = dsiSrcL LHSH4 is any16 ; dsiHls=0x2 & dsiDstH & LHSH4 & dsiSrcL {}
+:"LShift16" dsiDstH = dsiSrcH LHSH4 is any16 ; dsiHls=0x3 & dsiDstH & LHSH4 & dsiSrcH {}
 }
 
 with : dsiSopc=0x01 ; dsiHls=0x0 {
-:AShift16Vec dsiDst = dsiSrc AHSH4 "(V)"   is any16 ; dsiSop=0x0 & dsiDst & AHSH4 & dsiSrc {}
-:AShift16Vec dsiDst = dsiSrc AHSH4 "(V,S)" is any16 ; dsiSop=0x1 & dsiDst & AHSH4 & dsiSrc {}
-:LShift16Vec dsiDst = dsiSrc LHSH4 "(V)"   is any16 ; dsiSop=0x2 & dsiDst & LHSH4 & dsiSrc {}
+:"AShift16Vec" dsiDst = dsiSrc AHSH4 "(V)"   is any16 ; dsiSop=0x0 & dsiDst & AHSH4 & dsiSrc {}
+:"AShift16Vec" dsiDst = dsiSrc AHSH4 "(V,S)" is any16 ; dsiSop=0x1 & dsiDst & AHSH4 & dsiSrc {}
+:"LShift16Vec" dsiDst = dsiSrc LHSH4 "(V)"   is any16 ; dsiSop=0x2 & dsiDst & LHSH4 & dsiSrc {}
 }
 
 with : dsiSopc=0x02 ; dsiHls=0x0 {
-:AShift32   dsiDst = dsiSrc ASH5              is any16 ; dsiSop=0x0 & dsiDst & ASH5 & dsiSrc {}
-:AShift32   dsiDst = dsiSrc ASH5 "(S)"        is any16 ; dsiSop=0x1 & dsiDst & ASH5 & dsiSrc {}
-:LShift     dsiDst = dsiSrc LSH5              is any16 ; dsiSop=0x2 & dsiDst & LSH5 & dsiSrc {}
-:ShiftRot32 dsiDst = "ROT" dsiSrc "BY" dsiImm is any16 ; dsiSop=0x3 & dsiDst & dsiImm & dsiSrc {}
+:"AShift32"   dsiDst = dsiSrc ASH5              is any16 ; dsiSop=0x0 & dsiDst & ASH5 & dsiSrc {}
+:"AShift32"   dsiDst = dsiSrc ASH5 "(S)"        is any16 ; dsiSop=0x1 & dsiDst & ASH5 & dsiSrc {}
+:"LShift"     dsiDst = dsiSrc LSH5              is any16 ; dsiSop=0x2 & dsiDst & LSH5 & dsiSrc {}
+:"ShiftRot32" dsiDst = "ROT" dsiSrc "BY" dsiImm is any16 ; dsiSop=0x3 & dsiDst & dsiImm & dsiSrc {}
 }
 
 with : dsiSopc=0x03 ... {
-:AShiftAcc   "A0 = A0" ASH5          is any16 ; dsiSop=0x0 & dsiHls=0x0 & ASH5 {}
-:AShiftAcc   "A1 = A1" ASH5          is any16 ; dsiSop=0x0 & dsiHls=0x1 & ASH5 {}
-:LShiftA     "A0 = A0" LSH5          is any16 ; dsiSop=0x1 & dsiHls=0x0 & LSH5 {}
-:LShiftA     "A1 = A1" LSH5          is any16 ; dsiSop=0x1 & dsiHls=0x1 & LSH5 {}
-:ShiftRotAcc "A0 = ROT A0 BY" dsiImm is any16 ; dsiSop=0x2 & dsiHls=0x0 & dsiImm {}
-:ShiftRotAcc "A1 = ROT A1 BY" dsiImm is any16 ; dsiSop=0x2 & dsiHls=0x1 & dsiImm {}
+:"AShiftAcc"   "A0 = A0" ASH5          is any16 ; dsiSop=0x0 & dsiHls=0x0 & ASH5 {}
+:"AShiftAcc"   "A1 = A1" ASH5          is any16 ; dsiSop=0x0 & dsiHls=0x1 & ASH5 {}
+:"LShiftA"     "A0 = A0" LSH5          is any16 ; dsiSop=0x1 & dsiHls=0x0 & LSH5 {}
+:"LShiftA"     "A1 = A1" LSH5          is any16 ; dsiSop=0x1 & dsiHls=0x1 & LSH5 {}
+:"ShiftRotAcc" "A0 = ROT A0 BY" dsiImm is any16 ; dsiSop=0x2 & dsiHls=0x0 & dsiImm {}
+:"ShiftRotAcc" "A1 = ROT A1 BY" dsiImm is any16 ; dsiSop=0x2 & dsiHls=0x1 & dsiImm {}
+}
 }
 }
 
+## Multi
+
+M: is multi=0x0 {}
+M: is multi=0x1 { delayslot(4); }
+
+:^Mult32 is M ... & Mult32 {}
 
 ######################################################################
 ########>--------        32 bits instructions        --------<########
