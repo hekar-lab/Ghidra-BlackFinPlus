@@ -2,7 +2,7 @@
 
 <processor_spec>
   <properties>
-    <property key="parallelInstructionHelperClass" value="blackfinplus.BlackFinPlusParallelInstrHelper"/>
+    <property key="parallelInstructionHelperClass" value="blackfinplus.BlackfinPlusParallelInstrHelper"/>
   </properties>
 
   <programcounter register="PC"/>

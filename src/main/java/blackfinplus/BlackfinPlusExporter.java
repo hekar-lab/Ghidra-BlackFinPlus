@@ -30,12 +30,12 @@ import ghidra.util.task.TaskMonitor;
 /**
  * Provide class-level documentation that describes what this exporter does.
  */
-public class BlackFinPlusExporter extends Exporter {
+public class BlackfinPlusExporter extends Exporter {
 
 	/**
 	 * Exporter constructor.
 	 */
-	public BlackFinPlusExporter() {
+	public BlackfinPlusExporter() {
 
 		// Name the exporter and associate a file extension with it
 

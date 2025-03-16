@@ -44,7 +44,7 @@ import resources.Icons;
 	description = "Plugin long description goes here."
 )
 //@formatter:on
-public class BlackFinPlusPlugin extends ProgramPlugin {
+public class BlackfinPlusPlugin extends ProgramPlugin {
 
 	MyProvider provider;
 
@@ -53,7 +53,7 @@ public class BlackFinPlusPlugin extends ProgramPlugin {
 	 * 
 	 * @param tool The plugin tool that this plugin is added to.
 	 */
-	public BlackFinPlusPlugin(PluginTool tool) {
+	public BlackfinPlusPlugin(PluginTool tool) {
 		super(tool);
 
 		// Customize provider (or remove if a provider is not desired)

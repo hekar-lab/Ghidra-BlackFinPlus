@@ -22,6 +22,113 @@ macro pop(reg) {
     SP = SP + 4;
 }
 
+macro getAstat(off, outVal) {
+    local astat:4 = ASTAT >> off;
+    local astatFlag:1 = astat:1;
+    astatFlag = astatFlag & 0x01;
+    outVal = astatFlag;
+}
+
+macro extractCplx32(c, ci, cr) {
+    ci = c(2);
+    cr = c:2;
+}
+
+macro buildCplx80(ci, cr, out) {
+    local im:5 = sext(ci); local re:5 = sext(cr);
+    local out:10 = zext(im) << 40 | zext(re);
+}
+
+macro extractCplx80(c, ci, cr) {
+    ci = c(5);
+    cr = c:5;
+}
+
+macro sfassign40to32Sat(in, out) {
+    out = in:4;
+    local out40:5 = sext(out);
+    if (in == out40) goto <end>;
+    out = 1 << 31;
+    if (in s< 0) got <neg>;
+    out = ~out;
+    <neg>
+    <end>
+}
+
+macro sfassign40to16Sat(in, out) {
+    local out32:4;
+    sfassign40to32Sat(in, out32);
+    out = out32(2);
+}
+
+macro extract32Cplx80(c, ci, cr) {
+    local im:5; local re:5;
+    extractCplx80(c, im, re);
+    sfassign40to32Sat(im, ci);
+    sfassign40to32Sat(re, cr);
+}
+
+macro satSAdd16(a, b, outVal) {
+    outVal = a + b;
+    local c:1 = scarry(a, b);
+    if (!c) goto <noSat>;
+    outVal = 1 << 15;
+    if (a s< 0) goto <neg>;
+    outVal = ~outVal;
+    <neg>
+    <noSat>
+}
+
+macro satSAdd32(a, b, outVal) {
+    outVal = a + b;
+    local c:1 = scarry(a, b);
+    if (!c) goto <noSat>;
+    outVal = 1 << 31;
+    if (a s< 0) goto <neg>;
+    outVal = ~outVal;
+    <neg>
+    <noSat>
+}
+
+macro satSAdd40(a, b, outVal) {
+    outVal = a + b;
+    local c:1 = scarry(a, b);
+    if (!c) goto <noSat>;
+    outVal = 1 << 39;
+    if (a s< 0) goto <neg>;
+    outVal = ~outVal;
+    <neg>
+    <noSat>
+}
+
+macro sfMult16(a, b, outVal) {
+    outVal = 0x7fffffff;
+    if (a == 0x8000 && b == 0x8000) goto <speCase>;
+    local a32:4 = sext(a);
+    local b32:4 = sext(b);
+    outVal = (a32 * b32) << 1;
+    <speCase>
+}
+
+macro siMult16(a, b, outVal) {
+    local a32:4 = sext(a);
+    local b32:4 = sext(b);
+    outVal = a * b;
+}
+
+macro sfCplxMult(ai, ar, bi, br, ci, cr) {
+    local t1:4;
+    local t2:4;
+
+    sfMult16(ai, br, t1);
+    sfMult16(ar, bi, t2);
+    satSAdd32(t1, t2, ci);
+
+    sfMult16(ar, br, t1);
+    sfMult16(ai, bi, t2);
+    satSAdd32(t1, t2, cr);
+}
+
 # Hardware loops
 
 HwLoop: is loop0active=0 & loop1active=0 {}

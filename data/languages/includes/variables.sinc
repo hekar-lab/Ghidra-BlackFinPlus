@@ -2,6 +2,9 @@
 ########>--------             Variables              --------<########
 ######################################################################
 
+
+### Registers ###
+
 # Data registers
 attach variables [ 
     alu2opSrc alu2opDst alu2opDstCp
@@ -223,3 +226,11 @@ attach variables [
 
 # Loop registers
 attach variables [ lopC ] [ LC0 LC1 ];
+
+
+### Names ###
+
+attach names [ cc2statCbit ] [ 
+    "AZ"  "AN"   "AC0COPY" "VCOPY" "" "CC" "AQ" "" "RND_MOD" ""   "" "" "AC0" "AC1" "" ""
+    "AV0" "AV0S" "AV1"     "AV1S"  "" ""   ""   "" "V"       "VS" "" "" ""    ""    "" ""
+];

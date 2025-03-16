@@ -27,9 +27,9 @@ import ghidra.util.task.TaskMonitor;
 /**
  * Provide class-level documentation that describes what this analyzer does.
  */
-public class BlackFinPlusAnalyzer extends AbstractAnalyzer {
+public class BlackfinPlusAnalyzer extends AbstractAnalyzer {
 
-	public BlackFinPlusAnalyzer() {
+	public BlackfinPlusAnalyzer() {
 
 		// Name the analyzer and give it a description.
 

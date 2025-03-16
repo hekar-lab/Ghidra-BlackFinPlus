@@ -3,7 +3,7 @@ package blackfinplus;
 import ghidra.program.model.lang.ParallelInstructionLanguageHelper;
 import ghidra.program.model.listing.Instruction;
 
-public class BlackFinPlusParallelInstrHelper implements ParallelInstructionLanguageHelper {
+public class BlackfinPlusParallelInstrHelper implements ParallelInstructionLanguageHelper {
 	private boolean isMulti(Instruction instr) throws Exception {
 		byte[] raw = instr.getParsedBytes();
 		return ((raw[1] & 0xf8) ^ 0xc8) == 0x00;

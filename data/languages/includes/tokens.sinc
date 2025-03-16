@@ -46,7 +46,8 @@ define token inst16 (16)
 	ccflagG       = ( 6, 6)
 	ccflagYDreg   = ( 3, 5)
 	ccflagYPreg   = ( 3, 5)
-	ccflagYImm    = ( 3, 5)
+	ccflagYImm    = ( 3, 5) signed
+    ccflagYUImm   = ( 3, 5)
 	ccflagXDreg   = ( 0, 2)
 	ccflagXPreg   = ( 0, 2)
 
@@ -79,7 +80,7 @@ define token inst16 (16)
 
 # CompI2op Tokens
 	cpi2opOpc     = (10,10)
-	cpi2opSrc     = ( 3, 9)
+	cpi2opSrc     = ( 3, 9) signed
 	cpi2opDstD    = ( 0, 2)
 	cpi2opDstP    = ( 0, 2)
 
@@ -440,12 +441,12 @@ define token inst64 (16)
     ldiDummy   = ( 0,15)
 
 # LdStAbs Tokens
-    lsaPad1    = (12,15)
+    _lsaPad1    = (12,15)
     lsaSz      = (10,11)
     lsaW       = ( 9, 9)
-    lsaPad2    = ( 7, 8)
+    _lsaPad2    = ( 7, 8)
     lsaZ       = ( 6, 6)
-    lsaPad3    = ( 3, 5)
+    _lsaPad3    = ( 3, 5)
     lsaDReg    = ( 0, 2)
     lsaDRegL   = ( 0, 2)
     lsaDRegH   = ( 0, 2)

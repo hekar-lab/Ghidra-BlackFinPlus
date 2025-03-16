@@ -28,14 +28,125 @@ NCMODE: ""     is dmMmod=0xd {}
 NCMODE: "(T)"  is dmMmod=0xe {}
 NCMODE: "(IS)" is dmMmod=0xf {}
 
-CPAIR: "R1:0" is dmDst=0x0 {}
-CPAIR: "R3:2" is dmDst=0x2 {}
-CPAIR: "R5:4" is dmDst=0x4 {}
-CPAIR: "R7:6" is dmDst=0x6 {}
+CPAIR: "R1:0" is dmDst=0x0 { export R0; }
+CPAIR: "R3:2" is dmDst=0x2 { export R2; }
+CPAIR: "R5:4" is dmDst=0x4 { export R4; }
+CPAIR: "R7:6" is dmDst=0x6 { export R6; }
 
 CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {}
 CMPLXOP: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {}
 CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {}
+
+# default mode
+with : dmMmod=0xd ... {
+CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {
+    local ai:2; local ar:2;
+    local bi:2; local br:2;
+    local ci:4; local cr:4;
+
+    extractCplx32(dmSrc0, ai, ar);
+    extractCplx32(dmSrc0, bi, br);
+
+    sfCplxMult(ai, ar, bi, br, ci, cr);
+
+    local out:10;
+    buildCplx80(ci, cr, out);
+    export out;
+}
+CMPLXOP: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {
+    local ai:2; local ar:2;
+    local bi:2; local br:2;
+    local ci:4; local cr:4;
+
+    extractCplx32(dmSrc0, ai, ar);
+    extractCplx32(dmSrc0, bi, br);
+
+    bi = -bi;
+    sfCplxMult(ai, ar, bi, br, ci, cr);
+
+    local out:10;
+    buildCplx80(ci, cr, out);
+    export out;
+}
+CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {
+    local ai:2; local ar:2;
+    local bi:2; local br:2;
+    local ci:4; local cr:4;
+
+    ai = -ai;
+    bi = -bi;
+    extractCplx32(dmSrc0, ai, ar);
+    extractCplx32(dmSrc0, bi, br);
+
+    sfCplxMult(ai, ar, bi, br, ci, cr);
+
+    local out:10;
+    buildCplx80(ci, cr, out);
+    export out;
+}
+
+CMPLXACC: "A1:0" = CMPLXOP  is dmOp0=0x0 & CMPLXOP {
+    local im:5; local re:5;
+    extractCplx80(CMPLXOP, im, re);
+    A1 = im;
+    A0 = re;
+}
+CMPLXACC: "A1:0" += CMPLXOP is dmOp0=0x1 & CMPLXOP {
+    local im:5; local re:5;
+    extractCplx80(CMPLXOP, im, re);
+    satSAdd40(A1, im, A1);
+    satSAdd40(A0, re, A0);
+}
+CMPLXACC: "A1:0" -= CMPLXOP is dmOp0=0x2 & CMPLXOP {
+    local im:5; local re:5;
+    extractCplx80(CMPLXOP, im, re);
+    im = -im; re = -re;
+    satSAdd40(A1, im, A1);
+    satSAdd40(A0, re, A0);
+}
+
+with : dmP=0x0 ; dmW0=0x0 {
+CMPLXMAC: CMPLXACC is any16 ; CMPLXACC { build CMPLXACC; }
+}
+
+with : dmP=0x0 ; dmW0=0x1 {
+CMPLXMAC: dmDst = CMPLXACC is any16 ; dmDst {
+    build CMPLXACC;
+    local im16:2; local re16:2;
+    sfassign40to16Sat(A1, im16);
+    sfassign40to16Sat(A0, re16);
+    dmDst = zext(im16) << 16 | zext(re16);
+}
+CMPLXMAC: dmDst = CMPLXOP  is any16 ; dmOp0=0x3 & dmDst & CMPLXOP {
+    local im:5; local re:5;
+    extractCplx80(CMPLXOP, im, re);
+    local im16:2; local re16:2;
+    sfassign40to16Sat(im, im16);
+    sfassign40to16Sat(re, re16);
+    dmDst = zext(im16) << 16 | zext(re16);
+}
+}
+
+with : dmP=0x1 ; dmW0=0x1 {
+CMPLXMAC: CPAIR = CMPLXACC is any16 ; CPAIR {
+    build CMPLXACC;
+    local reReg:4 = &CPAIR; local imReg:4 = &CPAIR + 4;
+    local im32:4; local re32:4;
+    sfassign40to32Sat(A1, im32);
+    sfassign40to32Sat(A0, re32);
+    imReg = im32; reReg = re32;
+}
+CMPLXMAC: CPAIR = CMPLXOP  is any16 ; dmOp0=0x3 & CPAIR & CMPLXOP {
+    local im:5; local re:5;
+    extractCplx80(CMPLXOP, im, re);
+    local reReg:4 = &CPAIR; local imReg:4 = &CPAIR + 4;
+    local im32:4; local re32:4;
+    sfassign40to32Sat(A1, im32);
+    sfassign40to32Sat(A0, re32);
+    imReg = im32; reReg = re32;
+}
+}
+}
 
 with : dmP=0x0 ; dmW0=0x0 {
 CMPLXMAC: "A1:0" =  CMPLXOP CMODE is (CMODE ; dmOp0=0x0) & CMPLXOP {}
@@ -97,8 +208,8 @@ MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
 MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
 
 with : dmP=0x0 & dmW1=0x0 ; dmW0=0x0 {
-TRADMAC:"Mac16"             MAC0 MMODX           is MMODX & dmOp1=0x3 ; MAC0 {}
-TRADMAC:"Mac16"             MAC1 MMODX           is (MMODX ; dmOp0=0x3) & MAC1 {}
+TRADMAC:"Mac16"             MAC0 MMODX           is MMODX & dmOp1=0x3 ; dmOp0!=0x3 & MAC0 {}
+TRADMAC:"Mac16"             MAC1 MMODX           is (MMODX & dmOp1!=0x3 ; dmOp0=0x3) & MAC1 {}
 TRADMAC:"ParaMac16AndMac16" MAC1 MML, MAC0 MMODX is (MMODX & MML ; MAC0) & MAC1 {}
 }
 
@@ -157,8 +268,8 @@ with : (opcode04=0xc & dmOpcode=0x0) ... {
 :^TRADMAC is (dmMmod2=0x2 ; any32) & TRADMAC {}
 :^TRADMAC is (dmMmod=0xc ; any32) & TRADMAC {}
 
-:"CmplxMult" CMPLXMAC is (dmMmod=0xd ; any32) & CMPLXMAC {}
-:"CmplxMult" CMPLXMAC is (dmMmod3=0x7 ; any32) & CMPLXMAC {}
+:"Mac32Cmplx" CMPLXMAC is (dmMmod=0xd ; any32) & CMPLXMAC {}
+:"Mac32Cmplx" CMPLXMAC is (dmMmod3=0x7 ; any32) & CMPLXMAC {}
 }
 
 
@@ -319,17 +430,17 @@ addsubaccDesc: "A0 += A1 (W32)" is daHl=0x0 ; daAop=0x2 & daS=0x1 & daX=0x0 {}
 addsubaccDesc: "A0 -= A1"       is daHl=0x0 ; daAop=0x3 & daS=0x0 & daX=0x0 {}
 addsubaccDesc: "A0 -= A1 (W32)" is daHl=0x0 ; daAop=0x3 & daS=0x1 & daX=0x0 {}
 
-negaccDesc: "A0 = -A0"           is daHl=0x0 ; daAop=0x0 {}
-negaccDesc: "A1 = -A0"           is daHl=0x1 ; daAop=0x0 {}
-negaccDesc: "A0 = -A1"           is daHl=0x0 ; daAop=0x1 {}
-negaccDesc: "A1 = -A1"           is daHl=0x1 ; daAop=0x1 {}
-negaccDesc: "A1 = -A1, A0 = -A0" is daHl=0x0 ; daAop=0x3 {}
+negacc0Desc: "A0 = -A0"           is daAop=0x0 {}
+negacc0Desc: "A0 = -A1"           is daAop=0x1 {}
+negacc1Desc: "A1 = -A0"           is daAop=0x0 {}
+negacc1Desc: "A1 = -A1"           is daAop=0x1 {}
+negaccDualDesc: "A1 = -A1, A0 = -A0" is epsilon {}
 
-absaccDesc: "A0 = ABS A0" is daHl=0x0 ; daAop=0x0 {}
-absaccDesc: "A1 = ABS A0" is daHl=0x1 ; daAop=0x0 {}
-absaccDesc: "A0 = ABS A1" is daHl=0x0 ; daAop=0x1 {}
-absaccDesc: "A1 = ABS A1" is daHl=0x1 ; daAop=0x1 {}
-absaccDesc: "A1 = ABS A1, A0 = ABS A0" is daHl=0x0 ; daAop=0x3 {}
+absacc0Desc: "A0 = ABS A0" is daAop=0x0 {}
+absacc0Desc: "A0 = ABS A1" is daAop=0x1 {}
+absacc1Desc: "A1 = ABS A0" is daAop=0x0 {}
+absacc1Desc: "A1 = ABS A1" is daAop=0x1 {}
+absaccDualDesc: "A1 = ABS A1, A0 = ABS A0" is epsilon {}
 
 with : (opcode04=0xc & daOpcode=0x2) ... {
 :"AddSubVec16" daDst0 = daSrc0 AOPL daSrc1 SX is daAopc=0x00 ; (AOPL & SX & daDst0 & daSrc0 & daSrc1) {}
@@ -421,17 +532,17 @@ with : daHl=0x0 & daAopc=0x0d ; daS=0x0 & daX=0x0 {
 }
 
 with : daAopc=0x0e ; daS=0x0 & daX=0x0 {
-:"NegAcc0"    negaccDesc is (any16 ; daAop=0x0) & negaccDesc {}
-:"NegAcc1"    negaccDesc is (any16 ; daAop=0x1) & negaccDesc {}
-:"NegAccDual" negaccDesc is (any16 ; daAop=0x3) & negaccDesc {}
+:"NegAcc0"    negacc0Desc    is daHl=0x0 ; negacc0Desc {}
+:"NegAcc1"    negacc1Desc    is daHl=0x1 ; negacc1Desc {}
+:"NegAccDual" negaccDualDesc is daHl=0x0 ; daAop=0x3 & negaccDualDesc {}
 }
 
 :"Neg16Vec" daDst0 = -daSrc0 "(V)" is daHl=0x0 & daAopc=0x0f ; daAop=0x3 & daS=0x0 & daX=0x0 & daSrc0 & daDst0 {}
 
 with : daAopc=0x10 ... {
-:"AbsAcc0"    absaccDesc is (any16 ; daAop=0x0 & daS=0x0 & daX=0x0) & absaccDesc {}
-:"AbsAcc1"    absaccDesc is (any16 ; daAop=0x1 & daS=0x0 & daX=0x0) & absaccDesc {}
-:"AbsAccDual" absaccDesc is (any16 ; daAop=0x3 & daS=0x0 & daX=0x0) & absaccDesc {}
+:"AbsAcc0"    absacc0Desc    is daHl=0x0 ; absacc0Desc & daS=0x0 & daX=0x0 {}
+:"AbsAcc1"    absacc1Desc    is daHl=0x1 ; absacc1Desc & daS=0x0 & daX=0x0 {}
+:"AbsAccDual" absaccDualDesc is daHl=0x0 ; daAop=0x3 & daS=0x0 & daX=0x0 & absaccDualDesc {}
 
 :"MvDregToAxDual" "A1" = daSrc0 SMODE, "A0" = daSrc1 XMODE is daHl=0x1 ; daAop=0x3 & SMODE & XMODE & daSrc0 & daSrc1 {}
 }

@@ -16,6 +16,7 @@
 package blackfinplus;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 import ghidra.app.util.bin.ByteProvider;
@@ -33,8 +34,8 @@ import ghidra.util.task.TaskMonitor;
  * Provide class-level documentation that describes what this file system does.
  */
 @FileSystemInfo(type = "fstypegoeshere", // ([a-z0-9]+ only)
-		description = "File system description goes here", factory = BlackFinPlusFileSystem.MyFileSystemFactory.class)
-public class BlackFinPlusFileSystem implements GFileSystem {
+		description = "File system description goes here", factory = BlackfinPlusFileSystem.MyFileSystemFactory.class)
+public class BlackfinPlusFileSystem implements GFileSystem {
 
 	private final FSRLRoot fsFSRL;
 	private FileSystemIndexHelper<MyMetadata> fsih;
@@ -48,7 +49,7 @@ public class BlackFinPlusFileSystem implements GFileSystem {
 	 * @param fsFSRL The root {@link FSRL} of the file system.
 	 * @param provider The file system provider.
 	 */
-	public BlackFinPlusFileSystem(FSRLRoot fsFSRL, ByteProvider provider) {
+	public BlackfinPlusFileSystem(FSRLRoot fsFSRL, ByteProvider provider) {
 		this.fsFSRL = fsFSRL;
 		this.provider = provider;
 		this.fsih = new FileSystemIndexHelper<>(this, fsFSRL);
@@ -60,7 +61,7 @@ public class BlackFinPlusFileSystem implements GFileSystem {
 	 * @param monitor A cancellable task monitor.
 	 */
 	public void mount(TaskMonitor monitor) {
-		monitor.setMessage("Opening " + BlackFinPlusFileSystem.class.getSimpleName() + "...");
+		monitor.setMessage("Opening " + BlackfinPlusFileSystem.class.getSimpleName() + "...");
 
 		// Customize how things in the file system are stored.  The following should be 
 		// treated as pseudo-code.
@@ -113,6 +114,11 @@ public class BlackFinPlusFileSystem implements GFileSystem {
 	}
 
 	@Override
+	public GFile lookup(String path, Comparator<String> nameComp) throws IOException {
+		return fsih.lookup(null, path, nameComp);
+	}
+
+	@Override
 	public ByteProvider getByteProvider(GFile file, TaskMonitor monitor)
 			throws IOException, CancelledException {
 
@@ -142,15 +148,15 @@ public class BlackFinPlusFileSystem implements GFileSystem {
 
 	// Customize for the real file system.
 	public static class MyFileSystemFactory
-			implements GFileSystemFactoryByteProvider<BlackFinPlusFileSystem>,
+			implements GFileSystemFactoryByteProvider<BlackfinPlusFileSystem>,
 			GFileSystemProbeByteProvider {
 
 		@Override
-		public BlackFinPlusFileSystem create(FSRLRoot targetFSRL,
+		public BlackfinPlusFileSystem create(FSRLRoot targetFSRL,
 				ByteProvider byteProvider, FileSystemService fsService, TaskMonitor monitor)
 				throws IOException, CancelledException {
 
-			BlackFinPlusFileSystem fs = new BlackFinPlusFileSystem(targetFSRL, byteProvider);
+			BlackfinPlusFileSystem fs = new BlackfinPlusFileSystem(targetFSRL, byteProvider);
 			fs.mount(monitor);
 			return fs;
 		}
