@@ -31,6 +31,14 @@ macro getAstat(off, outVal) {
 
 # Hardware loops
 
+HwLoopZCheck: is zloop=0 {}
+HwLoopZCheck: is zloop=1 {
+	if (LC0 == 0) goto inst_next;
+}
+HwLoopZCheck: is zloop=2 {
+	if (LC1 == 0) goto inst_next;
+}
+
 HwLoop: is loop0active=0 & loop1active=0 {}
 HwLoop: is loop0active=1 & loop1active=0 {
     if (LC0 == 0) goto inst_next;
@@ -58,7 +66,8 @@ HwLoop: is loop0active=1 & loop1active=1 {
 
 # Build instructions
 
-:^instruction is phase=0 & HwLoop & instruction [ phase=1; ]{ 
+:^instruction is phase=0 & HwLoop & HwLoopZCheck & instruction [ phase=1; ]{ 
+	build HwLoopZCheck;
     build instruction; 
     build HwLoop;
 }

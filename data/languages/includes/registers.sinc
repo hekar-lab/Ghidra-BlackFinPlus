@@ -88,4 +88,5 @@ define context contextreg
     phase       = (0,0)
     loop0active = (1,1) noflow
     loop1active = (2,2) noflow
+    zloop       = (3,4)
 ;
