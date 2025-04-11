@@ -22,380 +22,82 @@ with Mult32 : {
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 #################### CMPLXMAC ####################
-CPAIR: "R1:0" is dmDst=0x0 { export R0; }
-CPAIR: "R3:2" is dmDst=0x2 { export R2; }
-CPAIR: "R5:4" is dmDst=0x4 { export R4; }
-CPAIR: "R7:6" is dmDst=0x6 { export R6; }
+CMODE: ""     is dmMmod=0xd {}
+CMODE: "(IS)" is dmMmod=0xf {}
 
-# default mode CMPLXOP
-with : dmMmod=0xd ... {
-CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
+NCMODE: ""     is dmMmod=0xd {}
+NCMODE: "(T)"  is dmMmod=0xe {}
+NCMODE: "(IS)" is dmMmod=0xf {}
 
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
+CPAIR: "R1:0" is dmDst=0x0 {}
+CPAIR: "R3:2" is dmDst=0x2 {}
+CPAIR: "R5:4" is dmDst=0x4 {}
+CPAIR: "R7:6" is dmDst=0x6 {}
 
-    sfCplxMult(ai, ar, bi, br, ci, cr);
+CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {}
+CMPLXOP: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {}
+CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {}
 
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-CMPLXOP: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    bi = -bi;
-    sfCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    ai = -ai;
-    bi = -bi;
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    sfCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-}
-
-# (T) mode CMPLXOP
-with : dmMmod=0xe ... {
-CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    sfCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-CMPLXOP: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    bi = -bi;
-    sfCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    ai = -ai;
-    bi = -bi;
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    sfCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-}
-
-# (IS) mode CMPLXOP
-with : dmMmod=0xf ... {
-CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    siCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-CMPLXOP: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    bi = -bi;
-    siCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {
-    local ai:2; local ar:2;
-    local bi:2; local br:2;
-    local ci:4; local cr:4;
-
-    ai = -ai;
-    bi = -bi;
-    extractCplx32(dmSrc0, ai, ar);
-    extractCplx32(dmSrc1, bi, br);
-
-    siCplxMult(ai, ar, bi, br, ci, cr);
-
-    local out:10;
-    buildCplx80(ci, cr, out);
-    export out;
-}
-}
-
-# CMPLXACC
-CMPLXACC: "A1:0" = CMPLXOP  is CMPLXOP & (any16 ; dmOp0=0x0) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    A1 = im;
-    A0 = re;
-}
-CMPLXACC: "A1:0" += CMPLXOP is CMPLXOP & (any16 ; dmOp0=0x1) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    satSAdd40(A1, im, A1);
-    satSAdd40(A0, re, A0);
-}
-CMPLXACC: "A1:0" -= CMPLXOP is CMPLXOP & (any16 ; dmOp0=0x2) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    im = -im; re = -re;
-    satSAdd40(A1, im, A1);
-    satSAdd40(A0, re, A0);
-}
-
-# default mode CMPLXMAC
-with : dmMmod=0xd ... {
 with : dmP=0x0 ; dmW0=0x0 {
-CMPLXMAC: CMPLXACC is CMPLXACC { build CMPLXACC; }
+CMPLXMAC: "A1:0" =  CMPLXOP CMODE is (CMODE ; dmOp0=0x0) & CMPLXOP {}
+CMPLXMAC: "A1:0" += CMPLXOP CMODE is (CMODE ; dmOp0=0x1) & CMPLXOP {}
+CMPLXMAC: "A1:0" -= CMPLXOP CMODE is (CMODE ; dmOp0=0x2) & CMPLXOP {}
 }
 
 with : dmP=0x0 ; dmW0=0x1 {
-CMPLXMAC: dmDst = (CMPLXACC) is CMPLXACC & (any16 ; dmDst) {
-    local im16:2; local re16:2;
-    sfassign40to16Sat(A1, im16);
-    sfassign40to16Sat(A0, re16);
-    dmDst = zext(im16) << 16 | zext(re16);
-}
-CMPLXMAC: dmDst = CMPLXOP  is CMPLXOP & (any16 ; dmOp0=0x3 & dmDst) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    local im16:2; local re16:2;
-    sfassign40to16Sat(im, im16);
-    sfassign40to16Sat(re, re16);
-    dmDst = zext(im16) << 16 | zext(re16);
-}
+CMPLXMAC: dmDst = ("A1:0" = CMPLXOP) NCMODE  is (NCMODE ; dmOp0=0x0 & dmDst) & CMPLXOP {}
+CMPLXMAC: dmDst = ("A1:0" += CMPLXOP) NCMODE is (NCMODE ; dmOp0=0x1 & dmDst) & CMPLXOP {}
+CMPLXMAC: dmDst = ("A1:0" -= CMPLXOP) NCMODE is (NCMODE ; dmOp0=0x2 & dmDst) & CMPLXOP {}
+CMPLXMAC: dmDst = CMPLXOP NCMODE             is (NCMODE ; dmOp0=0x3 & dmDst) & CMPLXOP {}
 }
 
 with : dmP=0x1 ; dmW0=0x1 {
-CMPLXMAC: CPAIR = (CMPLXACC) is CMPLXACC & (any16 ; CPAIR) {
-    local reReg:4 = &CPAIR; local imReg:4 = &CPAIR + 4;
-    local im32:4; local re32:4;
-    sfassign40to32Sat(A1, im32);
-    sfassign40to32Sat(A0, re32);
-    imReg = im32; reReg = re32;
-}
-CMPLXMAC: CPAIR = CMPLXOP  is CMPLXOP & (any16 ; dmOp0=0x3 & CPAIR) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    local reReg:4 = &CPAIR; local imReg:4 = &CPAIR + 4;
-    local im32:4; local re32:4;
-    sfassign40to32Sat(A1, im32);
-    sfassign40to32Sat(A0, re32);
-    imReg = im32; reReg = re32;
-}
-}
-}
-
-# (T) mode CMPLXMAC
-with : dmMmod=0xe ... {
-with : dmP=0x0 ; dmW0=0x1 {
-CMPLXMAC: dmDst = (CMPLXACC) "(T)" is CMPLXACC & (any16 ; dmDst) {
-    local im16:2; local re16:2;
-    sfassign40to16Sat(A1, im16);
-    sfassign40to16Sat(A0, re16);
-    dmDst = zext(im16) << 16 | zext(re16);
-}
-CMPLXMAC: dmDst = CMPLXOP "(T)" is CMPLXOP & (any16 ; dmOp0=0x3 & dmDst) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    local im16:2; local re16:2;
-    sfassign40to16Sat(im, im16);
-    sfassign40to16Sat(re, re16);
-    dmDst = zext(im16) << 16 | zext(re16);
-}
-}
-}
-
-
-
-# (IS) mode CMPLXMAC
-with : dmMmod=0xf ... {
-with : dmP=0x0 ; dmW0=0x0 {
-CMPLXMAC: CMPLXACC "(IS)" is CMPLXACC { build CMPLXACC; }
-}
-
-with : dmP=0x0 ; dmW0=0x1 {
-CMPLXMAC: dmDst = (CMPLXACC) "(IS)" is CMPLXACC & (any16 ; dmDst) {
-    local im16:2; local re16:2;
-    siassign40to16Sat(A1, im16);
-    siassign40to16Sat(A0, re16);
-    dmDst = zext(im16) << 16 | zext(re16);
-}
-CMPLXMAC: dmDst = CMPLXOP "(IS)" is CMPLXOP & (any16 ; dmOp0=0x3 & dmDst) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    local im16:2; local re16:2;
-    siassign40to16Sat(im, im16);
-    siassign40to16Sat(re, re16);
-    dmDst = zext(im16) << 16 | zext(re16);
-}
-}
-
-with : dmP=0x1 ; dmW0=0x1 {
-CMPLXMAC: CPAIR = (CMPLXACC) "(IS)" is CMPLXACC & (any16 ; CPAIR) {
-    local reReg:4 = &CPAIR; local imReg:4 = &CPAIR + 4;
-    local im32:4; local re32:4;
-    siassign40to32Sat(A1, im32);
-    siassign40to32Sat(A0, re32);
-    imReg = im32; reReg = re32;
-}
-CMPLXMAC: CPAIR = CMPLXOP "(IS)" is CMPLXOP & (any16 ; dmOp0=0x3 & CPAIR) {
-    local im:5; local re:5;
-    extractCplx80(CMPLXOP, im, re);
-    local reReg:4 = &CPAIR; local imReg:4 = &CPAIR + 4;
-    local im32:4; local re32:4;
-    siassign40to32Sat(A1, im32);
-    siassign40to32Sat(A0, re32);
-    imReg = im32; reReg = re32;
-}
-}
+CMPLXMAC: CPAIR = ("A1:0" = CMPLXOP) CMODE  is (CMODE ; dmOp0=0x0 & CPAIR) & CMPLXOP {}
+CMPLXMAC: CPAIR = ("A1:0" += CMPLXOP) CMODE is (CMODE ; dmOp0=0x1 & CPAIR) & CMPLXOP {}
+CMPLXMAC: CPAIR = ("A1:0" -= CMPLXOP) CMODE is (CMODE ; dmOp0=0x2 & CPAIR) & CMPLXOP {}
+CMPLXMAC: CPAIR = CMPLXOP CMODE             is (CMODE ; dmOp0=0x3 & CPAIR) & CMPLXOP {}
 }
 #################### CMPLXMAC ####################
 
 #################### TRADMAC ####################
-## Mult phase
-M0S0: dmSrc0L is dmH00=0x0 & dmSrc0L { export dmSrc0L; }
-M0S0: dmSrc0H is dmH00=0x1 & dmSrc0H { export dmSrc0H; }
-M0S1: dmSrc1L is dmH10=0x0 & dmSrc1L { export dmSrc1L; }
-M0S1: dmSrc1H is dmH10=0x1 & dmSrc1H { export dmSrc1H; }
+MMOD: "S2RND" is dmMmod=0x1 {}
+MMOD: "T"     is dmMmod=0x2 {}
+MMOD: "W32"   is dmMmod=0x3 {}
+MMOD: "FU"    is dmMmod=0x4 {}
+MMOD: "TFU"   is dmMmod=0x6 {}
+MMOD: "IS"    is dmMmod=0x8 {}
+MMOD: "ISS2"  is dmMmod=0x9 {}
+MMOD: "IH"    is dmMmod=0xb {}
+MMOD: "IU"    is dmMmod=0xc {}
 
-M1S0: dmSrc0L is dmH01=0x0 & dmSrc0L { export dmSrc0L; }
-M1S0: dmSrc0H is dmH01=0x1 & dmSrc0H { export dmSrc0H; }
-M1S1: dmSrc1L is dmH11=0x0 & dmSrc1L { export dmSrc1L; }
-M1S1: dmSrc1H is dmH11=0x1 & dmSrc1H { export dmSrc1H; }
+MMODX: ""     is dmMmod=0x0 {}
+MMODX: (MMOD) is MMOD {}
 
-# Uniform
-with : dmMm=0x0 ... {
-# Default mode
-with : dmMmod=0x0 ... {
-MAC0S: M0S0 * M0S1 is (any16; M0S0 & M0S1) {
-local mout: 4; local out:5;
-sfMult16(M0S0, M0S1, mout);
-out = sext(mout);
-export out;
-}
-MAC1S: M1S0 * M1S1 is (any16; M1S0 & M1S1) {
-local mout: 4; local out:5;
-sfMult16(M1S0, M1S1, mout);
-out = sext(mout);
-export out;
-}
-}
-}
+MML: ""    is dmMm=0x0 {}
+MML: "(M)" is dmMm=0x1 {}
 
-# Mixed (M)
-with : dmMm=0x1 ... {
-	
-}
+MMLMMODX: ""         is dmMmod=0x0 & dmMm=0x0 {}
+MMLMMODX: (MMOD)     is MMOD & dmMm=0x0 {}
+MMLMMODX: ("M")      is dmMmod=0x0 & dmMm=0x1 {}
+MMLMMODX: ("M",MMOD) is MMOD & dmMm=0x1 {}
 
-## Assign phase
+MAC0S: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
+MAC0S: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
+MAC0S: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
+MAC0S: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
 
-MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S { A0 = MAC0S; }
-MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S { satSAdd40(A0, MAC0S, A0); }
-MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S { 
-local res:5 = -MAC0S;
-satSAdd40(A0, res, A0);
-}
+MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S {}
+MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S {}
+MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S {}
 
-MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S { A1 = MAC1S; }
-MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S { satSAdd40(A1, MAC1S, A1); }
-MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S { 
-local res:5 = -MAC1S;
-satSAdd40(A1, res, A1);
-}
+MAC1S: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
+MAC1S: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
+MAC1S: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
+MAC1S: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
 
-## Final phase
-
-#MMOD: "S2RND" is dmMmod=0x1 {}
-#MMOD: "T"     is dmMmod=0x2 {}
-#MMOD: "W32"   is dmMmod=0x3 {}
-#MMOD: "FU"    is dmMmod=0x4 {}
-#MMOD: "TFU"   is dmMmod=0x6 {}
-#MMOD: "IS"    is dmMmod=0x8 {}
-#MMOD: "ISS2"  is dmMmod=0x9 {}
-#MMOD: "IH"    is dmMmod=0xb {}
-#MMOD: "IU"    is dmMmod=0xc {}
-#
-#MMODX: ""     is dmMmod=0x0 {}
-#MMODX: (MMOD) is MMOD {}
-#
-#MML: ""    is dmMm=0x0 {}
-#MML: "(M)" is dmMm=0x1 {}
-#
-#MMLMMODX: ""         is dmMmod=0x0 & dmMm=0x0 {}
-#MMLMMODX: (MMOD)     is MMOD & dmMm=0x0 {}
-#MMLMMODX: ("M")      is dmMmod=0x0 & dmMm=0x1 {}
-#MMLMMODX: ("M",MMOD) is MMOD & dmMm=0x1 {}
-
-#MAC0S: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
-#MAC0S: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
-#MAC0S: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
-#MAC0S: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
-#
-#MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S {}
-#MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S {}
-#MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S {}
-#
-#MAC1S: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
-#MAC1S: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
-#MAC1S: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
-#MAC1S: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
-#
-#MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S {}
-#MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
-#MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
+MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S {}
+MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
+MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
 
 with : dmP=0x0 & dmW1=0x0 ; dmW0=0x0 {
 TRADMAC:"Mac16"             MAC0 MMODX           is MMODX & dmOp1=0x3 ; dmOp0!=0x3 & MAC0 {}
