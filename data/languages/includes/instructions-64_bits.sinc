@@ -12,26 +12,52 @@
 ## | 0 | 0 | 0 | 0 |.sz....|.w.| 0 | 0 |.z.| 0 | 0 | 0 |.reg.......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-lsaImm: imm is lsaImmH ; lsaImmL [imm = lsaImmH << 16 | lsaImmL;] {}
+lsaImm: imm is lsaImmH ; lsaImmL [imm = lsaImmH << 16 | lsaImmL;] { local tmp:4 = imm; export tmp; }
 
 with : opcode16=0xd800 ... {
 with : ... lsaW=0x0 {
-:LdM32bitToDreg  lsaDReg = [lsaImm]          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x0 & lsaDReg {}
-:LdM32bitToDreg  lsaPReg = [lsaImm]          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x1 & lsaPReg {}
-:LdM16bitToDreg  lsaDReg = "W"[lsaImm] "(Z)" is any16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x0 & lsaDReg {}
-:LdM16bitToDreg  lsaPReg = "W"[lsaImm] "(X)" is any16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x1 & lsaPReg {}
-:LdM08bitToDreg  lsaDReg = "B"[lsaImm] "(Z)" is any16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x0 & lsaDReg {}
-:LdM08bitToDreg  lsaPReg = "B"[lsaImm] "(X)" is any16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x1 & lsaPReg {}
-:LdM16bitToDregL lsaDRegL = "W"[lsaImm]      is any16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x0 & lsaDRegL {}
-:LdM16bitToDregH lsaDRegH = "W"[lsaImm]      is any16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x1 & lsaDRegH {}
+:LdM32bitToDreg  lsaDReg = [lsaImm]          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x0 & lsaDReg {
+	lsaDReg = *[ram]:4 lsaImm;
+}
+:LdM32bitToDreg  lsaPReg = [lsaImm]          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x1 & lsaPReg {
+	lsaPReg = *[ram]:4 lsaImm;
+}
+:LdM16bitToDreg  lsaDReg = "W"[lsaImm] "(Z)" is any16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x0 & lsaDReg {
+	lsaDReg = zext(*[ram]:2 lsaImm);
+}
+:LdM16bitToDreg  lsaDReg = "W"[lsaImm] "(X)" is any16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x1 & lsaDReg {
+	lsaDReg = sext(*[ram]:2 lsaImm);
+}
+:LdM08bitToDreg  lsaDReg = "B"[lsaImm] "(Z)" is any16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x0 & lsaDReg {
+	lsaDReg = zext(*[ram]:1 lsaImm);
+}
+:LdM08bitToDreg  lsaDReg = "B"[lsaImm] "(X)" is any16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x1 & lsaDReg {
+	lsaDReg = sext(*[ram]:1 lsaImm);
+}
+:LdM16bitToDregL lsaDRegL = "W"[lsaImm]      is any16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x0 & lsaDRegL {
+	lsaDRegL = *[ram]:2 lsaImm;
+}
+:LdM16bitToDregH lsaDRegH = "W"[lsaImm]      is any16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x1 & lsaDRegH {
+	lsaDRegH = *[ram]:2 lsaImm;
+}
 }
 
 with : ... lsaW=0x1 {
-:StDregToM32bit  [lsaImm] = lsaDReg          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x0 & lsaDReg {}
-:StDregToM32bit  [lsaImm] = lsaPReg          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x1 & lsaPReg {}
-:StDregToM16bit  "W"[lsaImm] = lsaDReg       is any16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x0 & lsaDReg {}
-:StDregToM08bit  "B"[lsaImm] = lsaPReg       is any16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x0 & lsaPReg {}
-:StDregHToM16bit "W"[lsaImm] = lsaDRegH      is any16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x1 & lsaDRegH {}
+:StDregToM32bit  [lsaImm] = lsaDReg          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x0 & lsaDReg {
+	*[ram]:4 lsaImm = lsaDReg;
+}
+:StDregToM32bit  [lsaImm] = lsaPReg          is any16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x1 & lsaPReg {
+	*[ram]:4 lsaImm = lsaPReg;
+}
+:StDregToM16bit  "W"[lsaImm] = lsaDReg       is any16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x0 & lsaDReg {
+	*[ram]:2 lsaImm = lsaDReg:2;
+}
+:StDregToM08bit  "B"[lsaImm] = lsaDReg       is any16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x0 & lsaDReg {
+	*[ram]:1 lsaImm = lsaDReg:1;
+}
+:StDregHToM16bit "W"[lsaImm] = lsaDRegH      is any16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x1 & lsaDRegH {
+	*[ram]:2 lsaImm = lsaDRegH;
+}
 }
 }
 
@@ -47,23 +73,53 @@ with : ... lsaW=0x1 {
 
 ldiImm: imm is ldiImmH ; ldiImmL [
     imm = ((ldiImmH << 16 | ldiImmL) & 0x7fffffff) - ((ldiImmH << 16 | ldiImmL) & 0x80000000);
-    ] {}
+] {
+	local tmp:4 = imm; export tmp;
+}
 
 with : opcode10=0x368 ... {
-:LdImmToReg ldiDReg = ldiImm    is ldiGrp=0x0 & ldiDReg ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiPReg = ldiImm    is ldiGrp=0x1 & ldiPReg ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiIReg = ldiImm    is ldiGrp=0x2 & ldiReg1=0x0 & ldiIReg ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiMReg = ldiImm    is ldiGrp=0x2 & ldiReg1=0x1 & ldiMReg ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiBReg = ldiImm    is ldiGrp=0x3 & ldiReg1=0x0 & ldiBReg ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiLReg = ldiImm    is ldiGrp=0x3 & ldiReg1=0x1 & ldiLReg ; ldiImm ; ldiDummy {}
-:LdImmToAxX "A0.X" = ldiImm     is ldiGrp=0x4 & ldiReg=0x0 ; ldiImm ; ldiDummy {}
-:LdImmToAxW "A0.W" = ldiImm     is ldiGrp=0x4 & ldiReg=0x1 ; ldiImm ; ldiDummy {}
-:LdImmToAxX "A1.X" = ldiImm     is ldiGrp=0x4 & ldiReg=0x2 ; ldiImm ; ldiDummy {}
-:LdImmToAxW "A1.W" = ldiImm     is ldiGrp=0x4 & ldiReg=0x3 ; ldiImm ; ldiDummy {}
-:LdImmToReg "ASTAT" = ldiImm    is ldiGrp=0x4 & ldiReg=0x6 ; ldiImm ; ldiDummy {}
-:LdImmToReg "RETS" = ldiImm     is ldiGrp=0x4 & ldiReg=0x7 ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiSysReg2 = ldiImm is ldiGrp=0x6 & ldiSysReg2 ; ldiImm ; ldiDummy {}
-:LdImmToReg ldiSysReg3 = ldiImm is ldiGrp=0x7 & ldiSysReg3 ; ldiImm ; ldiDummy {}
+:LdImmToReg ldiDReg = ldiImm    is ldiGrp=0x0 & ldiDReg ; ldiImm ; ldiDummy { 
+	ldiDReg = ldiImm;
+}
+:LdImmToReg ldiPReg = ldiImm    is ldiGrp=0x1 & ldiPReg ; ldiImm ; ldiDummy { 
+	ldiPReg = ldiImm;
+}
+:LdImmToReg ldiIReg = ldiImm    is ldiGrp=0x2 & ldiReg1=0x0 & ldiIReg ; ldiImm ; ldiDummy {
+	ldiIReg = ldiImm;
+}
+:LdImmToReg ldiMReg = ldiImm    is ldiGrp=0x2 & ldiReg1=0x1 & ldiMReg ; ldiImm ; ldiDummy {
+	ldiMReg = ldiImm;
+}
+:LdImmToReg ldiBReg = ldiImm    is ldiGrp=0x3 & ldiReg1=0x0 & ldiBReg ; ldiImm ; ldiDummy {
+	ldiBReg = ldiImm;
+}
+:LdImmToReg ldiLReg = ldiImm    is ldiGrp=0x3 & ldiReg1=0x1 & ldiLReg ; ldiImm ; ldiDummy {
+	ldiLReg = ldiImm;
+}
+:LdImmToAxX "A0.X" = ldiImm     is ldiGrp=0x4 & ldiReg=0x0 ; ldiImm ; ldiDummy { 
+	A0.X = ldiImm:1;
+}
+:LdImmToAxW "A0.W" = ldiImm     is ldiGrp=0x4 & ldiReg=0x1 ; ldiImm ; ldiDummy {
+	A0.W = ldiImm;
+}
+:LdImmToAxX "A1.X" = ldiImm     is ldiGrp=0x4 & ldiReg=0x2 ; ldiImm ; ldiDummy {
+	A1.X = ldiImm:1;
+}
+:LdImmToAxW "A1.W" = ldiImm     is ldiGrp=0x4 & ldiReg=0x3 ; ldiImm ; ldiDummy {
+	A1.W = ldiImm;
+}
+:LdImmToReg "ASTAT" = ldiImm    is ldiGrp=0x4 & ldiReg=0x6 ; ldiImm ; ldiDummy {
+	ASTAT = ldiImm;
+}
+:LdImmToReg "RETS" = ldiImm     is ldiGrp=0x4 & ldiReg=0x7 ; ldiImm ; ldiDummy {
+	RETS = ldiImm;
+}
+:LdImmToReg ldiSysReg2 = ldiImm is ldiGrp=0x6 & ldiSysReg2 ; ldiImm ; ldiDummy {
+	ldiSysReg2 = ldiImm;
+}
+:LdImmToReg ldiSysReg3 = ldiImm is ldiGrp=0x7 & ldiSysReg3 ; ldiImm ; ldiDummy {
+	ldiSysReg3 = ldiImm;
+}
 }
 
 
@@ -80,11 +136,21 @@ jmpImm:  addr is jmpImmH ; jmpImmL [addr = inst_start + (jmpImmH << 16 | jmpImmL
 jmpImmA: addr is jmpImmH ; jmpImmL [addr = jmpImmH << 16 | jmpImmL;]{ export *[ram]:4 addr; }
 
 with : (opcode06=0x37 & jmpOpcode=0x0) ... {
-:JumpAbs "JUMP.A" jmpImmA is jmpC=0x0 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 {}
-:JumpAbs "JUMP" jmpImm    is jmpC=0x0 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {}
+:JumpAbs "JUMP.A" jmpImmA is jmpC=0x0 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 {
+	goto jmpImmA;
+}
+:JumpAbs "JUMP" jmpImm    is jmpC=0x0 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {
+	goto jmpImm;
+}
 
-:Call "CALL.A" jmpImmA is jmpC=0x1 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 {}
-:Call "CALL" jmpImm    is jmpC=0x1 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {}
+:Call "CALL.A" jmpImmA is jmpC=0x1 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 {
+	RETS = inst_next;
+	goto jmpImmA;
+}
+:Call "CALL" jmpImm    is jmpC=0x1 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0 {
+	RETS = inst_next;
+	goto jmpImm;
+}
 }
 
 

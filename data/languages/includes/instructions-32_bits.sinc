@@ -800,32 +800,32 @@ with : lopC=0x1 ... {
 ## |.hword.........................................................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-DST: lihDReg is lihGrp=0x0 & lihDReg {}
-DST: lihPReg is lihGrp=0x1 & lihPReg {}
-DST: lihIReg is lihGrp=0x2 & lihReg1=0x0 & lihIReg {}
-DST: lihMReg is lihGrp=0x2 & lihReg1=0x1 & lihMReg {}
-DST: lihBReg is lihGrp=0x3 & lihReg1=0x0 & lihBReg {}
-DST: lihLReg is lihGrp=0x3 & lihReg1=0x1 & lihLReg {}
+DST: lihDReg is lihGrp=0x0 & lihDReg { export lihDReg; }
+DST: lihPReg is lihGrp=0x1 & lihPReg { export lihPReg; }
+DST: lihIReg is lihGrp=0x2 & lihReg1=0x0 & lihIReg { export lihIReg; }
+DST: lihMReg is lihGrp=0x2 & lihReg1=0x1 & lihMReg { export lihMReg; }
+DST: lihBReg is lihGrp=0x3 & lihReg1=0x0 & lihBReg { export lihBReg; }
+DST: lihLReg is lihGrp=0x3 & lihReg1=0x1 & lihLReg { export lihLReg; }
 
-DSTL: lihDRegL is lihGrp=0x0 & lihDRegL {}
-DSTL: lihPRegL is lihGrp=0x1 & lihPRegL {}
-DSTL: lihIRegL is lihGrp=0x2 & lihReg1=0x0 & lihIRegL {}
-DSTL: lihMRegL is lihGrp=0x2 & lihReg1=0x1 & lihMRegL {}
-DSTL: lihBRegL is lihGrp=0x3 & lihReg1=0x0 & lihBRegL {}
-DSTL: lihLRegL is lihGrp=0x3 & lihReg1=0x1 & lihLRegL {}
+DSTL: lihDRegL is lihGrp=0x0 & lihDRegL { export lihDRegL; }
+DSTL: lihPRegL is lihGrp=0x1 & lihPRegL { export lihPRegL; }
+DSTL: lihIRegL is lihGrp=0x2 & lihReg1=0x0 & lihIRegL { export lihIRegL; }
+DSTL: lihMRegL is lihGrp=0x2 & lihReg1=0x1 & lihMRegL { export lihMRegL; }
+DSTL: lihBRegL is lihGrp=0x3 & lihReg1=0x0 & lihBRegL { export lihBRegL; }
+DSTL: lihLRegL is lihGrp=0x3 & lihReg1=0x1 & lihLRegL { export lihLRegL; }
 
-DSTH: lihDRegH is lihGrp=0x0 & lihDRegH {}
-DSTH: lihPRegH is lihGrp=0x1 & lihPRegH {}
-DSTH: lihIRegH is lihGrp=0x2 & lihReg1=0x0 & lihIRegH {}
-DSTH: lihMRegH is lihGrp=0x2 & lihReg1=0x1 & lihMRegH {}
-DSTH: lihBRegH is lihGrp=0x3 & lihReg1=0x0 & lihBRegH {}
-DSTH: lihLRegH is lihGrp=0x3 & lihReg1=0x1 & lihLRegH {}
+DSTH: lihDRegH is lihGrp=0x0 & lihDRegH { export lihDRegH; }
+DSTH: lihPRegH is lihGrp=0x1 & lihPRegH { export lihPRegH; }
+DSTH: lihIRegH is lihGrp=0x2 & lihReg1=0x0 & lihIRegH { export lihIRegH; }
+DSTH: lihMRegH is lihGrp=0x2 & lihReg1=0x1 & lihMRegH { export lihMRegH; }
+DSTH: lihBRegH is lihGrp=0x3 & lihReg1=0x0 & lihBRegH { export lihBRegH; }
+DSTH: lihLRegH is lihGrp=0x3 & lihReg1=0x1 & lihLRegH { export lihLRegH; }
 
 with : opcode08=0xe1 ... {
-:LdImmToDregHL DSTL = lihIHword      is lihZ=0x0 & lihH=0x0 & lihS=0x0 & DSTL ; lihIHword {}
-:LdImmToReg    DST = lihIHword "(X)" is lihZ=0x0 & lihH=0x0 & lihS=0x1 & DST ; lihIHword {}
-:LdImmToReg    DST = lihUHword "(Z)" is lihZ=0x1 & lihH=0x0 & lihS=0x0 & DST ; lihUHword {}
-:LdImmToDregHL DSTH = lihIHword      is lihZ=0x0 & lihH=0x1 & lihS=0x0 & DSTH ; lihIHword {}
+:LdImmToDregHL DSTL = lihIHword      is lihZ=0x0 & lihH=0x0 & lihS=0x0 & DSTL ; lihIHword { DSTL = lihIHword; }
+:LdImmToReg    DST = lihIHword "(X)" is lihZ=0x0 & lihH=0x0 & lihS=0x1 & DST ; lihIHword { DST = sext(lihIHword:2); }
+:LdImmToReg    DST = lihUHword "(Z)" is lihZ=0x1 & lihH=0x0 & lihS=0x0 & DST ; lihUHword { DST = zext(lihUHword:2); }
+:LdImmToDregHL DSTH = lihIHword      is lihZ=0x0 & lihH=0x1 & lihS=0x0 & DSTH ; lihIHword { DSTH = lihIHword; }
 }
 
 
@@ -839,8 +839,8 @@ with : opcode08=0xe1 ... {
 callaAddr: addr is callaSwH ; callaSwL [addr = inst_start + ((callaSwH << 16 | callaSwL) << 1);]{ export *[ram]:4 addr; }
 
 with : opcode07=0x71 ... {
-:JumpAbs "JUMP.L" callaAddr is callaS=0x0 ... & callaAddr {}
-:Call    "CALL" callaAddr   is callaS=0x1 ... & callaAddr {}
+:JumpAbs "JUMP.L" callaAddr is callaS=0x0 ... & callaAddr { goto callaAddr; }
+:Call    "CALL" callaAddr   is callaS=0x1 ... & callaAddr { RETS = inst_next; call callaAddr; }
 }
 
 
@@ -851,24 +851,44 @@ with : opcode07=0x71 ... {
 ## |.off...........................................................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-lsidImm2: imm is lsidOff [imm = lsidOff << 1;]{}
-lsidImm4: imm is lsidOff [imm = lsidOff << 2;]{}
+lsidImm2: imm is lsidOff [imm = lsidOff * 2;]{ local tmp:4 = imm; export tmp; }
+lsidImm4: imm is lsidOff [imm = lsidOff * 4;]{ local tmp:4 = imm; export tmp; }
 
 with : opcode06=0x39 ... {
 with : lsidW=0x0 ... {
-:LdM32bitToDreg lsidDReg = [lsidPtr + lsidImm4]          is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidImm4 {}
-:LdM32bitToPreg lsidPReg = [lsidPtr + lsidImm4]          is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPReg ; lsidImm4 {}
-:LdM16bitToDreg lsidDReg = "W"[lsidPtr + lsidImm2] "(Z)" is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidImm2 {}
-:LdM16bitToDreg lsidDReg = "W"[lsidPtr + lsidImm2] "(X)" is lsidZ=0x1 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidImm2 {}
-:LdM08bitToDreg lsidDReg = "B"[lsidPtr + lsidOff] "(Z)" is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {}
-:LdM08bitToDreg lsidDReg = "B"[lsidPtr + lsidOff] "(X)" is lsidZ=0x1 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {}
+:LdM32bitToDreg lsidDReg = [lsidPtr + lsidImm4]          is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidImm4 { 
+	lsidDReg = *[ram]:4 (lsidPtr + lsidImm4);
+}
+:LdM32bitToPreg lsidPReg = [lsidPtr + lsidImm4]          is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPReg ; lsidImm4 {
+	lsidPReg = *[ram]:4 (lsidPtr + lsidImm4);
+}
+:LdM16bitToDreg lsidDReg = "W"[lsidPtr + lsidImm2] "(Z)" is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidImm2 {
+	lsidDReg = zext(*[ram]:2 (lsidPtr + lsidImm2));
+}
+:LdM16bitToDreg lsidDReg = "W"[lsidPtr + lsidImm2] "(X)" is lsidZ=0x1 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidImm2 {
+	lsidDReg = sext(*[ram]:2 (lsidPtr + lsidImm2));
+}
+:LdM08bitToDreg lsidDReg = "B"[lsidPtr + lsidOff] "(Z)" is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {
+	lsidDReg = zext(*[ram]:1 (lsidPtr + lsidOff));
+}
+:LdM08bitToDreg lsidDReg = "B"[lsidPtr + lsidOff] "(X)" is lsidZ=0x1 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {
+	lsidDReg = sext(*[ram]:1 (lsidPtr + lsidOff));
+}
 }
 
 with : lsidW=0x1 ... {
-:StDregToM32bit  [lsidPtr + lsidImm4] = lsidDReg    is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidImm4 {}
-:StPregToM32bit  [lsidPtr + lsidImm4] = lsidPReg    is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPReg ; lsidImm4 {}
-:StDregLToM16bit "W"[lsidPtr + lsidImm2] = lsidDReg is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidImm2 {}
-:StDregToM08bit  "B"[lsidPtr + lsidOff] = lsidDReg is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {}
+:StDregToM32bit  [lsidPtr + lsidImm4] = lsidDReg    is lsidZ=0x0 & lsidSz=0x0 & lsidPtr & lsidDReg ; lsidImm4 {
+	*[ram]:4 (lsidPtr + lsidImm4) = lsidDReg;
+}
+:StPregToM32bit  [lsidPtr + lsidImm4] = lsidPReg    is lsidZ=0x1 & lsidSz=0x0 & lsidPtr & lsidPReg ; lsidImm4 {
+	*[ram]:4 (lsidPtr + lsidImm4) = lsidPReg;
+}
+:StDregLToM16bit "W"[lsidPtr + lsidImm2] = lsidDReg is lsidZ=0x0 & lsidSz=0x1 & lsidPtr & lsidDReg ; lsidImm2 {
+	*[ram]:2 (lsidPtr + lsidImm2) = lsidDReg:2;
+}
+:StDregToM08bit  "B"[lsidPtr + lsidOff] = lsidDReg is lsidZ=0x0 & lsidSz=0x2 & lsidPtr & lsidDReg ; lsidOff {
+	*[ram]:1 (lsidPtr + lsidOff) = lsidDReg:1;
+}
 }
 }
 
@@ -880,13 +900,20 @@ with : lsidW=0x1 ... {
 ## |.frm...........................................................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-lnkImm: imm is lnkFrm [imm = lnkFrm << 2;]{}
-
 unlinkDesc: "UNLINK" is epsilon {}
 
 with : opcode15=0x7400 ... {
-:Linkage "LINK" lnkImm is lnkR=0x0 ; lnkImm {}
-:Linkage unlinkDesc    is lnkR=0x1 ; lnkFrm & unlinkDesc {}
+:Linkage "LINK" lnkImm is lnkR=0x0 ; lnkFrm [lnkImm = lnkFrm * 4;]{
+	push(RETS);
+    push(FP);
+    FP = SP;
+    SP = SP - lnkImm;
+}
+:Linkage unlinkDesc    is lnkR=0x1 ; lnkFrm & unlinkDesc {
+	SP = FP;
+    pop(FP);
+    pop(RETS);
+}
 }
 
 
@@ -897,23 +924,55 @@ with : opcode15=0x7400 ... {
 ## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
+define pcodeop syncexcl;
+
 with : opcode06=0x3b ; lseZeros=0x0 {
 with : lseW=0x0 ... {
-:LdX32bitToDreg  lseReg = [lsePtr] "(EXCL)"      is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:LdX16bitToDreg  lseReg = "W"[lsePtr] "(Z,EXCL)" is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:LdX16bitToDreg  lseReg = "W"[lsePtr] "(X,EXCL)" is lseSz=0x1 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
-:LdX08bitToDreg  lseReg = "B"[lsePtr] "(Z,EXCL)" is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:LdX08bitToDreg  lseReg = "B"[lsePtr] "(X,EXCL)" is lseSz=0x2 & lseZ=0x1 & lseReg & lsePtr ; any32 {}
-:LdX16bitToDregL lseRegL = "W"[lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x0 & lseRegL & lsePtr ; any32 {}
-:LdX16bitToDregH lseRegH = "W"[lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
+:LdX32bitToDreg  lseReg = [lsePtr] "(EXCL)"      is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {
+	lseReg = *[ram]:4 lsePtr;
+}
+:LdX16bitToDreg  lseReg = "W"[lsePtr] "(Z,EXCL)" is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {
+	lseReg = zext(*[ram]:2 lsePtr);
+}
+:LdX16bitToDreg  lseReg = "W"[lsePtr] "(X,EXCL)" is lseSz=0x1 & lseZ=0x1 & lseReg & lsePtr ; any32 {
+	lseReg = sext(*[ram]:2 lsePtr);
+}
+:LdX08bitToDreg  lseReg = "B"[lsePtr] "(Z,EXCL)" is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {
+	lseReg = zext(*[ram]:1 lsePtr);
+}
+:LdX08bitToDreg  lseReg = "B"[lsePtr] "(X,EXCL)" is lseSz=0x2 & lseZ=0x1 & lseReg & lsePtr ; any32 {
+	lseReg = sext(*[ram]:1 lsePtr);
+}
+:LdX16bitToDregL lseRegL = "W"[lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x0 & lseRegL & lsePtr ; any32 {
+	lseRegL = *[ram]:2 lsePtr;
+}
+:LdX16bitToDregH lseRegH = "W"[lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {
+	lseRegH = *[ram]:2 lsePtr;
+}
 }
 
 with : lseW=0x1 ... {
-:StDregToX32bit  "CC" = ([lsePtr] = lseReg) "(EXCL)"     is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:StDregToX16bit  "CC" = ("W"[lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:StDregToX08bit  "CC" = ("B"[lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {}
-:StDregHToX16bit "CC" = ("W"[lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lseZ=0x0 & lseRegH & lsePtr ; any32 {}
-:SyncExcl                                                is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {}
+# Normally CC = write attempted
+# As write will always succeed in our case CC will always be set to 1
+:StDregToX32bit  "CC" = ([lsePtr] = lseReg) "(EXCL)"     is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; any32 {
+	*[ram]:4 lsePtr = lseReg;
+	CC = 1;
+}
+:StDregLToX16bit "CC" = ("W"[lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; any32 {
+	*[ram]:2 lsePtr = lseReg:2;
+	CC = 1;
+}
+:StDregToX08bit  "CC" = ("B"[lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; any32 {
+	*[ram]:1 lsePtr = lseReg:1;
+	CC = 1;
+}
+:StDregHToX16bit "CC" = ("W"[lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lseZ=0x0 & lseRegH & lsePtr ; any32 {
+	*[ram]:2 lsePtr = lseRegH;
+	CC = 1;
+}
+:SyncExcl                                                is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; any32 {
+	syncexcl();
+}
 }
 }
 
