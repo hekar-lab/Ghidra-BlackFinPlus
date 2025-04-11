@@ -21,6 +21,7 @@ with Mult32 : {
 ## |h01|h11|.w0|.op0...|h00|h10|.dst.......|.src0......|.src1......|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
+#################### CMPLXMAC ####################
 CPAIR: "R1:0" is dmDst=0x0 { export R0; }
 CPAIR: "R3:2" is dmDst=0x2 { export R2; }
 CPAIR: "R5:4" is dmDst=0x4 { export R4; }
@@ -75,7 +76,7 @@ CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {
 }
 }
 
-# (t) mode CMPLXOP
+# (T) mode CMPLXOP
 with : dmMmod=0xe ... {
 CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {
     local ai:2; local ar:2;
@@ -124,7 +125,7 @@ CMPLXOP: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {
 }
 }
 
-# (is) mode CMPLXOP
+# (IS) mode CMPLXOP
 with : dmMmod=0xf ... {
 CMPLXOP: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {
     local ai:2; local ar:2;
@@ -237,7 +238,7 @@ CMPLXMAC: CPAIR = CMPLXOP  is CMPLXOP & (any16 ; dmOp0=0x3 & CPAIR) {
 }
 }
 
-# (t) mode CMPLXMAC
+# (T) mode CMPLXMAC
 with : dmMmod=0xe ... {
 with : dmP=0x0 ; dmW0=0x1 {
 CMPLXMAC: dmDst = (CMPLXACC) "(T)" is CMPLXACC & (any16 ; dmDst) {
@@ -259,7 +260,7 @@ CMPLXMAC: dmDst = CMPLXOP "(T)" is CMPLXOP & (any16 ; dmOp0=0x3 & dmDst) {
 
 
 
-# (is) mode CMPLXMAC
+# (IS) mode CMPLXMAC
 with : dmMmod=0xf ... {
 with : dmP=0x0 ; dmW0=0x0 {
 CMPLXMAC: CMPLXACC "(IS)" is CMPLXACC { build CMPLXACC; }
@@ -301,45 +302,100 @@ CMPLXMAC: CPAIR = CMPLXOP "(IS)" is CMPLXOP & (any16 ; dmOp0=0x3 & CPAIR) {
 }
 }
 }
+#################### CMPLXMAC ####################
 
-MMOD: "S2RND" is dmMmod=0x1 {}
-MMOD: "T"     is dmMmod=0x2 {}
-MMOD: "W32"   is dmMmod=0x3 {}
-MMOD: "FU"    is dmMmod=0x4 {}
-MMOD: "TFU"   is dmMmod=0x6 {}
-MMOD: "IS"    is dmMmod=0x8 {}
-MMOD: "ISS2"  is dmMmod=0x9 {}
-MMOD: "IH"    is dmMmod=0xb {}
-MMOD: "IU"    is dmMmod=0xc {}
+#################### TRADMAC ####################
+## Mult phase
+M0S0: dmSrc0L is dmH00=0x0 & dmSrc0L { export dmSrc0L; }
+M0S0: dmSrc0H is dmH00=0x1 & dmSrc0H { export dmSrc0H; }
+M0S1: dmSrc1L is dmH10=0x0 & dmSrc1L { export dmSrc1L; }
+M0S1: dmSrc1H is dmH10=0x1 & dmSrc1H { export dmSrc1H; }
 
-MMODX: ""     is dmMmod=0x0 {}
-MMODX: (MMOD) is MMOD {}
+M1S0: dmSrc0L is dmH01=0x0 & dmSrc0L { export dmSrc0L; }
+M1S0: dmSrc0H is dmH01=0x1 & dmSrc0H { export dmSrc0H; }
+M1S1: dmSrc1L is dmH11=0x0 & dmSrc1L { export dmSrc1L; }
+M1S1: dmSrc1H is dmH11=0x1 & dmSrc1H { export dmSrc1H; }
 
-MML: ""    is dmMm=0x0 {}
-MML: "(M)" is dmMm=0x1 {}
+# Uniform
+with : dmMm=0x0 ... {
+# Default mode
+with : dmMmod=0x0 ... {
+MAC0S: M0S0 * M0S1 is (any16; M0S0 & M0S1) {
+local mout: 4; local out:5;
+sfMult16(M0S0, M0S1, mout);
+out = sext(mout);
+export out;
+}
+MAC1S: M1S0 * M1S1 is (any16; M1S0 & M1S1) {
+local mout: 4; local out:5;
+sfMult16(M1S0, M1S1, mout);
+out = sext(mout);
+export out;
+}
+}
+}
 
-MMLMMODX: ""         is dmMmod=0x0 & dmMm=0x0 {}
-MMLMMODX: (MMOD)     is MMOD & dmMm=0x0 {}
-MMLMMODX: ("M")      is dmMmod=0x0 & dmMm=0x1 {}
-MMLMMODX: ("M",MMOD) is MMOD & dmMm=0x1 {}
+# Mixed (M)
+with : dmMm=0x1 ... {
+	
+}
 
-MAC0S: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
-MAC0S: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
-MAC0S: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
-MAC0S: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
+## Assign phase
 
-MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S {}
-MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S {}
-MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S {}
+MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S { A0 = MAC0S; }
+MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S { satSAdd40(A0, MAC0S, A0); }
+MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S { 
+local res:5 = -MAC0S;
+satSAdd40(A0, res, A0);
+}
 
-MAC1S: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
-MAC1S: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
-MAC1S: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
-MAC1S: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
+MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S { A1 = MAC1S; }
+MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S { satSAdd40(A1, MAC1S, A1); }
+MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S { 
+local res:5 = -MAC1S;
+satSAdd40(A1, res, A1);
+}
 
-MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S {}
-MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
-MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
+## Final phase
+
+#MMOD: "S2RND" is dmMmod=0x1 {}
+#MMOD: "T"     is dmMmod=0x2 {}
+#MMOD: "W32"   is dmMmod=0x3 {}
+#MMOD: "FU"    is dmMmod=0x4 {}
+#MMOD: "TFU"   is dmMmod=0x6 {}
+#MMOD: "IS"    is dmMmod=0x8 {}
+#MMOD: "ISS2"  is dmMmod=0x9 {}
+#MMOD: "IH"    is dmMmod=0xb {}
+#MMOD: "IU"    is dmMmod=0xc {}
+#
+#MMODX: ""     is dmMmod=0x0 {}
+#MMODX: (MMOD) is MMOD {}
+#
+#MML: ""    is dmMm=0x0 {}
+#MML: "(M)" is dmMm=0x1 {}
+#
+#MMLMMODX: ""         is dmMmod=0x0 & dmMm=0x0 {}
+#MMLMMODX: (MMOD)     is MMOD & dmMm=0x0 {}
+#MMLMMODX: ("M")      is dmMmod=0x0 & dmMm=0x1 {}
+#MMLMMODX: ("M",MMOD) is MMOD & dmMm=0x1 {}
+
+#MAC0S: dmSrc0L * dmSrc1L is dmH00=0x0 & dmH10=0x0 & dmSrc0L & dmSrc1L {}
+#MAC0S: dmSrc0L * dmSrc1H is dmH00=0x0 & dmH10=0x1 & dmSrc0L & dmSrc1H {}
+#MAC0S: dmSrc0H * dmSrc1L is dmH00=0x1 & dmH10=0x0 & dmSrc0H & dmSrc1L {}
+#MAC0S: dmSrc0H * dmSrc1H is dmH00=0x1 & dmH10=0x1 & dmSrc0H & dmSrc1H {}
+#
+#MAC0: "A0" = MAC0S  is dmOp0=0x0 & MAC0S {}
+#MAC0: "A0" += MAC0S is dmOp0=0x1 & MAC0S {}
+#MAC0: "A0" -= MAC0S is dmOp0=0x2 & MAC0S {}
+#
+#MAC1S: dmSrc0L * dmSrc1L is dmH01=0x0 & dmH11=0x0 & dmSrc0L & dmSrc1L {}
+#MAC1S: dmSrc0L * dmSrc1H is dmH01=0x0 & dmH11=0x1 & dmSrc0L & dmSrc1H {}
+#MAC1S: dmSrc0H * dmSrc1L is dmH01=0x1 & dmH11=0x0 & dmSrc0H & dmSrc1L {}
+#MAC1S: dmSrc0H * dmSrc1H is dmH01=0x1 & dmH11=0x1 & dmSrc0H & dmSrc1H {}
+#
+#MAC1: "A1" = MAC1S  is dmOp1=0x0 ; MAC1S {}
+#MAC1: "A1" += MAC1S is dmOp1=0x1 ; MAC1S {}
+#MAC1: "A1" -= MAC1S is dmOp1=0x2 ; MAC1S {}
 
 with : dmP=0x0 & dmW1=0x0 ; dmW0=0x0 {
 TRADMAC:"Mac16"             MAC0 MMODX           is MMODX & dmOp1=0x3 ; dmOp0!=0x3 & MAC0 {}
@@ -396,6 +452,7 @@ TRADMAC:"ParaMac16WithMvAndMv"           dmDstO = (MAC1) MML, dmDstE = "A0" MMOD
 TRADMAC:"ParaMac16WithMvAndMac16WithMv"  dmDstO = (MAC1) MML, dmDstE = (MAC0) MMODX
     is (MMODX & MML ; dmDstO & dmDstE & MAC0) & MAC1 {}
 }
+#################### TRADMAC ####################
 
 with : (opcode04=0xc & dmOpcode=0x0) ... {
 :^TRADMAC is (dmMmod1=0x0 ; any32) & TRADMAC {}

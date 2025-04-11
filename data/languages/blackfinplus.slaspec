@@ -94,9 +94,9 @@ macro satSAdd16(a, b, outVal) {
     outVal = a + b;
     local c:1 = scarry(a, b);
     if (!c) goto <noSat>;
-    outVal = 1 << 15;
+    outVal = 0x8000;
     if (a s< 0) goto <neg>;
-    outVal = ~outVal;
+    outVal = 0x7fff;
     <neg>
     <noSat>
 }
@@ -105,9 +105,9 @@ macro satSAdd32(a, b, outVal) {
     outVal = a + b;
     local c:1 = scarry(a, b);
     if (!c) goto <noSat>;
-    outVal = 1 << 31;
+    outVal = 0x80000000;
     if (a s< 0) goto <neg>;
-    outVal = ~outVal;
+    outVal = 0x7fffffff;
     <neg>
     <noSat>
 }
@@ -116,10 +116,34 @@ macro satSAdd40(a, b, outVal) {
     outVal = a + b;
     local c:1 = scarry(a, b);
     if (!c) goto <noSat>;
-    outVal = 1 << 39;
+    outVal = 0x8000000000;
     if (a s< 0) goto <neg>;
-    outVal = ~outVal;
+    outVal = 0x7fffffffff;
     <neg>
+    <noSat>
+}
+
+macro satUAdd16(a, b, outVal) {
+    outVal = a + b;
+    local c:1 = carry(a, b);
+    if (!c) goto <noSat>;
+    outVal = 0xffff;
+    <noSat>
+}
+
+macro satUAdd32(a, b, outVal) {
+    outVal = a + b;
+    local c:1 = scarry(a, b);
+    if (!c) goto <noSat>;
+    outVal = 0xffffffff;
+    <noSat>
+}
+
+macro satUAdd40(a, b, outVal) {
+    outVal = a + b;
+    local c:1 = scarry(a, b);
+    if (!c) goto <noSat>;
+    outVal = 0xffffffffff;
     <noSat>
 }
 
