@@ -1,0 +1,61 @@
+## Copy CC conditional bit, from status (CC2Stat)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |.d.|..op...|.......cbit........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token ccsInstr16 (16)
+	ccsSig           = ( 8,15) 
+	ccsD             = ( 7, 7) 
+	ccsOp            = ( 5, 6) 
+	ccsCbitUImm      = ( 0, 4) 
+;
+
+
+### Instructions ###
+
+CC2Stat:^"MvToCC_STAT" "CC = "ccsCbitUImm
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x0 & ccsCbitUImm 
+{
+	CC = (ASTAT:1 >> ccsCbitUImm:1) & 0x1;
+}
+CC2Stat:^"MvToCC_STAT" "CC |= "ccsCbitUImm
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x1 & ccsCbitUImm 
+{
+	CC = CC || ((ASTAT:1 >> ccsCbitUImm:1) & 0x1);
+}
+CC2Stat:^"MvToCC_STAT" "CC &= "ccsCbitUImm
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x2 & ccsCbitUImm 
+{
+	CC = CC && ((ASTAT:1 >> ccsCbitUImm:1) & 0x1);
+}
+CC2Stat:^"MvToCC_STAT" "CC ^= "ccsCbitUImm
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x3 & ccsCbitUImm 
+{
+	CC = CC ^^ ((ASTAT:1 >> ccsCbitUImm:1) & 0x1);
+}
+CC2Stat:^"CCToStat16" ccsCbitUImm" = CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x0 & ccsCbitUImm 
+{
+	ASTAT = (ASTAT & ~(0x1 << ccsCbitUImm)) | (zext(CC) << ccsCbitUImm);
+}
+CC2Stat:^"CCToStat16" ccsCbitUImm" |= CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x1 & ccsCbitUImm 
+{
+	ASTAT = ASTAT | (zext(CC) << ccsCbitUImm);
+}
+CC2Stat:^"CCToStat16" ccsCbitUImm" &= CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x2 & ccsCbitUImm 
+{
+	ASTAT = ASTAT & ~(zext(CC) << ccsCbitUImm);
+}
+CC2Stat:^"CCToStat16" ccsCbitUImm" ^= CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x3 & ccsCbitUImm 
+{
+	ASTAT = ASTAT ^ (zext(CC) << ccsCbitUImm);
+}
+
+
+:^CC2Stat is CC2Stat { build CC2Stat; }

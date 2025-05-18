@@ -1,0 +1,78 @@
+## Cache Control (CacheCtrl)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 1 |.a.|..opc..|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token cctInstr16 (16)
+	cctSig           = ( 6,15) 
+	cctA             = ( 5, 5) 
+	cctOpc           = ( 3, 4) 
+	cctRegPReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables cctRegPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Operations ###
+
+define pcodeop prefetch;
+define pcodeop flushinv;
+define pcodeop flush;
+define pcodeop iflush;
+
+
+### Instructions ###
+
+CacheCtrl:^"CacheCtrl" "PREFETCH ["cctRegPReg"]"
+	is cctSig=0x009 & cctA=0x0 & cctOpc=0x0 & cctRegPReg 
+{
+	prefetch(cctRegPReg);
+}
+CacheCtrl:^"CacheCtrl" "PREFETCH ["cctRegPReg"++]"
+	is cctSig=0x009 & cctA=0x1 & cctOpc=0x0 & cctRegPReg 
+{
+	prefetch(cctRegPReg);
+	cctRegPReg = cctRegPReg + 0x20;
+}
+CacheCtrl:^"CacheCtrl" "FLUSHINV ["cctRegPReg"]"
+	is cctSig=0x009 & cctA=0x0 & cctOpc=0x1 & cctRegPReg 
+{
+	flushinv(cctRegPReg);
+}
+CacheCtrl:^"CacheCtrl" "FLUSHINV ["cctRegPReg"++]"
+	is cctSig=0x009 & cctA=0x1 & cctOpc=0x1 & cctRegPReg 
+{
+	flushinv(cctRegPReg);
+	cctRegPReg = cctRegPReg + 0x20;
+}
+CacheCtrl:^"CacheCtrl" "FLUSH ["cctRegPReg"]"
+	is cctSig=0x009 & cctA=0x0 & cctOpc=0x2 & cctRegPReg 
+{
+	flush(cctRegPReg);
+}
+CacheCtrl:^"CacheCtrl" "FLUSH ["cctRegPReg"++]"
+	is cctSig=0x009 & cctA=0x1 & cctOpc=0x2 & cctRegPReg 
+{
+	flush(cctRegPReg);
+	cctRegPReg = cctRegPReg + 0x20;
+}
+CacheCtrl:^"CacheCtrl" "IFLUSH ["cctRegPReg"]"
+	is cctSig=0x009 & cctA=0x0 & cctOpc=0x3 & cctRegPReg 
+{
+	iflush(cctRegPReg);
+}
+CacheCtrl:^"CacheCtrl" "IFLUSH ["cctRegPReg"++]"
+	is cctSig=0x009 & cctA=0x1 & cctOpc=0x3 & cctRegPReg 
+{
+	iflush(cctRegPReg);
+	cctRegPReg = cctRegPReg + 0x20;
+}
+
+
+:^CacheCtrl is CacheCtrl { build CacheCtrl; }

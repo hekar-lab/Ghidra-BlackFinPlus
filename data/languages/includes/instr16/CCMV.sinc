@@ -1,0 +1,89 @@
+## Conditional Move (CCMV)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 1 | 1 |.t.|.d.|.s.|....dst....|....src....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token cmvInstr16 (16)
+	cmvSig           = ( 9,15) 
+	cmvT             = ( 8, 8) 
+	cmvD             = ( 7, 7) 
+	cmvS             = ( 6, 6) 
+	cmvDstDReg       = ( 3, 5) 
+	cmvDstPReg       = ( 3, 5) 
+	cmvSrcDReg       = ( 0, 2) 
+	cmvSrcPReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables cmvDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables cmvSrcDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables cmvSrcPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables cmvDstPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+CCMV:^"MvRegToRegCond" "if !CC "cmvDstDReg" = "cmvSrcDReg
+	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x0 & cmvS=0x0 & cmvDstDReg & cmvSrcDReg 
+{
+	if (CC) goto <do_nothing>;
+	cmvDstDReg = cmvSrcDReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if !CC "cmvDstPReg" = "cmvSrcDReg
+	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x0 & cmvS=0x1 & cmvDstPReg & cmvSrcDReg 
+{
+	if (CC) goto <do_nothing>;
+	cmvDstPReg = cmvSrcDReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if !CC "cmvDstDReg" = "cmvSrcPReg
+	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x1 & cmvS=0x0 & cmvDstDReg & cmvSrcPReg 
+{
+	if (CC) goto <do_nothing>;
+	cmvDstDReg = cmvSrcPReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if !CC "cmvDstPReg" = "cmvSrcPReg
+	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x1 & cmvS=0x1 & cmvDstPReg & cmvSrcPReg 
+{
+	if (CC) goto <do_nothing>;
+	cmvDstPReg = cmvSrcPReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if CC "cmvDstDReg" = "cmvSrcDReg
+	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x0 & cmvS=0x0 & cmvDstDReg & cmvSrcDReg 
+{
+	if (!CC) goto <do_nothing>;
+	cmvDstDReg = cmvSrcDReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcDReg
+	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x0 & cmvS=0x1 & cmvDstPReg & cmvSrcDReg 
+{
+	if (!CC) goto <do_nothing>;
+	cmvDstPReg = cmvSrcDReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if CC "cmvDstDReg" = "cmvSrcPReg
+	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x1 & cmvS=0x0 & cmvDstDReg & cmvSrcPReg 
+{
+	if (!CC) goto <do_nothing>;
+	cmvDstDReg = cmvSrcPReg;
+<do_nothing>
+}
+CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcPReg
+	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x1 & cmvS=0x1 & cmvDstPReg & cmvSrcPReg 
+{
+	if (!CC) goto <do_nothing>;
+	cmvDstPReg = cmvSrcPReg;
+<do_nothing>
+}
+
+
+:^CCMV is CCMV { build CCMV; }

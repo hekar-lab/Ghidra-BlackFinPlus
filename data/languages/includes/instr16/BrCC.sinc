@@ -1,0 +1,61 @@
+## Conditional Branch PC relative on CC (BrCC)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 1 |.t.|.b.|..................off..................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token brcInstr16 (16)
+	brcSig           = (12,15) 
+	brcT             = (11,11) 
+	brcB             = (10,10) 
+	brcOffSImm       = ( 0, 9) signed
+;
+
+
+### Instructions ###
+
+BrCC:^"BrCC" "if !CC JUMP "addr
+	is brcSig=0x1 & brcT=0x0 & brcB=0x0 & brcOffSImm 
+[
+	addr = inst_start + brcOffSImm * 0x2;
+] {
+	local addrPtr:4 = *[ram]:4 addr:4;
+	if (CC) goto <workaround>;
+	goto [addrPtr];
+<workaround>
+}
+BrCC:^"BrCC" "if !CC JUMP "addr"(BP)"
+	is brcSig=0x1 & brcT=0x0 & brcB=0x1 & brcOffSImm 
+[
+	addr = inst_start + brcOffSImm * 0x2;
+] {
+	local addrPtr:4 = *[ram]:4 addr:4;
+	if (CC) goto <workaround>;
+	goto [addrPtr];
+<workaround>
+}
+BrCC:^"BrCC" "if CC JUMP "addr
+	is brcSig=0x1 & brcT=0x1 & brcB=0x0 & brcOffSImm 
+[
+	addr = inst_start + brcOffSImm * 0x2;
+] {
+	local addrPtr:4 = *[ram]:4 addr:4;
+	if (!CC) goto <workaround>;
+	goto [addrPtr];
+<workaround>
+}
+BrCC:^"BrCC" "if CC JUMP "addr"(BP)"
+	is brcSig=0x1 & brcT=0x1 & brcB=0x1 & brcOffSImm 
+[
+	addr = inst_start + brcOffSImm * 0x2;
+] {
+	local addrPtr:4 = *[ram]:4 addr:4;
+	if (!CC) goto <workaround>;
+	goto [addrPtr];
+<workaround>
+}
+
+
+:^BrCC is BrCC { build BrCC; }

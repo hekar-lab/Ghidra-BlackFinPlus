@@ -1,0 +1,18 @@
+## 16-bits instructions ##
+
+@include "instr16/NOP16.sinc"
+@include "instr16/ProgCtrl.sinc"
+@include "instr16/PushPopReg.sinc"
+@include "instr16/CC2Dreg.sinc"
+@include "instr16/CacheCtrl.sinc"
+@include "instr16/CC2Stat.sinc"
+@include "instr16/PushPopMult.sinc"
+@include "instr16/CCMV.sinc"
+@include "instr16/CCFlag.sinc"
+@include "instr16/BrCC.sinc"
+
+## 32-bits instructions ##
+
+
+## 64-bits instructions ##
+

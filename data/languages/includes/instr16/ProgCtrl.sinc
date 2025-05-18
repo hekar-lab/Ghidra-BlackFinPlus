@@ -1,0 +1,147 @@
+## Basic Program Sequencer Control Functions (ProgCtrl)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |......opc......|......reg......|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token pgcInstr16 (16)
+	pgcSig           = ( 8,15) 
+	pgcOpc           = ( 4, 7) 
+	pgcReg           = ( 0, 3) 
+	pgcRegUImm       = ( 0, 3) 
+	pgcRegH          = ( 3, 3) 
+	pgcRegLDReg      = ( 0, 2) 
+	pgcRegLPReg      = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables pgcRegLDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables pgcRegLPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Operations ###
+
+define pcodeop idle;
+define pcodeop csync;
+define pcodeop ssync;
+define pcodeop emuexcpt;
+define pcodeop raise;
+define pcodeop excpt;
+
+
+### Instructions ###
+
+ProgCtrl:^"Return" "RTS"
+	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x0 
+{
+	return [RETS];
+}
+ProgCtrl:^"Return" "RTI"
+	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x1 
+{
+	return [RETI];
+}
+ProgCtrl:^"Return" "RTX"
+	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x2 
+{
+	return [RETX];
+}
+ProgCtrl:^"Return" "RTN"
+	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x3 
+{
+	return [RETN];
+}
+ProgCtrl:^"Return" "RTE"
+	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x4 
+{
+	return [RETE];
+}
+ProgCtrl:^"Sync" "IDLE"
+	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x0 
+{
+	idle();
+}
+ProgCtrl:^"Sync" "CSYNC"
+	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x3 
+{
+	csync();
+}
+ProgCtrl:^"Sync" "SSYNC"
+	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x4 
+{
+	ssync();
+}
+ProgCtrl:^"Mode" "EMUEXCPT"
+	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x5 
+{
+	emuexcpt();
+}
+ProgCtrl:^"IMaskMv" "CLI "pgcRegLDReg
+	is pgcSig=0x00 & pgcOpc=0x3 & pgcRegLDReg & pgcRegH=0x0 
+{
+	local imaskAddr:4 = 0x1FC02104;
+	pgcRegLDReg = *[ram]:4 imaskAddr;
+	*[ram]:4 imaskAddr = 0x0;
+}
+ProgCtrl:^"IMaskMv" "STI "pgcRegLDReg
+	is pgcSig=0x00 & pgcOpc=0x4 & pgcRegLDReg & pgcRegH=0x0 
+{
+	local imaskAddr:4 = 0x1FC02104;
+	*[ram]:4 imaskAddr = pgcRegLDReg;
+}
+ProgCtrl:^"Jump" "JUMP ("pgcRegLPReg")"
+	is pgcSig=0x00 & pgcOpc=0x5 & pgcRegLPReg & pgcRegH=0x0 
+{
+	goto [pgcRegLPReg];
+}
+ProgCtrl:^"Jump" "JUMP (PC + "pgcRegLPReg")"
+	is pgcSig=0x00 & pgcOpc=0x8 & pgcRegLPReg & pgcRegH=0x0 
+{
+	goto [pgcRegLPReg + PC];
+}
+ProgCtrl:^"Call" "CALL ("pgcRegLPReg")"
+	is pgcSig=0x00 & pgcOpc=0x6 & pgcRegLPReg & pgcRegH=0x0 
+{
+	RETS = inst_next;
+	call [pgcRegLPReg];
+}
+ProgCtrl:^"Call" "CALL (PC + "pgcRegLPReg")"
+	is pgcSig=0x00 & pgcOpc=0x7 & pgcRegLPReg & pgcRegH=0x0 
+{
+	RETS = inst_next;
+	call [pgcRegLPReg + PC];
+}
+ProgCtrl:^"Raise" "RAISE "pgcRegUImm
+	is pgcSig=0x00 & pgcOpc=0x9 & pgcRegUImm 
+{
+	raise(pgcRegUImm:1);
+}
+ProgCtrl:^"Raise" "EXCPT "pgcRegUImm
+	is pgcSig=0x00 & pgcOpc=0xa & pgcRegUImm 
+{
+	excpt(pgcRegUImm:1);
+}
+ProgCtrl:^"TestSet" "TESTSET ("pgcRegLPReg")"
+	is pgcSig=0x00 & pgcOpc=0xb & pgcRegLPReg & pgcRegH=0x0 
+{
+	local testVal:1 = *[ram]:1 pgcRegLPReg;
+	CC = 0x0;
+	if (testVal != 0x0) goto <is_set>;
+	CC = 0x1;
+<is_set>
+	*[ram]:1 pgcRegLPReg = testVal | 0x80;
+}
+ProgCtrl:^"Sync" "STI IDLE "pgcRegLDReg
+	is pgcSig=0x00 & pgcOpc=0xc & pgcRegLDReg & pgcRegH=0x0 
+{
+	local imaskAddr:4 = 0x1FC02104;
+	*[ram]:4 imaskAddr = pgcRegLDReg;
+	idle();
+}
+
+
+:^ProgCtrl is ProgCtrl { build ProgCtrl; }

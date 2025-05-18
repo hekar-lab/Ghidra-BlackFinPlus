@@ -1,0 +1,45 @@
+## Move CC conditional bit, to and from Dreg (CC2Dreg)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |..opc..|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token c2dInstr16 (16)
+	c2dSig           = ( 5,15) 
+	c2dOpc           = ( 3, 4) 
+	c2dRegDReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables c2dRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+
+
+### Instructions ###
+
+CC2Dreg:^"CCToDreg" c2dRegDReg" = CC"
+	is c2dSig=0x010 & c2dOpc=0x0 & c2dRegDReg 
+{
+	c2dRegDReg = zext(CC);
+}
+CC2Dreg:^"MvToCC" "CC = "c2dRegDReg
+	is c2dSig=0x010 & c2dOpc=0x1 & c2dRegDReg 
+{
+	CC = c2dRegDReg != 0x0;
+}
+CC2Dreg:^"CCToDreg" c2dRegDReg" = !CC"
+	is c2dSig=0x010 & c2dOpc=0x2 & c2dRegDReg 
+{
+	c2dRegDReg = zext(!CC);
+}
+CC2Dreg:^"MvToCC" "CC = !CC"
+	is c2dSig=0x010 & c2dOpc=0x3 
+{
+	CC = !CC;
+}
+
+
+:^CC2Dreg is CC2Dreg { build CC2Dreg; }
