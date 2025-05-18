@@ -836,7 +836,11 @@ with : opcode08=0xe1 ... {
 ## |.sw.(imm24s2)..................................................|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
-callaAddr: addr is callaSwH ; callaSwL [addr = inst_start + ((callaSwH << 16 | callaSwL) << 1);]{ export *[ram]:4 addr; }
+callaAddr: addr is callaSwH ; callaSwL [
+	addr = inst_start + ((callaSwH << 16 | callaSwL) * 2);
+]{ 
+	export *[ram]:4 addr;
+}
 
 with : opcode07=0x71 ... {
 :JumpAbs "JUMP.L" callaAddr is callaS=0x0 ... & callaAddr { goto callaAddr; }

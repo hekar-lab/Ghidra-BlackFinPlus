@@ -67,7 +67,7 @@ define token inst16 (16)
 
 # CallA Tokens
 	callaS        = ( 8, 8)
-	callaSwH      = ( 0, 7)
+	callaSwH      = ( 0, 7) signed
 
 # Comp3op Tokens
 	cp3opOpc      = ( 9,11)
@@ -391,7 +391,8 @@ define token inst32 (16)
     dsiSrcH    = ( 0, 2)
 
 # Jump32 Tokens
-    jmpImmH    = ( 0,15)
+    jmpImmUH   = ( 0,15)
+    jmpImmH    = ( 0,15) signed
 
 # LdImm Tokens
     ldiImmH    = ( 0,15)
