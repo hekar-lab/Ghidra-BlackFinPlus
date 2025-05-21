@@ -75,4 +75,4 @@ CacheCtrl:^"CacheCtrl" "IFLUSH ["cctRegPReg"++]"
 }
 
 
-:^CacheCtrl is CacheCtrl { build CacheCtrl; }
+All:^CacheCtrl is CacheCtrl { build CacheCtrl; }

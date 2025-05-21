@@ -1,0 +1,202 @@
+## Load/Store (LdSt)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 0 | 0 | 1 |..sz...|.w.|..aop..|.z.|....ptr....|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token ldstInstr16 (16)
+	ldstSig          = (12,15) 
+	ldstSz           = (10,11) 
+	ldstW            = ( 9, 9) 
+	ldstAop          = ( 7, 8) 
+	ldstZ            = ( 6, 6) 
+	ldstPtrPReg      = ( 3, 5) 
+	ldstRegDReg      = ( 0, 2) 
+	ldstRegPReg      = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables ldstRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables ldstRegPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables ldstPtrPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+LdSt:^"LdM32bitToDreg" ldstRegDReg" = ["ldstPtrPReg"++]"
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x0 & ldstAop=0x0 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = *[ram]:4 ldstPtrPReg;
+	ldstPtrPReg = ldstPtrPReg + 0x4;
+}
+LdSt:^"LdM32bitToDreg" ldstRegDReg" = ["ldstPtrPReg"--]"
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x0 & ldstAop=0x1 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = *[ram]:4 ldstPtrPReg;
+	ldstPtrPReg = ldstPtrPReg - 0x4;
+}
+LdSt:^"LdM32bitToDreg" ldstRegDReg" = ["ldstPtrPReg"]"
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x0 & ldstAop=0x2 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = *[ram]:4 ldstPtrPReg;
+}
+LdSt:^"LdM32bitToPreg" ldstRegPReg" = ["ldstPtrPReg"++]"
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x0 & ldstAop=0x0 & ldstZ=0x1 & ldstPtrPReg & ldstRegPReg 
+{
+	ldstRegPReg = *[ram]:4 ldstPtrPReg;
+	ldstPtrPReg = ldstPtrPReg + 0x4;
+}
+LdSt:^"LdM32bitToPreg" ldstRegPReg" = ["ldstPtrPReg"--]"
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x0 & ldstAop=0x1 & ldstZ=0x1 & ldstPtrPReg & ldstRegPReg 
+{
+	ldstRegPReg = *[ram]:4 ldstPtrPReg;
+	ldstPtrPReg = ldstPtrPReg - 0x4;
+}
+LdSt:^"LdM32bitToPreg" ldstRegPReg" = ["ldstPtrPReg"]"
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x0 & ldstAop=0x2 & ldstZ=0x1 & ldstPtrPReg & ldstRegPReg 
+{
+	ldstRegPReg = *[ram]:4 ldstPtrPReg;
+}
+LdSt:^"LdM16bitToDreg" ldstRegDReg" = W["ldstPtrPReg"++] (Z)"
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x0 & ldstAop=0x0 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = zext(*[ram]:2 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg + 0x2;
+}
+LdSt:^"LdM16bitToDreg" ldstRegDReg" = W["ldstPtrPReg"--] (Z)"
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x0 & ldstAop=0x1 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = zext(*[ram]:2 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg - 0x2;
+}
+LdSt:^"LdM16bitToDreg" ldstRegDReg" = W["ldstPtrPReg"] (Z)"
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x0 & ldstAop=0x2 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = zext(*[ram]:2 ldstPtrPReg);
+}
+LdSt:^"LdM16bitToDreg" ldstRegDReg" = W["ldstPtrPReg"++] (X)"
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x0 & ldstAop=0x0 & ldstZ=0x1 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = sext(*[ram]:2 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg + 0x2;
+}
+LdSt:^"LdM16bitToDreg" ldstRegDReg" = W["ldstPtrPReg"--] (X)"
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x0 & ldstAop=0x1 & ldstZ=0x1 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = sext(*[ram]:2 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg - 0x2;
+}
+LdSt:^"LdM16bitToDreg" ldstRegDReg" = W["ldstPtrPReg"] (X)"
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x0 & ldstAop=0x2 & ldstZ=0x1 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = sext(*[ram]:2 ldstPtrPReg);
+}
+LdSt:^"LdM08bitToDreg" ldstRegDReg" = B["ldstPtrPReg"++] (Z)"
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x0 & ldstAop=0x0 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = zext(*[ram]:1 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg + 0x1;
+}
+LdSt:^"LdM08bitToDreg" ldstRegDReg" = B["ldstPtrPReg"--] (Z)"
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x0 & ldstAop=0x1 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = zext(*[ram]:1 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg - 0x1;
+}
+LdSt:^"LdM08bitToDreg" ldstRegDReg" = B["ldstPtrPReg"] (Z)"
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x0 & ldstAop=0x2 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = zext(*[ram]:1 ldstPtrPReg);
+}
+LdSt:^"LdM08bitToDreg" ldstRegDReg" = B["ldstPtrPReg"++] (X)"
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x0 & ldstAop=0x0 & ldstZ=0x1 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = sext(*[ram]:1 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg + 0x1;
+}
+LdSt:^"LdM08bitToDreg" ldstRegDReg" = B["ldstPtrPReg"--] (X)"
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x0 & ldstAop=0x1 & ldstZ=0x1 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = sext(*[ram]:1 ldstPtrPReg);
+	ldstPtrPReg = ldstPtrPReg - 0x1;
+}
+LdSt:^"LdM08bitToDreg" ldstRegDReg" = B["ldstPtrPReg"] (X)"
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x0 & ldstAop=0x2 & ldstZ=0x1 & ldstPtrPReg & ldstRegDReg 
+{
+	ldstRegDReg = sext(*[ram]:1 ldstPtrPReg);
+}
+LdSt:^"StDregToM32bit" "["ldstPtrPReg"++] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x1 & ldstAop=0x0 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:4 ldstPtrPReg = ldstRegDReg:4;
+	ldstPtrPReg = ldstPtrPReg + 0x4;
+}
+LdSt:^"StDregToM32bit" "["ldstPtrPReg"--] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x1 & ldstAop=0x1 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:4 ldstPtrPReg = ldstRegDReg:4;
+	ldstPtrPReg = ldstPtrPReg - 0x4;
+}
+LdSt:^"StDregToM32bit" "["ldstPtrPReg"] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x1 & ldstAop=0x2 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:4 ldstPtrPReg = ldstRegDReg:4;
+}
+LdSt:^"StPregToM32bit" "["ldstPtrPReg"++] = "ldstRegPReg
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x1 & ldstAop=0x0 & ldstZ=0x1 & ldstPtrPReg & ldstRegPReg 
+{
+	*[ram]:4 ldstPtrPReg = ldstRegPReg:4;
+	ldstPtrPReg = ldstPtrPReg + 0x4;
+}
+LdSt:^"StPregToM32bit" "["ldstPtrPReg"--] = "ldstRegPReg
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x1 & ldstAop=0x1 & ldstZ=0x1 & ldstPtrPReg & ldstRegPReg 
+{
+	*[ram]:4 ldstPtrPReg = ldstRegPReg:4;
+	ldstPtrPReg = ldstPtrPReg - 0x4;
+}
+LdSt:^"StPregToM32bit" "["ldstPtrPReg"] = "ldstRegPReg
+	is ldstSig=0x9 & ldstSz=0x0 & ldstW=0x1 & ldstAop=0x2 & ldstZ=0x1 & ldstPtrPReg & ldstRegPReg 
+{
+	*[ram]:4 ldstPtrPReg = ldstRegPReg:4;
+}
+LdSt:^"StDregLToM16bit" "W["ldstPtrPReg"++] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x1 & ldstAop=0x0 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:2 ldstPtrPReg = ldstRegDReg:2;
+	ldstPtrPReg = ldstPtrPReg + 0x2;
+}
+LdSt:^"StDregLToM16bit" "W["ldstPtrPReg"--] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x1 & ldstAop=0x1 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:2 ldstPtrPReg = ldstRegDReg:2;
+	ldstPtrPReg = ldstPtrPReg - 0x2;
+}
+LdSt:^"StDregLToM16bit" "W["ldstPtrPReg"] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x1 & ldstW=0x1 & ldstAop=0x2 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:2 ldstPtrPReg = ldstRegDReg:2;
+}
+LdSt:^"StDregLToM08bit" "B["ldstPtrPReg"++] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x1 & ldstAop=0x0 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:1 ldstPtrPReg = ldstRegDReg:1;
+	ldstPtrPReg = ldstPtrPReg + 0x1;
+}
+LdSt:^"StDregLToM08bit" "B["ldstPtrPReg"--] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x1 & ldstAop=0x1 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:1 ldstPtrPReg = ldstRegDReg:1;
+	ldstPtrPReg = ldstPtrPReg - 0x1;
+}
+LdSt:^"StDregLToM08bit" "B["ldstPtrPReg"] = "ldstRegDReg
+	is ldstSig=0x9 & ldstSz=0x2 & ldstW=0x1 & ldstAop=0x2 & ldstZ=0x0 & ldstPtrPReg & ldstRegDReg 
+{
+	*[ram]:1 ldstPtrPReg = ldstRegDReg:1;
+}
+
+
+All:^LdSt is LdSt { build LdSt; }

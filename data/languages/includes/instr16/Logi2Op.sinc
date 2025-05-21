@@ -1,0 +1,66 @@
+## Logic Binary Operations (Logi2Op)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 1 | 0 | 0 | 1 |....opc....|........src........|....dst....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token l2oInstr16 (16)
+	l2oSig           = (11,15) 
+	l2oOpc           = ( 8,10) 
+	l2oSrcUImm       = ( 3, 7) 
+	l2oDstDReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables l2oDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+
+
+### Instructions ###
+
+Logi2Op:^"ShiftBitTst" "CC = !BITTST("l2oDstDReg", "l2oSrcUImm")"
+	is l2oSig=0x09 & l2oOpc=0x0 & l2oSrcUImm & l2oDstDReg 
+{
+	CC = 0x0 == (l2oDstDReg & (0x1 << l2oSrcUImm));
+}
+Logi2Op:^"ShiftBitTst" "CC = BITTST("l2oDstDReg", "l2oSrcUImm")"
+	is l2oSig=0x09 & l2oOpc=0x1 & l2oSrcUImm & l2oDstDReg 
+{
+	CC = 0x0 != (l2oDstDReg & (0x1 << l2oSrcUImm));
+}
+Logi2Op:^"Shift_BitMod" "BITSET("l2oDstDReg", "l2oSrcUImm")"
+	is l2oSig=0x09 & l2oOpc=0x2 & l2oSrcUImm & l2oDstDReg 
+{
+	l2oDstDReg = l2oDstDReg | (0x1 << l2oSrcUImm);
+}
+Logi2Op:^"Shift_BitMod" "BITTGL("l2oDstDReg", "l2oSrcUImm")"
+	is l2oSig=0x09 & l2oOpc=0x3 & l2oSrcUImm & l2oDstDReg 
+{
+	l2oDstDReg = l2oDstDReg ^ (0x1 << l2oSrcUImm);
+}
+Logi2Op:^"Shift_BitMod" "BITCLR("l2oDstDReg", "l2oSrcUImm")"
+	is l2oSig=0x09 & l2oOpc=0x4 & l2oSrcUImm & l2oDstDReg 
+{
+	l2oDstDReg = l2oDstDReg & ~(0x1 << l2oSrcUImm);
+}
+Logi2Op:^"AShift32" l2oDstDReg" >>>= "l2oSrcUImm
+	is l2oSig=0x09 & l2oOpc=0x5 & l2oSrcUImm & l2oDstDReg 
+{
+	l2oDstDReg = l2oDstDReg s>> l2oSrcUImm;
+}
+Logi2Op:^"LShift" l2oDstDReg" >>= "l2oSrcUImm
+	is l2oSig=0x09 & l2oOpc=0x6 & l2oSrcUImm & l2oDstDReg 
+{
+	l2oDstDReg = l2oDstDReg >> l2oSrcUImm;
+}
+Logi2Op:^"LShift" l2oDstDReg" <<= "l2oSrcUImm
+	is l2oSig=0x09 & l2oOpc=0x7 & l2oSrcUImm & l2oDstDReg 
+{
+	l2oDstDReg = l2oDstDReg << l2oSrcUImm;
+}
+
+
+All:^Logi2Op is Logi2Op { build Logi2Op; }

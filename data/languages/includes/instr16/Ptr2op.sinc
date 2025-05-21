@@ -1,0 +1,67 @@
+## Pointer Arithmetic Operations (Ptr2op)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 1 | 0 | 0 | 0 | 1 | 0 |....opc....|....src....|....dst....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token p2oInstr16 (16)
+	p2oSig           = ( 9,15) 
+	p2oOpc           = ( 6, 8) 
+	p2oSrcPReg       = ( 3, 5) 
+	p2oDstPReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables p2oDstPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables p2oSrcPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+Ptr2op:^"DagAdd32" p2oDstPReg" -= "p2oSrcPReg
+	is p2oSig=0x22 & p2oOpc=0x0 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = p2oDstPReg - p2oSrcPReg;
+}
+Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" << 2"
+	is p2oSig=0x22 & p2oOpc=0x1 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = p2oSrcPReg << 0x2;
+}
+Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" << 1"
+	is p2oSig=0x22 & p2oOpc=0x2 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = p2oSrcPReg << 0x1;
+}
+Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" >> 2"
+	is p2oSig=0x22 & p2oOpc=0x3 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = p2oSrcPReg >> 0x2;
+}
+Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" >> 1"
+	is p2oSig=0x22 & p2oOpc=0x4 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = p2oSrcPReg >> 0x1;
+}
+Ptr2op:^"DagAdd32" p2oDstPReg" += "p2oSrcPReg" (BREV)"
+	is p2oSig=0x22 & p2oOpc=0x5 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = p2oDstPReg + p2oSrcPReg;
+}
+Ptr2op:^"DagAddSubShift" p2oDstPReg" +<<1= "p2oSrcPReg
+	is p2oSig=0x22 & p2oOpc=0x6 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = (p2oDstPReg + p2oSrcPReg) << 0x1;
+}
+Ptr2op:^"DagAddSubShift" p2oDstPReg" +<<2= "p2oSrcPReg
+	is p2oSig=0x22 & p2oOpc=0x7 & p2oSrcPReg & p2oDstPReg 
+{
+	p2oDstPReg = (p2oDstPReg + p2oSrcPReg) << 0x2;
+}
+
+
+All:^Ptr2op is Ptr2op { build Ptr2op; }

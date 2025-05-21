@@ -1,0 +1,82 @@
+## Load/Store postmodify addressing, pregister based (LdStPmod)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 0 | 0 | 0 |.w.|..aop..|....reg....|....idx....|....ptr....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lspInstr16 (16)
+	lspSig           = (12,15) 
+	lspW             = (11,11) 
+	lspAop           = ( 9,10) 
+	lspRegDReg       = ( 6, 8) 
+	lspRegDRegL      = ( 6, 8) 
+	lspRegDRegH      = ( 6, 8) 
+	lspIdxPReg       = ( 3, 5) 
+	lspPtrPReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables lspRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lspRegDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables lspRegDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables lspPtrPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lspIdxPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+LdStPmod:^"LdM32bitToDreg" lspRegDReg" = ["lspPtrPReg"++"lspIdxPReg"]"
+	is lspSig=0x8 & lspW=0x0 & lspAop=0x0 & lspRegDReg & lspIdxPReg & lspPtrPReg 
+{
+	lspRegDReg = *[ram]:4 lspPtrPReg;
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"LdM16bitToDregL" lspRegDRegL" = W["lspPtrPReg"++"lspIdxPReg"]"
+	is lspSig=0x8 & lspW=0x0 & lspAop=0x1 & lspRegDRegL & lspIdxPReg & lspPtrPReg 
+{
+	lspRegDRegL = *[ram]:2 lspPtrPReg;
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"LdM16bitToDregH" lspRegDRegH" = W["lspPtrPReg"++"lspIdxPReg"]"
+	is lspSig=0x8 & lspW=0x0 & lspAop=0x2 & lspRegDRegH & lspIdxPReg & lspPtrPReg 
+{
+	lspRegDRegH = *[ram]:2 lspPtrPReg;
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"StDregToM32bit" "["lspPtrPReg"++"lspIdxPReg"] = "lspRegDReg
+	is lspSig=0x8 & lspW=0x1 & lspAop=0x0 & lspRegDReg & lspIdxPReg & lspPtrPReg 
+{
+	*[ram]:4 lspPtrPReg = lspRegDReg;
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"StDregLToM16bit" "W["lspPtrPReg"++"lspIdxPReg"] = "lspRegDRegL
+	is lspSig=0x8 & lspW=0x1 & lspAop=0x1 & lspRegDRegL & lspIdxPReg & lspPtrPReg 
+{
+	*[ram]:2 lspPtrPReg = lspRegDRegL;
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"StDregHToM16bit" "W["lspPtrPReg"++"lspIdxPReg"] = "lspRegDRegH
+	is lspSig=0x8 & lspW=0x1 & lspAop=0x2 & lspRegDRegH & lspIdxPReg & lspPtrPReg 
+{
+	*[ram]:2 lspPtrPReg = lspRegDRegH;
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"LdM16bitToDreg" lspRegDReg" = W["lspPtrPReg"++"lspIdxPReg"] (Z)"
+	is lspSig=0x8 & lspW=0x0 & lspAop=0x3 & lspRegDReg & lspIdxPReg & lspPtrPReg 
+{
+	lspRegDReg = zext(*[ram]:2 lspPtrPReg);
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+LdStPmod:^"LdM16bitToDreg" lspRegDReg" = W["lspPtrPReg"++"lspIdxPReg"] (X)"
+	is lspSig=0x8 & lspW=0x1 & lspAop=0x3 & lspRegDReg & lspIdxPReg & lspPtrPReg 
+{
+	lspRegDReg = sext(*[ram]:2 lspPtrPReg);
+	lspPtrPReg = lspPtrPReg + lspIdxPReg;
+}
+
+
+All:^LdStPmod is LdStPmod { build LdStPmod; }

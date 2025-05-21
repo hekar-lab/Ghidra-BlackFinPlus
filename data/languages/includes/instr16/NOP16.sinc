@@ -17,4 +17,4 @@ NOP16:^"NOP"
 	is nopSig=0x0000 {}
 
 
-:^NOP16 is NOP16 { build NOP16; }
+All:^NOP16 is NOP16 { build NOP16; }

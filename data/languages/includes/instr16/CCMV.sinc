@@ -22,8 +22,8 @@ define token cmvInstr16 (16)
 
 attach variables cmvDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables cmvSrcDReg [R0 R1 R2 R3 R4 R5 R6 R7];
-attach variables cmvSrcPReg [P0 P1 P2 P3 P4 P5 SP FP];
 attach variables cmvDstPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables cmvSrcPReg [P0 P1 P2 P3 P4 P5 SP FP];
 
 
 ### Instructions ###
@@ -86,4 +86,4 @@ CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcPReg
 }
 
 
-:^CCMV is CCMV { build CCMV; }
+All:^CCMV is CCMV { build CCMV; }

@@ -42,4 +42,4 @@ CC2Dreg:^"MvToCC" "CC = !CC"
 }
 
 
-:^CC2Dreg is CC2Dreg { build CC2Dreg; }
+All:^CC2Dreg is CC2Dreg { build CC2Dreg; }

@@ -1,0 +1,149 @@
+## Load/Store (DspLdSt)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 0 | 0 | 1 | 1 | 1 |.w.|..aop..|...i...|...m...|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dlsInstr16 (16)
+	dlsSig           = (10,15) 
+	dlsW             = ( 9, 9) 
+	dlsAop           = ( 7, 8) 
+	dlsIIReg         = ( 5, 6) 
+	dlsM             = ( 3, 4) 
+	dlsMMReg         = ( 3, 4) 
+	dlsRegDReg       = ( 0, 2) 
+	dlsRegDRegL      = ( 0, 2) 
+	dlsRegDRegH      = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables dlsRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dlsRegDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dlsRegDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dlsIIReg [I0 I1 I2 I3];
+attach variables dlsMMReg [M0 M1 M2 M3];
+
+
+### Instructions ###
+
+DspLdSt:^"LdM32bitToDreg" dlsRegDReg" = ["dlsIIReg"++]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x0 & dlsIIReg & dlsM=0x0 & dlsRegDReg 
+{
+	dlsRegDReg = *[ram]:4 dlsIIReg;
+	dlsIIReg = dlsIIReg + 0x4;
+}
+DspLdSt:^"LdM16bitToDregL" dlsRegDRegL" = W["dlsIIReg"++]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x0 & dlsIIReg & dlsM=0x1 & dlsRegDRegL 
+{
+	dlsRegDRegL = *[ram]:2 dlsIIReg;
+	dlsIIReg = dlsIIReg + 0x2;
+}
+DspLdSt:^"LdM16bitToDregH" dlsRegDRegH" = W["dlsIIReg"++]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x0 & dlsIIReg & dlsM=0x2 & dlsRegDRegH 
+{
+	dlsRegDRegH = *[ram]:2 dlsIIReg;
+	dlsIIReg = dlsIIReg + 0x2;
+}
+DspLdSt:^"LdM32bitToDreg" dlsRegDReg" = ["dlsIIReg"--]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x1 & dlsIIReg & dlsM=0x0 & dlsRegDReg 
+{
+	dlsRegDReg = *[ram]:4 dlsIIReg;
+	dlsIIReg = dlsIIReg - 0x4;
+}
+DspLdSt:^"LdM16bitToDregL" dlsRegDRegL" = W["dlsIIReg"--]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x1 & dlsIIReg & dlsM=0x1 & dlsRegDRegL 
+{
+	dlsRegDRegL = *[ram]:2 dlsIIReg;
+	dlsIIReg = dlsIIReg - 0x2;
+}
+DspLdSt:^"LdM16bitToDregH" dlsRegDRegH" = W["dlsIIReg"--]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x1 & dlsIIReg & dlsM=0x2 & dlsRegDRegH 
+{
+	dlsRegDRegH = *[ram]:2 dlsIIReg;
+	dlsIIReg = dlsIIReg - 0x2;
+}
+DspLdSt:^"LdM32bitToDreg" dlsRegDReg" = ["dlsIIReg"]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x2 & dlsIIReg & dlsM=0x0 & dlsRegDReg 
+{
+	dlsRegDReg = *[ram]:4 dlsIIReg;
+}
+DspLdSt:^"LdM16bitToDregL" dlsRegDRegL" = W["dlsIIReg"]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x2 & dlsIIReg & dlsM=0x1 & dlsRegDRegL 
+{
+	dlsRegDRegL = *[ram]:2 dlsIIReg;
+}
+DspLdSt:^"LdM16bitToDregH" dlsRegDRegH" = W["dlsIIReg"]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x2 & dlsIIReg & dlsM=0x2 & dlsRegDRegH 
+{
+	dlsRegDRegH = *[ram]:2 dlsIIReg;
+}
+DspLdSt:^"StDregToM32bit" "["dlsIIReg"++] = "dlsRegDReg
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x0 & dlsIIReg & dlsM=0x0 & dlsRegDReg 
+{
+	*[ram]:4 dlsIIReg = dlsRegDReg;
+	dlsIIReg = dlsIIReg + 0x4;
+}
+DspLdSt:^"StDregLToM16bit" "W["dlsIIReg"++] = "dlsRegDRegL
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x0 & dlsIIReg & dlsM=0x1 & dlsRegDRegL 
+{
+	*[ram]:2 dlsIIReg = dlsRegDRegL;
+	dlsIIReg = dlsIIReg + 0x2;
+}
+DspLdSt:^"StDregHToM16bit" "W["dlsIIReg"++] = "dlsRegDRegH
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x0 & dlsIIReg & dlsM=0x2 & dlsRegDRegH 
+{
+	*[ram]:2 dlsIIReg = dlsRegDRegH;
+	dlsIIReg = dlsIIReg + 0x2;
+}
+DspLdSt:^"StDregToM32bit" "["dlsIIReg"--] = "dlsRegDReg
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x1 & dlsIIReg & dlsM=0x0 & dlsRegDReg 
+{
+	*[ram]:4 dlsIIReg = dlsRegDReg;
+	dlsIIReg = dlsIIReg - 0x4;
+}
+DspLdSt:^"StDregLToM16bit" "W["dlsIIReg"--] = "dlsRegDRegL
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x1 & dlsIIReg & dlsM=0x1 & dlsRegDRegL 
+{
+	*[ram]:2 dlsIIReg = dlsRegDRegL;
+	dlsIIReg = dlsIIReg - 0x2;
+}
+DspLdSt:^"StDregHToM16bit" "W["dlsIIReg"--] = "dlsRegDRegH
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x1 & dlsIIReg & dlsM=0x2 & dlsRegDRegH 
+{
+	*[ram]:2 dlsIIReg = dlsRegDRegH;
+	dlsIIReg = dlsIIReg - 0x2;
+}
+DspLdSt:^"StDregToM32bit" "["dlsIIReg"] = "dlsRegDReg
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x2 & dlsIIReg & dlsM=0x0 & dlsRegDReg 
+{
+	*[ram]:4 dlsIIReg = dlsRegDReg;
+}
+DspLdSt:^"StDregLToM16bit" "W["dlsIIReg"] = "dlsRegDRegL
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x2 & dlsIIReg & dlsM=0x1 & dlsRegDRegL 
+{
+	*[ram]:2 dlsIIReg = dlsRegDRegL;
+}
+DspLdSt:^"StDregHToM16bit" "W["dlsIIReg"] = "dlsRegDRegH
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x2 & dlsIIReg & dlsM=0x2 & dlsRegDRegH 
+{
+	*[ram]:2 dlsIIReg = dlsRegDRegH;
+}
+DspLdSt:^"LdM32bitToDreg" dlsRegDReg" = ["dlsIIReg"++"dlsMMReg"]"
+	is dlsSig=0x27 & dlsW=0x0 & dlsAop=0x3 & dlsIIReg & dlsMMReg & dlsRegDReg 
+{
+	dlsRegDReg = *[ram]:4 dlsIIReg;
+	dlsIIReg = dlsIIReg + dlsMMReg;
+}
+DspLdSt:^"StDregToM32bit" "["dlsIIReg"++"dlsMMReg"] = "dlsRegDReg
+	is dlsSig=0x27 & dlsW=0x1 & dlsAop=0x3 & dlsIIReg & dlsMMReg & dlsRegDReg 
+{
+	*[ram]:4 dlsIIReg = dlsRegDReg;
+	dlsIIReg = dlsIIReg + dlsMMReg;
+}
+
+
+All:^DspLdSt is DspLdSt { build DspLdSt; }

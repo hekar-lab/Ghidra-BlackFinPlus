@@ -58,4 +58,4 @@ CC2Stat:^"CCToStat16" ccsCbitUImm" ^= CC"
 }
 
 
-:^CC2Stat is CC2Stat { build CC2Stat; }
+All:^CC2Stat is CC2Stat { build CC2Stat; }

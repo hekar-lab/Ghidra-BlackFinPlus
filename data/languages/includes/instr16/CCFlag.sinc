@@ -1,7 +1,7 @@
 ## Set CC conditional bit (CCFlag)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 0 | 0 | 0 | 0 | 1 |.i.|....opc....|.g.|.....x.....|.....y.....|
+## | 0 | 0 | 0 | 0 | 1 |.i.|....opc....|.g.|.....y.....|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 ### Tokens ###
@@ -22,10 +22,10 @@ define token cfgInstr16 (16)
 
 ### Variables ###
 
-attach variables cfgXDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables cfgYDReg [R0 R1 R2 R3 R4 R5 R6 R7];
-attach variables cfgXPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables cfgXDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables cfgYPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables cfgXPReg [P0 P1 P2 P3 P4 P5 SP FP];
 
 
 ### Instructions ###
@@ -147,4 +147,4 @@ CCFlag:^"CompAccumulators" "CC = A0 <= A1"
 }
 
 
-:^CCFlag is CCFlag { build CCFlag; }
+All:^CCFlag is CCFlag { build CCFlag; }

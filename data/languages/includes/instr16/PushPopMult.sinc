@@ -2280,4 +2280,4 @@ PushPopMult:^"PushPopMul16" "(R7:7, P5:5) = [SP++]"
 }
 
 
-:^PushPopMult is PushPopMult { build PushPopMult; }
+All:^PushPopMult is PushPopMult { build PushPopMult; }

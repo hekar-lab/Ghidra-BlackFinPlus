@@ -10,9 +10,24 @@
 @include "instr16/CCMV.sinc"
 @include "instr16/CCFlag.sinc"
 @include "instr16/BrCC.sinc"
+@include "instr16/UJump.sinc"
+@include "instr16/RegMv.sinc"
+@include "instr16/ALU2op.sinc"
+@include "instr16/Ptr2op.sinc"
+@include "instr16/Logi2Op.sinc"
+@include "instr16/Comp3op.sinc"
+@include "instr16/CompI2op.sinc"
+@include "instr16/LdStPmod.sinc"
+@include "instr16/LdSt.sinc"
+@include "instr16/DspLdSt.sinc"
+@include "instr16/DAGModIm.sinc"
+@include "instr16/DAGModIk.sinc"
+@include "instr16/LdStII.sinc"
+@include "instr16/LdStIIFP.sinc"
 
 ## 32-bits instructions ##
 
+@include "instr32/NOP32.sinc"
 
 ## 64-bits instructions ##
 

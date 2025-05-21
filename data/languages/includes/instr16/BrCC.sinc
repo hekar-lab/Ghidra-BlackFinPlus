@@ -22,9 +22,9 @@ BrCC:^"BrCC" "if !CC JUMP "addr
 	addr = inst_start + brcOffSImm * 0x2;
 ] {
 	local addrPtr:4 = *[ram]:4 addr:4;
-	if (CC) goto <workaround>;
+	if (CC) goto <ignore_jump>;
 	goto [addrPtr];
-<workaround>
+<ignore_jump>
 }
 BrCC:^"BrCC" "if !CC JUMP "addr"(BP)"
 	is brcSig=0x1 & brcT=0x0 & brcB=0x1 & brcOffSImm 
@@ -32,9 +32,9 @@ BrCC:^"BrCC" "if !CC JUMP "addr"(BP)"
 	addr = inst_start + brcOffSImm * 0x2;
 ] {
 	local addrPtr:4 = *[ram]:4 addr:4;
-	if (CC) goto <workaround>;
+	if (CC) goto <ignore_jump>;
 	goto [addrPtr];
-<workaround>
+<ignore_jump>
 }
 BrCC:^"BrCC" "if CC JUMP "addr
 	is brcSig=0x1 & brcT=0x1 & brcB=0x0 & brcOffSImm 
@@ -42,9 +42,9 @@ BrCC:^"BrCC" "if CC JUMP "addr
 	addr = inst_start + brcOffSImm * 0x2;
 ] {
 	local addrPtr:4 = *[ram]:4 addr:4;
-	if (!CC) goto <workaround>;
+	if (!CC) goto <ignore_jump>;
 	goto [addrPtr];
-<workaround>
+<ignore_jump>
 }
 BrCC:^"BrCC" "if CC JUMP "addr"(BP)"
 	is brcSig=0x1 & brcT=0x1 & brcB=0x1 & brcOffSImm 
@@ -52,10 +52,10 @@ BrCC:^"BrCC" "if CC JUMP "addr"(BP)"
 	addr = inst_start + brcOffSImm * 0x2;
 ] {
 	local addrPtr:4 = *[ram]:4 addr:4;
-	if (!CC) goto <workaround>;
+	if (!CC) goto <ignore_jump>;
 	goto [addrPtr];
-<workaround>
+<ignore_jump>
 }
 
 
-:^BrCC is BrCC { build BrCC; }
+All:^BrCC is BrCC { build BrCC; }
