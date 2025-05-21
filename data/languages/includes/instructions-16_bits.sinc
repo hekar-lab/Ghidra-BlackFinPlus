@@ -804,7 +804,7 @@ with : lsiiW=0x0 {
 with : lsiiW=0x1 {
 :StDregToM32bit  lsiiImm4 = lsiiDReg    is lsiiOp=0x0 & lsiiImm4 & lsiiDReg { *[ram]:4 lsiiImm4 = lsiiDReg; }
 :StDregLToM16bit "W"lsiiImm2 = lsiiDReg is lsiiOp=0x1 & lsiiImm2 & lsiiDReg { *[ram]:2 lsiiImm2 = lsiiDReg:2; }
-:StPregToM32bit  lsiiImm4 = lsiiPReg    is lsiiOp=0x3 & lsiiImm4 & lsiiPReg { *[ram]: 4lsiiImm4 = lsiiPReg; }
+:StPregToM32bit  lsiiImm4 = lsiiPReg    is lsiiOp=0x3 & lsiiImm4 & lsiiPReg { *[ram]:4 lsiiImm4 = lsiiPReg; }
 }
 }
 
