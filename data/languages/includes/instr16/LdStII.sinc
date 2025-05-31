@@ -33,6 +33,7 @@ LdStII:^"LdM32bitToDreg" lsiRegDReg" = ["lsiPtrPReg" + "imm"]"
 ] {
 	lsiRegDReg = *[ram]:4 (lsiPtrPReg + imm);
 }
+
 LdStII:^"LdM16bitToDreg" lsiRegDReg" = W["lsiPtrPReg" + "imm"] (Z)"
 	is lsiSig=0x5 & lsiW=0x0 & lsiOp=0x1 & lsiOffUImm & lsiPtrPReg & lsiRegDReg 
 [
@@ -40,6 +41,7 @@ LdStII:^"LdM16bitToDreg" lsiRegDReg" = W["lsiPtrPReg" + "imm"] (Z)"
 ] {
 	lsiRegDReg = zext(*[ram]:2 (lsiPtrPReg + imm));
 }
+
 LdStII:^"LdM16bitToDreg" lsiRegDReg" = W["lsiPtrPReg" + "imm"] (X)"
 	is lsiSig=0x5 & lsiW=0x0 & lsiOp=0x2 & lsiOffUImm & lsiPtrPReg & lsiRegDReg 
 [
@@ -47,6 +49,7 @@ LdStII:^"LdM16bitToDreg" lsiRegDReg" = W["lsiPtrPReg" + "imm"] (X)"
 ] {
 	lsiRegDReg = sext(*[ram]:2 (lsiPtrPReg + imm));
 }
+
 LdStII:^"LdM32bitToPreg" lsiRegPReg" = ["lsiPtrPReg" + "imm"]"
 	is lsiSig=0x5 & lsiW=0x0 & lsiOp=0x3 & lsiOffUImm & lsiPtrPReg & lsiRegPReg 
 [
@@ -54,6 +57,7 @@ LdStII:^"LdM32bitToPreg" lsiRegPReg" = ["lsiPtrPReg" + "imm"]"
 ] {
 	lsiRegPReg = *[ram]:4 (lsiPtrPReg + imm);
 }
+
 LdStII:^"StDregToM32bit" "["lsiPtrPReg" + "imm"] = "lsiRegDReg
 	is lsiSig=0x5 & lsiW=0x1 & lsiOp=0x0 & lsiOffUImm & lsiPtrPReg & lsiRegDReg 
 [
@@ -61,6 +65,7 @@ LdStII:^"StDregToM32bit" "["lsiPtrPReg" + "imm"] = "lsiRegDReg
 ] {
 	*[ram]:4 (lsiPtrPReg + imm) = lsiRegDReg;
 }
+
 LdStII:^"StDregLToM16bit" "W["lsiPtrPReg" + "imm"] = "lsiRegDReg
 	is lsiSig=0x5 & lsiW=0x1 & lsiOp=0x1 & lsiOffUImm & lsiPtrPReg & lsiRegDReg 
 [
@@ -68,6 +73,7 @@ LdStII:^"StDregLToM16bit" "W["lsiPtrPReg" + "imm"] = "lsiRegDReg
 ] {
 	*[ram]:2 (lsiPtrPReg + imm) = lsiRegDReg:2;
 }
+
 LdStII:^"StPregToM32bit" "["lsiPtrPReg" + "imm"] = "lsiRegPReg
 	is lsiSig=0x5 & lsiW=0x1 & lsiOp=0x3 & lsiOffUImm & lsiPtrPReg & lsiRegPReg 
 [
@@ -77,4 +83,5 @@ LdStII:^"StPregToM32bit" "["lsiPtrPReg" + "imm"] = "lsiRegPReg
 }
 
 
-All:^LdStII is LdStII { build LdStII; }
+
+:^LdStII is LdStII { build LdStII; }

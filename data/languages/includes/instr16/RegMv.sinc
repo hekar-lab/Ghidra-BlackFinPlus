@@ -35,12 +35,12 @@ define token rmvInstr16 (16)
 
 ### Variables ###
 
-attach variables rmvSrcDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables rmvDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
-attach variables rmvDstPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables rmvSrcDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables rmvSrcPReg [P0 P1 P2 P3 P4 P5 SP FP];
-attach variables rmvDstLIReg [I0 I1 I2 I3];
+attach variables rmvDstPReg [P0 P1 P2 P3 P4 P5 SP FP];
 attach variables rmvSrcLIReg [I0 I1 I2 I3];
+attach variables rmvDstLIReg [I0 I1 I2 I3];
 attach variables rmvSrcLMReg [M0 M1 M2 M3];
 attach variables rmvDstLMReg [M0 M1 M2 M3];
 attach variables rmvDstLBReg [B0 B1 B2 B3];
@@ -49,8 +49,8 @@ attach variables rmvDstLLReg [L0 L1 L2 L3];
 attach variables rmvSrcLLReg [L0 L1 L2 L3];
 attach variables rmvDstSyRg2 [LC0 LT0 LB0 LC1 LT1 LB1 CYCLES CYCLES2];
 attach variables rmvSrcSyRg2 [LC0 LT0 LB0 LC1 LT1 LB1 CYCLES CYCLES2];
-attach variables rmvDstSyRg3 [USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT];
 attach variables rmvSrcSyRg3 [USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT];
+attach variables rmvDstSyRg3 [USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT];
 
 
 ### Instructions ###
@@ -60,976 +60,1207 @@ RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcDReg
 {
 	rmvDstDReg = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x1 & rmvDstDReg & rmvSrcPReg 
 {
 	rmvDstDReg = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x2 & rmvDstDReg & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstDReg = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x2 & rmvDstDReg & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstDReg = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x3 & rmvDstDReg & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstDReg = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x3 & rmvDstDReg & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstDReg = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x4 & rmvDstDReg & rmvSrc=0x0 
 {
 	rmvDstDReg = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x4 & rmvDstDReg & rmvSrc=0x1 
 {
 	rmvDstDReg = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x4 & rmvDstDReg & rmvSrc=0x2 
 {
 	rmvDstDReg = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x4 & rmvDstDReg & rmvSrc=0x3 
 {
 	rmvDstDReg = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x4 & rmvDstDReg & rmvSrc=0x6 
 {
 	rmvDstDReg = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = RETS"
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x4 & rmvDstDReg & rmvSrc=0x7 
 {
 	rmvDstDReg = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x6 & rmvDstDReg & rmvSrcSyRg2 
 {
 	rmvDstDReg = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstDReg" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x0 & rmvGs=0x7 & rmvDstDReg & rmvSrcSyRg3 
 {
 	rmvDstDReg = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x0 & rmvDstPReg & rmvSrcDReg 
 {
 	rmvDstPReg = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x1 & rmvDstPReg & rmvSrcPReg 
 {
 	rmvDstPReg = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x2 & rmvDstPReg & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstPReg = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x2 & rmvDstPReg & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstPReg = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x3 & rmvDstPReg & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstPReg = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x3 & rmvDstPReg & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstPReg = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x4 & rmvDstPReg & rmvSrc=0x0 
 {
 	rmvDstPReg = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x4 & rmvDstPReg & rmvSrc=0x1 
 {
 	rmvDstPReg = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x4 & rmvDstPReg & rmvSrc=0x2 
 {
 	rmvDstPReg = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x4 & rmvDstPReg & rmvSrc=0x3 
 {
 	rmvDstPReg = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x4 & rmvDstPReg & rmvSrc=0x6 
 {
 	rmvDstPReg = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = RETS"
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x4 & rmvDstPReg & rmvSrc=0x7 
 {
 	rmvDstPReg = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x6 & rmvDstPReg & rmvSrcSyRg2 
 {
 	rmvDstPReg = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstPReg" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x1 & rmvGs=0x7 & rmvDstPReg & rmvSrcSyRg3 
 {
 	rmvDstPReg = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x0 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcDReg 
 {
 	rmvDstLIReg = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x1 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcPReg 
 {
 	rmvDstLIReg = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x2 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstLIReg = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x2 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstLIReg = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x3 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstLIReg = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x3 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstLIReg = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLIReg & rmvSrc=0x0 
 {
 	rmvDstLIReg = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLIReg & rmvSrc=0x1 
 {
 	rmvDstLIReg = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLIReg & rmvSrc=0x2 
 {
 	rmvDstLIReg = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLIReg & rmvSrc=0x3 
 {
 	rmvDstLIReg = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLIReg & rmvSrc=0x6 
 {
 	rmvDstLIReg = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = RETS"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLIReg & rmvSrc=0x7 
 {
 	rmvDstLIReg = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x6 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcSyRg2 
 {
 	rmvDstLIReg = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstLIReg" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x7 & rmvDstH=0x0 & rmvDstLIReg & rmvSrcSyRg3 
 {
 	rmvDstLIReg = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x0 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcDReg 
 {
 	rmvDstLMReg = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x1 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcPReg 
 {
 	rmvDstLMReg = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x2 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstLMReg = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x2 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstLMReg = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x3 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstLMReg = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x3 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstLMReg = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLMReg & rmvSrc=0x0 
 {
 	rmvDstLMReg = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLMReg & rmvSrc=0x1 
 {
 	rmvDstLMReg = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLMReg & rmvSrc=0x2 
 {
 	rmvDstLMReg = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLMReg & rmvSrc=0x3 
 {
 	rmvDstLMReg = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLMReg & rmvSrc=0x6 
 {
 	rmvDstLMReg = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = RETS"
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLMReg & rmvSrc=0x7 
 {
 	rmvDstLMReg = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x6 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcSyRg2 
 {
 	rmvDstLMReg = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstLMReg" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x2 & rmvGs=0x7 & rmvDstH=0x1 & rmvDstLMReg & rmvSrcSyRg3 
 {
 	rmvDstLMReg = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x0 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcDReg 
 {
 	rmvDstLBReg = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x1 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcPReg 
 {
 	rmvDstLBReg = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x2 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstLBReg = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x2 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstLBReg = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x3 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstLBReg = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x3 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstLBReg = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLBReg & rmvSrc=0x0 
 {
 	rmvDstLBReg = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLBReg & rmvSrc=0x1 
 {
 	rmvDstLBReg = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLBReg & rmvSrc=0x2 
 {
 	rmvDstLBReg = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLBReg & rmvSrc=0x3 
 {
 	rmvDstLBReg = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLBReg & rmvSrc=0x6 
 {
 	rmvDstLBReg = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = RETS"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x0 & rmvDstLBReg & rmvSrc=0x7 
 {
 	rmvDstLBReg = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x6 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcSyRg2 
 {
 	rmvDstLBReg = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstLBReg" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x7 & rmvDstH=0x0 & rmvDstLBReg & rmvSrcSyRg3 
 {
 	rmvDstLBReg = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x0 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcDReg 
 {
 	rmvDstLLReg = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x1 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcPReg 
 {
 	rmvDstLLReg = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x2 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstLLReg = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x2 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstLLReg = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x3 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstLLReg = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x3 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstLLReg = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLLReg & rmvSrc=0x0 
 {
 	rmvDstLLReg = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLLReg & rmvSrc=0x1 
 {
 	rmvDstLLReg = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLLReg & rmvSrc=0x2 
 {
 	rmvDstLLReg = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLLReg & rmvSrc=0x3 
 {
 	rmvDstLLReg = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLLReg & rmvSrc=0x6 
 {
 	rmvDstLLReg = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = RETS"
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x4 & rmvDstH=0x1 & rmvDstLLReg & rmvSrc=0x7 
 {
 	rmvDstLLReg = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x6 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcSyRg2 
 {
 	rmvDstLLReg = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstLLReg" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x3 & rmvGs=0x7 & rmvDstH=0x1 & rmvDstLLReg & rmvSrcSyRg3 
 {
 	rmvDstLLReg = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x0 & rmvDst=0x0 & rmvSrcDReg 
 {
 	A0.X = rmvSrcDReg:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x1 & rmvDst=0x0 & rmvSrcPReg 
 {
 	A0.X = rmvSrcPReg:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x0 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	A0.X = rmvSrcLIReg:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x0 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	A0.X = rmvSrcLMReg:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x0 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	A0.X = rmvSrcLBReg:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x0 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	A0.X = rmvSrcLLReg:1;
 }
-RegMv:^"MvRegToReg" "A0.X = A0.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x0 
+
+RegMvDesc90: "A0.X = A0.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc90
+	is RegMvDesc90 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x0 
 {
 	A0.X = A0.X;
 }
-RegMv:^"MvRegToReg" "A0.X = A0.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x1 
+
+RegMvDesc91: "A0.X = A0.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc91
+	is RegMvDesc91 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x1 
 {
 	A0.X = A0.W:1;
 }
-RegMv:^"MvRegToReg" "A0.X = A1.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x2 
+
+RegMvDesc92: "A0.X = A1.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc92
+	is RegMvDesc92 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x2 
 {
 	A0.X = A1.X;
 }
-RegMv:^"MvRegToReg" "A0.X = A1.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x3 
+
+RegMvDesc93: "A0.X = A1.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc93
+	is RegMvDesc93 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x3 
 {
 	A0.X = A1.W:1;
 }
-RegMv:^"MvRegToReg" "A0.X = ASTAT"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x6 
+
+RegMvDesc94: "A0.X = ASTAT" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc94
+	is RegMvDesc94 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x6 
 {
 	A0.X = ASTAT:1;
 }
-RegMv:^"MvRegToReg" "A0.X = RETS"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x7 
+
+RegMvDesc95: "A0.X = RETS" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc95
+	is RegMvDesc95 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x0 & rmvSrc=0x7 
 {
 	A0.X = RETS:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x6 & rmvDst=0x0 & rmvSrcSyRg2 
 {
 	A0.X = rmvSrcSyRg2:1;
 }
+
 RegMv:^"MvRegToReg" "A0.X = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x7 & rmvDst=0x0 & rmvSrcSyRg3 
 {
 	A0.X = rmvSrcSyRg3:1;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x0 & rmvDst=0x1 & rmvSrcDReg 
 {
 	A0.W = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x1 & rmvDst=0x1 & rmvSrcPReg 
 {
 	A0.W = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x1 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	A0.W = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x1 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	A0.W = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x1 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	A0.W = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x1 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	A0.W = rmvSrcLLReg;
 }
-RegMv:^"MvRegToReg" "A0.W = A0.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x0 
+
+RegMvDesc104: "A0.W = A0.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc104
+	is RegMvDesc104 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x0 
 {
 	A0.W = sext(A0.X);
 }
-RegMv:^"MvRegToReg" "A0.W = A0.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x1 
+
+RegMvDesc105: "A0.W = A0.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc105
+	is RegMvDesc105 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x1 
 {
 	A0.W = A0.W;
 }
-RegMv:^"MvRegToReg" "A0.W = A1.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x2 
+
+RegMvDesc106: "A0.W = A1.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc106
+	is RegMvDesc106 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x2 
 {
 	A0.W = sext(A1.X);
 }
-RegMv:^"MvRegToReg" "A0.W = A1.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x3 
+
+RegMvDesc107: "A0.W = A1.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc107
+	is RegMvDesc107 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x3 
 {
 	A0.W = A1.W;
 }
-RegMv:^"MvRegToReg" "A0.W = ASTAT"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x6 
+
+RegMvDesc108: "A0.W = ASTAT" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc108
+	is RegMvDesc108 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x6 
 {
 	A0.W = ASTAT;
 }
-RegMv:^"MvRegToReg" "A0.W = RETS"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x7 
+
+RegMvDesc109: "A0.W = RETS" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc109
+	is RegMvDesc109 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x1 & rmvSrc=0x7 
 {
 	A0.W = RETS;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x6 & rmvDst=0x1 & rmvSrcSyRg2 
 {
 	A0.W = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" "A0.W = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x7 & rmvDst=0x1 & rmvSrcSyRg3 
 {
 	A0.W = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x0 & rmvDst=0x2 & rmvSrcDReg 
 {
 	A1.X = rmvSrcDReg:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x1 & rmvDst=0x2 & rmvSrcPReg 
 {
 	A1.X = rmvSrcPReg:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x2 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	A1.X = rmvSrcLIReg:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x2 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	A1.X = rmvSrcLMReg:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x2 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	A1.X = rmvSrcLBReg:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x2 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	A1.X = rmvSrcLLReg:1;
 }
-RegMv:^"MvRegToReg" "A1.X = A0.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x0 
+
+RegMvDesc118: "A1.X = A0.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc118
+	is RegMvDesc118 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x0 
 {
 	A1.X = A0.X;
 }
-RegMv:^"MvRegToReg" "A1.X = A0.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x1 
+
+RegMvDesc119: "A1.X = A0.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc119
+	is RegMvDesc119 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x1 
 {
 	A1.X = A0.W:1;
 }
-RegMv:^"MvRegToReg" "A1.X = A1.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x2 
+
+RegMvDesc120: "A1.X = A1.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc120
+	is RegMvDesc120 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x2 
 {
 	A1.X = A1.X;
 }
-RegMv:^"MvRegToReg" "A1.X = A1.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x3 
+
+RegMvDesc121: "A1.X = A1.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc121
+	is RegMvDesc121 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x3 
 {
 	A1.X = A1.W:1;
 }
-RegMv:^"MvRegToReg" "A1.X = ASTAT"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x6 
+
+RegMvDesc122: "A1.X = ASTAT" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc122
+	is RegMvDesc122 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x6 
 {
 	A1.X = ASTAT:1;
 }
-RegMv:^"MvRegToReg" "A1.X = RETS"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x7 
+
+RegMvDesc123: "A1.X = RETS" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc123
+	is RegMvDesc123 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x2 & rmvSrc=0x7 
 {
 	A1.X = RETS:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x6 & rmvDst=0x2 & rmvSrcSyRg2 
 {
 	A1.X = rmvSrcSyRg2:1;
 }
+
 RegMv:^"MvRegToReg" "A1.X = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x7 & rmvDst=0x2 & rmvSrcSyRg3 
 {
 	A1.X = rmvSrcSyRg3:1;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x0 & rmvDst=0x3 & rmvSrcDReg 
 {
 	A1.W = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x1 & rmvDst=0x3 & rmvSrcPReg 
 {
 	A1.W = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x3 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	A1.W = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x3 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	A1.W = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x3 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	A1.W = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x3 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	A1.W = rmvSrcLLReg;
 }
-RegMv:^"MvRegToReg" "A1.W = A0.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x0 
+
+RegMvDesc132: "A1.W = A0.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc132
+	is RegMvDesc132 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x0 
 {
 	A1.W = sext(A0.X);
 }
-RegMv:^"MvRegToReg" "A1.W = A0.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x1 
+
+RegMvDesc133: "A1.W = A0.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc133
+	is RegMvDesc133 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x1 
 {
 	A1.W = A0.W;
 }
-RegMv:^"MvRegToReg" "A1.W = A1.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x2 
+
+RegMvDesc134: "A1.W = A1.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc134
+	is RegMvDesc134 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x2 
 {
 	A1.W = sext(A1.X);
 }
-RegMv:^"MvRegToReg" "A1.W = A1.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x3 
+
+RegMvDesc135: "A1.W = A1.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc135
+	is RegMvDesc135 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x3 
 {
 	A1.W = A1.W;
 }
-RegMv:^"MvRegToReg" "A1.W = ASTAT"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x6 
+
+RegMvDesc136: "A1.W = ASTAT" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc136
+	is RegMvDesc136 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x6 
 {
 	A1.W = ASTAT;
 }
-RegMv:^"MvRegToReg" "A1.W = RETS"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x7 
+
+RegMvDesc137: "A1.W = RETS" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc137
+	is RegMvDesc137 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x3 & rmvSrc=0x7 
 {
 	A1.W = RETS;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x6 & rmvDst=0x3 & rmvSrcSyRg2 
 {
 	A1.W = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" "A1.W = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x7 & rmvDst=0x3 & rmvSrcSyRg3 
 {
 	A1.W = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x0 & rmvDst=0x6 & rmvSrcDReg 
 {
 	ASTAT = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x1 & rmvDst=0x6 & rmvSrcPReg 
 {
 	ASTAT = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x6 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	ASTAT = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x6 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	ASTAT = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x6 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	ASTAT = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x6 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	ASTAT = rmvSrcLLReg;
 }
-RegMv:^"MvRegToReg" "ASTAT = A0.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x0 
+
+RegMvDesc146: "ASTAT = A0.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc146
+	is RegMvDesc146 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x0 
 {
 	ASTAT = sext(A0.X);
 }
-RegMv:^"MvRegToReg" "ASTAT = A0.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x1 
+
+RegMvDesc147: "ASTAT = A0.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc147
+	is RegMvDesc147 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x1 
 {
 	ASTAT = A0.W;
 }
-RegMv:^"MvRegToReg" "ASTAT = A1.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x2 
+
+RegMvDesc148: "ASTAT = A1.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc148
+	is RegMvDesc148 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x2 
 {
 	ASTAT = sext(A1.X);
 }
-RegMv:^"MvRegToReg" "ASTAT = A1.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x3 
+
+RegMvDesc149: "ASTAT = A1.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc149
+	is RegMvDesc149 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x3 
 {
 	ASTAT = A1.W;
 }
-RegMv:^"MvRegToReg" "ASTAT = ASTAT"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x6 
+
+RegMvDesc150: "ASTAT = ASTAT" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc150
+	is RegMvDesc150 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x6 
 {
 	ASTAT = ASTAT;
 }
-RegMv:^"MvRegToReg" "ASTAT = RETS"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x7 
+
+RegMvDesc151: "ASTAT = RETS" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc151
+	is RegMvDesc151 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x6 & rmvSrc=0x7 
 {
 	ASTAT = RETS;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x6 & rmvDst=0x6 & rmvSrcSyRg2 
 {
 	ASTAT = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" "ASTAT = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x7 & rmvDst=0x6 & rmvSrcSyRg3 
 {
 	ASTAT = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x0 & rmvDst=0x7 & rmvSrcDReg 
 {
 	RETS = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x1 & rmvDst=0x7 & rmvSrcPReg 
 {
 	RETS = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x7 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	RETS = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x2 & rmvDst=0x7 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	RETS = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x7 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	RETS = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x3 & rmvDst=0x7 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	RETS = rmvSrcLLReg;
 }
-RegMv:^"MvRegToReg" "RETS = A0.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x0 
+
+RegMvDesc160: "RETS = A0.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc160
+	is RegMvDesc160 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x0 
 {
 	RETS = sext(A0.X);
 }
-RegMv:^"MvRegToReg" "RETS = A0.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x1 
+
+RegMvDesc161: "RETS = A0.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc161
+	is RegMvDesc161 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x1 
 {
 	RETS = A0.W;
 }
-RegMv:^"MvRegToReg" "RETS = A1.X"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x2 
+
+RegMvDesc162: "RETS = A1.X" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc162
+	is RegMvDesc162 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x2 
 {
 	RETS = sext(A1.X);
 }
-RegMv:^"MvRegToReg" "RETS = A1.W"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x3 
+
+RegMvDesc163: "RETS = A1.W" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc163
+	is RegMvDesc163 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x3 
 {
 	RETS = A1.W;
 }
-RegMv:^"MvRegToReg" "RETS = ASTAT"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x6 
+
+RegMvDesc164: "RETS = ASTAT" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc164
+	is RegMvDesc164 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x6 
 {
 	RETS = ASTAT;
 }
-RegMv:^"MvRegToReg" "RETS = RETS"
-	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x7 
+
+RegMvDesc165: "RETS = RETS" is epsilon {}
+RegMv:^"MvRegToReg" RegMvDesc165
+	is RegMvDesc165 & rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x4 & rmvDst=0x7 & rmvSrc=0x7 
 {
 	RETS = RETS;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x6 & rmvDst=0x7 & rmvSrcSyRg2 
 {
 	RETS = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" "RETS = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x4 & rmvGs=0x7 & rmvDst=0x7 & rmvSrcSyRg3 
 {
 	RETS = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x0 & rmvDstSyRg2 & rmvSrcDReg 
 {
 	rmvDstSyRg2 = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x1 & rmvDstSyRg2 & rmvSrcPReg 
 {
 	rmvDstSyRg2 = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x2 & rmvDstSyRg2 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstSyRg2 = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x2 & rmvDstSyRg2 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstSyRg2 = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x3 & rmvDstSyRg2 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstSyRg2 = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x3 & rmvDstSyRg2 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstSyRg2 = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x4 & rmvDstSyRg2 & rmvSrc=0x0 
 {
 	rmvDstSyRg2 = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x4 & rmvDstSyRg2 & rmvSrc=0x1 
 {
 	rmvDstSyRg2 = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x4 & rmvDstSyRg2 & rmvSrc=0x2 
 {
 	rmvDstSyRg2 = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x4 & rmvDstSyRg2 & rmvSrc=0x3 
 {
 	rmvDstSyRg2 = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x4 & rmvDstSyRg2 & rmvSrc=0x6 
 {
 	rmvDstSyRg2 = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = RETS"
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x4 & rmvDstSyRg2 & rmvSrc=0x7 
 {
 	rmvDstSyRg2 = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x6 & rmvDstSyRg2 & rmvSrcSyRg2 
 {
 	rmvDstSyRg2 = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg2" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x6 & rmvGs=0x7 & rmvDstSyRg2 & rmvSrcSyRg3 
 {
 	rmvDstSyRg2 = rmvSrcSyRg3;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcDReg
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x0 & rmvDstSyRg3 & rmvSrcDReg 
 {
 	rmvDstSyRg3 = rmvSrcDReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcPReg
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x1 & rmvDstSyRg3 & rmvSrcPReg 
 {
 	rmvDstSyRg3 = rmvSrcPReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcLIReg
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x2 & rmvDstSyRg3 & rmvSrcH=0x0 & rmvSrcLIReg 
 {
 	rmvDstSyRg3 = rmvSrcLIReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcLMReg
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x2 & rmvDstSyRg3 & rmvSrcH=0x1 & rmvSrcLMReg 
 {
 	rmvDstSyRg3 = rmvSrcLMReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcLBReg
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x3 & rmvDstSyRg3 & rmvSrcH=0x0 & rmvSrcLBReg 
 {
 	rmvDstSyRg3 = rmvSrcLBReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcLLReg
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x3 & rmvDstSyRg3 & rmvSrcH=0x1 & rmvSrcLLReg 
 {
 	rmvDstSyRg3 = rmvSrcLLReg;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = A0.X"
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x4 & rmvDstSyRg3 & rmvSrc=0x0 
 {
 	rmvDstSyRg3 = sext(A0.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = A0.W"
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x4 & rmvDstSyRg3 & rmvSrc=0x1 
 {
 	rmvDstSyRg3 = A0.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = A1.X"
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x4 & rmvDstSyRg3 & rmvSrc=0x2 
 {
 	rmvDstSyRg3 = sext(A1.X);
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = A1.W"
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x4 & rmvDstSyRg3 & rmvSrc=0x3 
 {
 	rmvDstSyRg3 = A1.W;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = ASTAT"
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x4 & rmvDstSyRg3 & rmvSrc=0x6 
 {
 	rmvDstSyRg3 = ASTAT;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = RETS"
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x4 & rmvDstSyRg3 & rmvSrc=0x7 
 {
 	rmvDstSyRg3 = RETS;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcSyRg2
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x6 & rmvDstSyRg3 & rmvSrcSyRg2 
 {
 	rmvDstSyRg3 = rmvSrcSyRg2;
 }
+
 RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcSyRg3
 	is rmvSig=0x3 & rmvGd=0x7 & rmvGs=0x7 & rmvDstSyRg3 & rmvSrcSyRg3 
 {
@@ -1037,4 +1268,5 @@ RegMv:^"MvRegToReg" rmvDstSyRg3" = "rmvSrcSyRg3
 }
 
 
-All:^RegMv is RegMv { build RegMv; }
+
+:^RegMv is RegMv { build RegMv; }

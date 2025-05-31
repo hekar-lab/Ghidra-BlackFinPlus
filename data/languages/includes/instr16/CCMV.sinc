@@ -35,6 +35,7 @@ CCMV:^"MvRegToRegCond" "if !CC "cmvDstDReg" = "cmvSrcDReg
 	cmvDstDReg = cmvSrcDReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if !CC "cmvDstPReg" = "cmvSrcDReg
 	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x0 & cmvS=0x1 & cmvDstPReg & cmvSrcDReg 
 {
@@ -42,6 +43,7 @@ CCMV:^"MvRegToRegCond" "if !CC "cmvDstPReg" = "cmvSrcDReg
 	cmvDstPReg = cmvSrcDReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if !CC "cmvDstDReg" = "cmvSrcPReg
 	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x1 & cmvS=0x0 & cmvDstDReg & cmvSrcPReg 
 {
@@ -49,6 +51,7 @@ CCMV:^"MvRegToRegCond" "if !CC "cmvDstDReg" = "cmvSrcPReg
 	cmvDstDReg = cmvSrcPReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if !CC "cmvDstPReg" = "cmvSrcPReg
 	is cmvSig=0x03 & cmvT=0x0 & cmvD=0x1 & cmvS=0x1 & cmvDstPReg & cmvSrcPReg 
 {
@@ -56,6 +59,7 @@ CCMV:^"MvRegToRegCond" "if !CC "cmvDstPReg" = "cmvSrcPReg
 	cmvDstPReg = cmvSrcPReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if CC "cmvDstDReg" = "cmvSrcDReg
 	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x0 & cmvS=0x0 & cmvDstDReg & cmvSrcDReg 
 {
@@ -63,6 +67,7 @@ CCMV:^"MvRegToRegCond" "if CC "cmvDstDReg" = "cmvSrcDReg
 	cmvDstDReg = cmvSrcDReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcDReg
 	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x0 & cmvS=0x1 & cmvDstPReg & cmvSrcDReg 
 {
@@ -70,6 +75,7 @@ CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcDReg
 	cmvDstPReg = cmvSrcDReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if CC "cmvDstDReg" = "cmvSrcPReg
 	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x1 & cmvS=0x0 & cmvDstDReg & cmvSrcPReg 
 {
@@ -77,6 +83,7 @@ CCMV:^"MvRegToRegCond" "if CC "cmvDstDReg" = "cmvSrcPReg
 	cmvDstDReg = cmvSrcPReg;
 <do_nothing>
 }
+
 CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcPReg
 	is cmvSig=0x03 & cmvT=0x1 & cmvD=0x1 & cmvS=0x1 & cmvDstPReg & cmvSrcPReg 
 {
@@ -86,4 +93,5 @@ CCMV:^"MvRegToRegCond" "if CC "cmvDstPReg" = "cmvSrcPReg
 }
 
 
-All:^CCMV is CCMV { build CCMV; }
+
+:^CCMV is CCMV { build CCMV; }

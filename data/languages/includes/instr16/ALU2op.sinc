@@ -37,66 +37,79 @@ ALU2op:^"AShift32" a2oDstDReg" >>>= "a2oSrcDReg
 {
 	a2oDstDReg = a2oDstDReg s>> a2oSrcDReg;
 }
+
 ALU2op:^"LShift" a2oDstDReg" >>= "a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0x1 & a2oSrcDReg & a2oDstDReg 
 {
 	a2oDstDReg = a2oDstDReg >> a2oSrcDReg;
 }
+
 ALU2op:^"LShift" a2oDstDReg" <<= "a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0x2 & a2oSrcDReg & a2oDstDReg 
 {
 	a2oDstDReg = a2oDstDReg << a2oSrcDReg;
 }
+
 ALU2op:^"MultInt" a2oDstDReg" *= "a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0x3 & a2oSrcDReg & a2oDstDReg 
 {
 	a2oDstDReg = a2oDstDReg * a2oSrcDReg;
 }
+
 ALU2op:^"AddSubShift" a2oDstDReg" +<<1= "a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0x4 & a2oSrcDReg & a2oDstDReg 
 {
 	a2oDstDReg = (a2oDstDReg + a2oSrcDReg) << 0x1;
 }
+
 ALU2op:^"AddSubShift" a2oDstDReg" +<<2= "a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0x5 & a2oSrcDReg & a2oDstDReg 
 {
 	a2oDstDReg = (a2oDstDReg + a2oSrcDReg) << 0x2;
 }
+
 ALU2op:^"Divide" "DIVQ ("a2oDstDReg", "a2oSrcDReg")"
 	is a2oSig=0x10 & a2oOpc=0x8 & a2oSrcDReg & a2oDstDReg 
 {
 	divq(a2oDstDReg, a2oSrcDReg);
 }
+
 ALU2op:^"Divide" "DIVS ("a2oDstDReg", "a2oSrcDReg")"
 	is a2oSig=0x10 & a2oOpc=0x9 & a2oSrcDReg & a2oDstDReg 
 {
 	divs(a2oDstDReg, a2oSrcDReg);
 }
+
 ALU2op:^"MvDregLToDreg" a2oDstDReg" = "a2oSrcDRegL" (X)"
 	is a2oSig=0x10 & a2oOpc=0xa & a2oSrcDRegL & a2oDstDReg 
 {
 	a2oDstDReg = sext(a2oSrcDRegL);
 }
+
 ALU2op:^"MvDregLToDreg" a2oDstDReg" = "a2oSrcDRegL" (Z)"
 	is a2oSig=0x10 & a2oOpc=0xb & a2oSrcDRegL & a2oDstDReg 
 {
 	a2oDstDReg = zext(a2oSrcDRegL);
 }
+
 ALU2op:^"MvDregBToDreg" a2oDstDReg" = "a2oSrcDRegB" (X)"
 	is a2oSig=0x10 & a2oOpc=0xc & a2oSrcDRegB & a2oDstDReg 
 {
 	a2oDstDReg = sext(a2oSrcDRegB);
 }
+
 ALU2op:^"MvDregBToDreg" a2oDstDReg" = "a2oSrcDRegB" (Z)"
 	is a2oSig=0x10 & a2oOpc=0xd & a2oSrcDRegB & a2oDstDReg 
 {
 	a2oDstDReg = zext(a2oSrcDRegB);
 }
+
 ALU2op:^"Neg32" a2oDstDReg" = -"a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0xe & a2oSrcDReg & a2oDstDReg 
 {
 	a2oDstDReg = -a2oSrcDReg;
 }
+
 ALU2op:^"Not32" a2oDstDReg" = ~"a2oSrcDReg
 	is a2oSig=0x10 & a2oOpc=0xf & a2oSrcDReg & a2oDstDReg 
 {
@@ -104,4 +117,5 @@ ALU2op:^"Not32" a2oDstDReg" = ~"a2oSrcDReg
 }
 
 
-All:^ALU2op is ALU2op { build ALU2op; }
+
+:^ALU2op is ALU2op { build ALU2op; }

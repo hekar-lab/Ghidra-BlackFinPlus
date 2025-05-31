@@ -27,36 +27,43 @@ Ptr2op:^"DagAdd32" p2oDstPReg" -= "p2oSrcPReg
 {
 	p2oDstPReg = p2oDstPReg - p2oSrcPReg;
 }
+
 Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" << 2"
 	is p2oSig=0x22 & p2oOpc=0x1 & p2oSrcPReg & p2oDstPReg 
 {
 	p2oDstPReg = p2oSrcPReg << 0x2;
 }
+
 Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" << 1"
 	is p2oSig=0x22 & p2oOpc=0x2 & p2oSrcPReg & p2oDstPReg 
 {
 	p2oDstPReg = p2oSrcPReg << 0x1;
 }
+
 Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" >> 2"
 	is p2oSig=0x22 & p2oOpc=0x3 & p2oSrcPReg & p2oDstPReg 
 {
 	p2oDstPReg = p2oSrcPReg >> 0x2;
 }
+
 Ptr2op:^"LShiftPtr" p2oDstPReg" = "p2oSrcPReg" >> 1"
 	is p2oSig=0x22 & p2oOpc=0x4 & p2oSrcPReg & p2oDstPReg 
 {
 	p2oDstPReg = p2oSrcPReg >> 0x1;
 }
+
 Ptr2op:^"DagAdd32" p2oDstPReg" += "p2oSrcPReg" (BREV)"
 	is p2oSig=0x22 & p2oOpc=0x5 & p2oSrcPReg & p2oDstPReg 
 {
 	p2oDstPReg = p2oDstPReg + p2oSrcPReg;
 }
+
 Ptr2op:^"DagAddSubShift" p2oDstPReg" +<<1= "p2oSrcPReg
 	is p2oSig=0x22 & p2oOpc=0x6 & p2oSrcPReg & p2oDstPReg 
 {
 	p2oDstPReg = (p2oDstPReg + p2oSrcPReg) << 0x1;
 }
+
 Ptr2op:^"DagAddSubShift" p2oDstPReg" +<<2= "p2oSrcPReg
 	is p2oSig=0x22 & p2oOpc=0x7 & p2oSrcPReg & p2oDstPReg 
 {
@@ -64,4 +71,5 @@ Ptr2op:^"DagAddSubShift" p2oDstPReg" +<<2= "p2oSrcPReg
 }
 
 
-All:^Ptr2op is Ptr2op { build Ptr2op; }
+
+:^Ptr2op is Ptr2op { build Ptr2op; }

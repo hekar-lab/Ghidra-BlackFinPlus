@@ -25,16 +25,19 @@ DAGModIk:^"DagAddImm" dmkIIReg" += 2"
 {
 	dmkIIReg = dmkIIReg + 0x2;
 }
+
 DAGModIk:^"DagAddImm" dmkIIReg" -= 2"
 	is dmkSig=0x9f6 & dmkOpc=0x1 & dmkIIReg 
 {
 	dmkIIReg = dmkIIReg - 0x2;
 }
+
 DAGModIk:^"DagAddImm" dmkIIReg" += 4"
 	is dmkSig=0x9f6 & dmkOpc=0x2 & dmkIIReg 
 {
 	dmkIIReg = dmkIIReg + 0x4;
 }
+
 DAGModIk:^"DagAddImm" dmkIIReg" -= 4"
 	is dmkSig=0x9f6 & dmkOpc=0x3 & dmkIIReg 
 {
@@ -42,4 +45,5 @@ DAGModIk:^"DagAddImm" dmkIIReg" -= 4"
 }
 
 
-All:^DAGModIk is DAGModIk { build DAGModIk; }
+
+:^DAGModIk is DAGModIk { build DAGModIk; }

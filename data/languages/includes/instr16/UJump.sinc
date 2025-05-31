@@ -23,4 +23,5 @@ UJump:^"JumpAbs" "JUMP.S "addr
 }
 
 
-All:^UJump is UJump { build UJump; }
+
+:^UJump is UJump { build UJump; }

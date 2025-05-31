@@ -26,36 +26,43 @@ Logi2Op:^"ShiftBitTst" "CC = !BITTST("l2oDstDReg", "l2oSrcUImm")"
 {
 	CC = 0x0 == (l2oDstDReg & (0x1 << l2oSrcUImm));
 }
+
 Logi2Op:^"ShiftBitTst" "CC = BITTST("l2oDstDReg", "l2oSrcUImm")"
 	is l2oSig=0x09 & l2oOpc=0x1 & l2oSrcUImm & l2oDstDReg 
 {
 	CC = 0x0 != (l2oDstDReg & (0x1 << l2oSrcUImm));
 }
+
 Logi2Op:^"Shift_BitMod" "BITSET("l2oDstDReg", "l2oSrcUImm")"
 	is l2oSig=0x09 & l2oOpc=0x2 & l2oSrcUImm & l2oDstDReg 
 {
 	l2oDstDReg = l2oDstDReg | (0x1 << l2oSrcUImm);
 }
+
 Logi2Op:^"Shift_BitMod" "BITTGL("l2oDstDReg", "l2oSrcUImm")"
 	is l2oSig=0x09 & l2oOpc=0x3 & l2oSrcUImm & l2oDstDReg 
 {
 	l2oDstDReg = l2oDstDReg ^ (0x1 << l2oSrcUImm);
 }
+
 Logi2Op:^"Shift_BitMod" "BITCLR("l2oDstDReg", "l2oSrcUImm")"
 	is l2oSig=0x09 & l2oOpc=0x4 & l2oSrcUImm & l2oDstDReg 
 {
 	l2oDstDReg = l2oDstDReg & ~(0x1 << l2oSrcUImm);
 }
+
 Logi2Op:^"AShift32" l2oDstDReg" >>>= "l2oSrcUImm
 	is l2oSig=0x09 & l2oOpc=0x5 & l2oSrcUImm & l2oDstDReg 
 {
 	l2oDstDReg = l2oDstDReg s>> l2oSrcUImm;
 }
+
 Logi2Op:^"LShift" l2oDstDReg" >>= "l2oSrcUImm
 	is l2oSig=0x09 & l2oOpc=0x6 & l2oSrcUImm & l2oDstDReg 
 {
 	l2oDstDReg = l2oDstDReg >> l2oSrcUImm;
 }
+
 Logi2Op:^"LShift" l2oDstDReg" <<= "l2oSrcUImm
 	is l2oSig=0x09 & l2oOpc=0x7 & l2oSrcUImm & l2oDstDReg 
 {
@@ -63,4 +70,5 @@ Logi2Op:^"LShift" l2oDstDReg" <<= "l2oSrcUImm
 }
 
 
-All:^Logi2Op is Logi2Op { build Logi2Op; }
+
+:^Logi2Op is Logi2Op { build Logi2Op; }

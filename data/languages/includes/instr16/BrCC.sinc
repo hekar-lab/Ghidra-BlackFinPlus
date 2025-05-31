@@ -26,6 +26,7 @@ BrCC:^"BrCC" "if !CC JUMP "addr
 	goto [addrPtr];
 <ignore_jump>
 }
+
 BrCC:^"BrCC" "if !CC JUMP "addr"(BP)"
 	is brcSig=0x1 & brcT=0x0 & brcB=0x1 & brcOffSImm 
 [
@@ -36,6 +37,7 @@ BrCC:^"BrCC" "if !CC JUMP "addr"(BP)"
 	goto [addrPtr];
 <ignore_jump>
 }
+
 BrCC:^"BrCC" "if CC JUMP "addr
 	is brcSig=0x1 & brcT=0x1 & brcB=0x0 & brcOffSImm 
 [
@@ -46,6 +48,7 @@ BrCC:^"BrCC" "if CC JUMP "addr
 	goto [addrPtr];
 <ignore_jump>
 }
+
 BrCC:^"BrCC" "if CC JUMP "addr"(BP)"
 	is brcSig=0x1 & brcT=0x1 & brcB=0x1 & brcOffSImm 
 [
@@ -58,4 +61,5 @@ BrCC:^"BrCC" "if CC JUMP "addr"(BP)"
 }
 
 
-All:^BrCC is BrCC { build BrCC; }
+
+:^BrCC is BrCC { build BrCC; }

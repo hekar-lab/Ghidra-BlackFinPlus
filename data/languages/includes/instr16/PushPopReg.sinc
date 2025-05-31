@@ -43,162 +43,201 @@ PushPopReg:^"Pop" pprRegDReg" = [SP++]"
 	pprRegDReg = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegDReg
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x0 & pprRegDReg 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegDReg:4;
 }
+
 PushPopReg:^"Pop" pprRegPReg" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x1 & pprRegPReg 
 {
 	pprRegPReg = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegPReg
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x1 & pprRegPReg 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegPReg:4;
 }
+
 PushPopReg:^"Pop" pprRegLIReg" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x2 & pprRegH=0x0 & pprRegLIReg 
 {
 	pprRegLIReg = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegLIReg
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x2 & pprRegH=0x0 & pprRegLIReg 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegLIReg:4;
 }
+
 PushPopReg:^"Pop" pprRegLMReg" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x2 & pprRegH=0x1 & pprRegLMReg 
 {
 	pprRegLMReg = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegLMReg
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x2 & pprRegH=0x1 & pprRegLMReg 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegLMReg:4;
 }
+
 PushPopReg:^"Pop" pprRegLBReg" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x3 & pprRegH=0x0 & pprRegLBReg 
 {
 	pprRegLBReg = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegLBReg
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x3 & pprRegH=0x0 & pprRegLBReg 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegLBReg:4;
 }
+
 PushPopReg:^"Pop" pprRegLLReg" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x3 & pprRegH=0x1 & pprRegLLReg 
 {
 	pprRegLLReg = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegLLReg
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x3 & pprRegH=0x1 & pprRegLLReg 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegLLReg:4;
 }
-PushPopReg:^"Pop" "A0.X = [SP++]"
-	is pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x0 
+
+PushPopRegDesc12: "A0.X = [SP++]" is epsilon {}
+PushPopReg:^"Pop" PushPopRegDesc12
+	is PushPopRegDesc12 & pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x0 
 {
 	A0.X = *[ram]:1 SP;
 	SP = SP + 0x4;
 }
-PushPopReg:^"Push" "[--SP] = A0.X"
-	is pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x0 
+
+PushPopRegDesc13: "[--SP] = A0.X" is epsilon {}
+PushPopReg:^"Push" PushPopRegDesc13
+	is PushPopRegDesc13 & pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x0 
 {
 	SP = SP - 0x4;
 	*[ram]:1 SP = A0.X:1;
 }
-PushPopReg:^"Pop" "A0.W = [SP++]"
-	is pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x1 
+
+PushPopRegDesc14: "A0.W = [SP++]" is epsilon {}
+PushPopReg:^"Pop" PushPopRegDesc14
+	is PushPopRegDesc14 & pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x1 
 {
 	A0.W = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
-PushPopReg:^"Push" "[--SP] = A0.W"
-	is pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x1 
+
+PushPopRegDesc15: "[--SP] = A0.W" is epsilon {}
+PushPopReg:^"Push" PushPopRegDesc15
+	is PushPopRegDesc15 & pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x1 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = A0.W:4;
 }
-PushPopReg:^"Pop" "A1.X = [SP++]"
-	is pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x2 
+
+PushPopRegDesc16: "A1.X = [SP++]" is epsilon {}
+PushPopReg:^"Pop" PushPopRegDesc16
+	is PushPopRegDesc16 & pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x2 
 {
 	A1.X = *[ram]:1 SP;
 	SP = SP + 0x4;
 }
-PushPopReg:^"Push" "[--SP] = A1.X"
-	is pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x2 
+
+PushPopRegDesc17: "[--SP] = A1.X" is epsilon {}
+PushPopReg:^"Push" PushPopRegDesc17
+	is PushPopRegDesc17 & pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x2 
 {
 	SP = SP - 0x4;
 	*[ram]:1 SP = A1.X:1;
 }
-PushPopReg:^"Pop" "A1.W = [SP++]"
-	is pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x3 
+
+PushPopRegDesc18: "A1.W = [SP++]" is epsilon {}
+PushPopReg:^"Pop" PushPopRegDesc18
+	is PushPopRegDesc18 & pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x3 
 {
 	A1.W = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
-PushPopReg:^"Push" "[--SP] = A1.W"
-	is pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x3 
+
+PushPopRegDesc19: "[--SP] = A1.W" is epsilon {}
+PushPopReg:^"Push" PushPopRegDesc19
+	is PushPopRegDesc19 & pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x3 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = A1.W:4;
 }
-PushPopReg:^"Pop" "ASTAT = [SP++]"
-	is pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x6 
+
+PushPopRegDesc20: "ASTAT = [SP++]" is epsilon {}
+PushPopReg:^"Pop" PushPopRegDesc20
+	is PushPopRegDesc20 & pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x6 
 {
 	ASTAT = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
-PushPopReg:^"Push" "[--SP] = ASTAT"
-	is pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x6 
+
+PushPopRegDesc21: "[--SP] = ASTAT" is epsilon {}
+PushPopReg:^"Push" PushPopRegDesc21
+	is PushPopRegDesc21 & pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x6 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = ASTAT:4;
 }
-PushPopReg:^"Pop" "RETS = [SP++]"
-	is pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x7 
+
+PushPopRegDesc22: "RETS = [SP++]" is epsilon {}
+PushPopReg:^"Pop" PushPopRegDesc22
+	is PushPopRegDesc22 & pprSig=0x002 & pprW=0x0 & pprGrp=0x4 & pprReg=0x7 
 {
 	RETS = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
-PushPopReg:^"Push" "[--SP] = RETS"
-	is pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x7 
+
+PushPopRegDesc23: "[--SP] = RETS" is epsilon {}
+PushPopReg:^"Push" PushPopRegDesc23
+	is PushPopRegDesc23 & pprSig=0x002 & pprW=0x1 & pprGrp=0x4 & pprReg=0x7 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = RETS:4;
 }
+
 PushPopReg:^"Pop" pprRegSyRg2" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x6 & pprRegSyRg2 
 {
 	pprRegSyRg2 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegSyRg2
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x6 & pprRegSyRg2 
 {
 	SP = SP - 0x4;
 	*[ram]:4 SP = pprRegSyRg2:4;
 }
+
 PushPopReg:^"Pop" pprRegSyRg3" = [SP++]"
 	is pprSig=0x002 & pprW=0x0 & pprGrp=0x7 & pprRegSyRg3 
 {
 	pprRegSyRg3 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
+
 PushPopReg:^"Push" "[--SP] = "pprRegSyRg3
 	is pprSig=0x002 & pprW=0x1 & pprGrp=0x7 & pprRegSyRg3 
 {
@@ -207,4 +246,5 @@ PushPopReg:^"Push" "[--SP] = "pprRegSyRg3
 }
 
 
-All:^PushPopReg is PushPopReg { build PushPopReg; }
+
+:^PushPopReg is PushPopReg { build PushPopReg; }

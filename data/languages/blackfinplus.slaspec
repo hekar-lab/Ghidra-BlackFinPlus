@@ -8,4 +8,3 @@ define space register type=register_space size=2;
 
 @include "includes/instructions.sinc"
 
-:^All is All { build All; }

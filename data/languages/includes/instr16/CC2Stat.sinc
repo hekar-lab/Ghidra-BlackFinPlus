@@ -10,52 +10,70 @@ define token ccsInstr16 (16)
 	ccsSig           = ( 8,15) 
 	ccsD             = ( 7, 7) 
 	ccsOp            = ( 5, 6) 
-	ccsCbitUImm      = ( 0, 4) 
+	ccsCbitCBIT      = ( 0, 4) 
 ;
+
+
+### Variables ###
+
+attach names ccsCbitCBIT [
+	"AZ" "AN" "AC0COPY" "VCOPY" "_0x04" "CC" "AQ" "_0x07"
+	"RND_MOD" "_0x09" "_0x0a" "_0x0b" "AC0" "AC1" "_0x0e" "_0x0f"
+	"AV0" "AV0S" "AV1" "AV1S" "_0x14" "_0x15" "_0x16" "_0x17"
+	"V" "VS" "_0x1a" "_0x1b" "_0x1c" "_0x1d" "_0x1e" "_0x1f"
+];
 
 
 ### Instructions ###
 
-CC2Stat:^"MvToCC_STAT" "CC = "ccsCbitUImm
-	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x0 & ccsCbitUImm 
+CC2Stat:^"MvToCC_STAT" "CC = "ccsCbitCBIT
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x0 & ccsCbitCBIT 
 {
-	CC = (ASTAT:1 >> ccsCbitUImm:1) & 0x1;
+	CC = (ASTAT:1 >> ccsCbitCBIT:1) & 0x1;
 }
-CC2Stat:^"MvToCC_STAT" "CC |= "ccsCbitUImm
-	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x1 & ccsCbitUImm 
+
+CC2Stat:^"MvToCC_STAT" "CC |= "ccsCbitCBIT
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x1 & ccsCbitCBIT 
 {
-	CC = CC || ((ASTAT:1 >> ccsCbitUImm:1) & 0x1);
+	CC = CC || ((ASTAT:1 >> ccsCbitCBIT:1) & 0x1);
 }
-CC2Stat:^"MvToCC_STAT" "CC &= "ccsCbitUImm
-	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x2 & ccsCbitUImm 
+
+CC2Stat:^"MvToCC_STAT" "CC &= "ccsCbitCBIT
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x2 & ccsCbitCBIT 
 {
-	CC = CC && ((ASTAT:1 >> ccsCbitUImm:1) & 0x1);
+	CC = CC && ((ASTAT:1 >> ccsCbitCBIT:1) & 0x1);
 }
-CC2Stat:^"MvToCC_STAT" "CC ^= "ccsCbitUImm
-	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x3 & ccsCbitUImm 
+
+CC2Stat:^"MvToCC_STAT" "CC ^= "ccsCbitCBIT
+	is ccsSig=0x03 & ccsD=0x0 & ccsOp=0x3 & ccsCbitCBIT 
 {
-	CC = CC ^^ ((ASTAT:1 >> ccsCbitUImm:1) & 0x1);
+	CC = CC ^^ ((ASTAT:1 >> ccsCbitCBIT:1) & 0x1);
 }
-CC2Stat:^"CCToStat16" ccsCbitUImm" = CC"
-	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x0 & ccsCbitUImm 
+
+CC2Stat:^"CCToStat16" ccsCbitCBIT" = CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x0 & ccsCbitCBIT 
 {
-	ASTAT = (ASTAT & ~(0x1 << ccsCbitUImm)) | (zext(CC) << ccsCbitUImm);
+	ASTAT = (ASTAT & ~(0x1 << ccsCbitCBIT)) | (zext(CC) << ccsCbitCBIT);
 }
-CC2Stat:^"CCToStat16" ccsCbitUImm" |= CC"
-	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x1 & ccsCbitUImm 
+
+CC2Stat:^"CCToStat16" ccsCbitCBIT" |= CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x1 & ccsCbitCBIT 
 {
-	ASTAT = ASTAT | (zext(CC) << ccsCbitUImm);
+	ASTAT = ASTAT | (zext(CC) << ccsCbitCBIT);
 }
-CC2Stat:^"CCToStat16" ccsCbitUImm" &= CC"
-	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x2 & ccsCbitUImm 
+
+CC2Stat:^"CCToStat16" ccsCbitCBIT" &= CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x2 & ccsCbitCBIT 
 {
-	ASTAT = ASTAT & ~(zext(CC) << ccsCbitUImm);
+	ASTAT = ASTAT & ~(zext(CC) << ccsCbitCBIT);
 }
-CC2Stat:^"CCToStat16" ccsCbitUImm" ^= CC"
-	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x3 & ccsCbitUImm 
+
+CC2Stat:^"CCToStat16" ccsCbitCBIT" ^= CC"
+	is ccsSig=0x03 & ccsD=0x1 & ccsOp=0x3 & ccsCbitCBIT 
 {
-	ASTAT = ASTAT ^ (zext(CC) << ccsCbitUImm);
+	ASTAT = ASTAT ^ (zext(CC) << ccsCbitCBIT);
 }
 
 
-All:^CC2Stat is CC2Stat { build CC2Stat; }
+
+:^CC2Stat is CC2Stat { build CC2Stat; }

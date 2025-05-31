@@ -29,16 +29,19 @@ CompI2op:^"LdImmToReg" ci2DstDReg" = "ci2SrcSImm" (X)"
 {
 	ci2DstDReg = sext(ci2SrcSImm:1);
 }
+
 CompI2op:^"AddImm" ci2DstDReg" += "ci2SrcSImm
 	is ci2Sig=0x6 & ci2R=0x0 & ci2Opc=0x1 & ci2SrcSImm & ci2DstDReg 
 {
 	ci2DstDReg = ci2DstDReg + ci2SrcSImm;
 }
+
 CompI2op:^"LdImmToReg" ci2DstPReg" = "ci2SrcSImm" (X)"
 	is ci2Sig=0x6 & ci2R=0x1 & ci2Opc=0x0 & ci2SrcSImm & ci2DstPReg 
 {
 	ci2DstPReg = sext(ci2SrcSImm:1);
 }
+
 CompI2op:^"DagAddImm" ci2DstPReg" += "ci2SrcSImm
 	is ci2Sig=0x6 & ci2R=0x1 & ci2Opc=0x1 & ci2SrcSImm & ci2DstPReg 
 {
@@ -46,4 +49,5 @@ CompI2op:^"DagAddImm" ci2DstPReg" += "ci2SrcSImm
 }
 
 
-All:^CompI2op is CompI2op { build CompI2op; }
+
+:^CompI2op is CompI2op { build CompI2op; }

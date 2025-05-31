@@ -24,4 +24,5 @@ NOP32:^"NOP32"
 	is mnopSigH=0xc & mnopX3=0x003 ; mnopSigL=0x1800 {}
 
 
-All:^NOP32 is NOP32 { build NOP32; }
+
+:^NOP32 is NOP32 { build NOP32; }

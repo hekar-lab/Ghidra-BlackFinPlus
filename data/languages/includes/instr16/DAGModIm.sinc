@@ -29,11 +29,13 @@ DAGModIm:^"DagAdd32" dmmIIReg" += "dmmMMReg
 {
 	dmmIIReg = dmmIIReg + dmmMMReg;
 }
+
 DAGModIm:^"DagAdd32" dmmIIReg" += "dmmMMReg" (BREV)"
 	is dmmSig=0x9e & dmmBr=0x1 & dmmX3=0x3 & dmmOp=0x0 & dmmMMReg & dmmIIReg 
 {
 	dmmIIReg = dmmIIReg + dmmMMReg;
 }
+
 DAGModIm:^"DagAdd32" dmmIIReg" -= "dmmMMReg
 	is dmmSig=0x9e & dmmBr=0x0 & dmmX3=0x3 & dmmOp=0x1 & dmmMMReg & dmmIIReg 
 {
@@ -41,4 +43,5 @@ DAGModIm:^"DagAdd32" dmmIIReg" -= "dmmMMReg
 }
 
 
-All:^DAGModIm is DAGModIm { build DAGModIm; }
+
+:^DAGModIm is DAGModIm { build DAGModIm; }

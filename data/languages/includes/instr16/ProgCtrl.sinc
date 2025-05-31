@@ -35,51 +35,69 @@ define pcodeop excpt;
 
 ### Instructions ###
 
-ProgCtrl:^"Return" "RTS"
-	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x0 
+ProgCtrlDesc0: "RTS" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc0
+	is ProgCtrlDesc0 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x0 
 {
 	return [RETS];
 }
-ProgCtrl:^"Return" "RTI"
-	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x1 
+
+ProgCtrlDesc1: "RTI" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc1
+	is ProgCtrlDesc1 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x1 
 {
 	return [RETI];
 }
-ProgCtrl:^"Return" "RTX"
-	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x2 
+
+ProgCtrlDesc2: "RTX" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc2
+	is ProgCtrlDesc2 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x2 
 {
 	return [RETX];
 }
-ProgCtrl:^"Return" "RTN"
-	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x3 
+
+ProgCtrlDesc3: "RTN" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc3
+	is ProgCtrlDesc3 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x3 
 {
 	return [RETN];
 }
-ProgCtrl:^"Return" "RTE"
-	is pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x4 
+
+ProgCtrlDesc4: "RTE" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc4
+	is ProgCtrlDesc4 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x4 
 {
 	return [RETE];
 }
-ProgCtrl:^"Sync" "IDLE"
-	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x0 
+
+ProgCtrlDesc5: "IDLE" is epsilon {}
+ProgCtrl:^"Sync" ProgCtrlDesc5
+	is ProgCtrlDesc5 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x0 
 {
 	idle();
 }
-ProgCtrl:^"Sync" "CSYNC"
-	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x3 
+
+ProgCtrlDesc6: "CSYNC" is epsilon {}
+ProgCtrl:^"Sync" ProgCtrlDesc6
+	is ProgCtrlDesc6 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x3 
 {
 	csync();
 }
-ProgCtrl:^"Sync" "SSYNC"
-	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x4 
+
+ProgCtrlDesc7: "SSYNC" is epsilon {}
+ProgCtrl:^"Sync" ProgCtrlDesc7
+	is ProgCtrlDesc7 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x4 
 {
 	ssync();
 }
-ProgCtrl:^"Mode" "EMUEXCPT"
-	is pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x5 
+
+ProgCtrlDesc8: "EMUEXCPT" is epsilon {}
+ProgCtrl:^"Mode" ProgCtrlDesc8
+	is ProgCtrlDesc8 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x5 
 {
 	emuexcpt();
 }
+
 ProgCtrl:^"IMaskMv" "CLI "pgcRegLDReg
 	is pgcSig=0x00 & pgcOpc=0x3 & pgcRegH=0x0 & pgcRegLDReg 
 {
@@ -87,44 +105,52 @@ ProgCtrl:^"IMaskMv" "CLI "pgcRegLDReg
 	pgcRegLDReg = *[ram]:4 imaskAddr;
 	*[ram]:4 imaskAddr = 0x0;
 }
+
 ProgCtrl:^"IMaskMv" "STI "pgcRegLDReg
 	is pgcSig=0x00 & pgcOpc=0x4 & pgcRegH=0x0 & pgcRegLDReg 
 {
 	local imaskAddr:4 = 0x1FC02104;
 	*[ram]:4 imaskAddr = pgcRegLDReg;
 }
+
 ProgCtrl:^"Jump" "JUMP ("pgcRegLPReg")"
 	is pgcSig=0x00 & pgcOpc=0x5 & pgcRegH=0x0 & pgcRegLPReg 
 {
 	goto [pgcRegLPReg];
 }
+
 ProgCtrl:^"Jump" "JUMP (PC + "pgcRegLPReg")"
 	is pgcSig=0x00 & pgcOpc=0x8 & pgcRegH=0x0 & pgcRegLPReg 
 {
 	goto [pgcRegLPReg + PC];
 }
+
 ProgCtrl:^"Call" "CALL ("pgcRegLPReg")"
 	is pgcSig=0x00 & pgcOpc=0x6 & pgcRegH=0x0 & pgcRegLPReg 
 {
 	RETS = inst_next;
 	call [pgcRegLPReg];
 }
+
 ProgCtrl:^"Call" "CALL (PC + "pgcRegLPReg")"
 	is pgcSig=0x00 & pgcOpc=0x7 & pgcRegH=0x0 & pgcRegLPReg 
 {
 	RETS = inst_next;
 	call [pgcRegLPReg + PC];
 }
+
 ProgCtrl:^"Raise" "RAISE "pgcRegUImm
 	is pgcSig=0x00 & pgcOpc=0x9 & pgcRegUImm 
 {
 	raise(pgcRegUImm:1);
 }
+
 ProgCtrl:^"Raise" "EXCPT "pgcRegUImm
 	is pgcSig=0x00 & pgcOpc=0xa & pgcRegUImm 
 {
 	excpt(pgcRegUImm:1);
 }
+
 ProgCtrl:^"TestSet" "TESTSET ("pgcRegLPReg")"
 	is pgcSig=0x00 & pgcOpc=0xb & pgcRegH=0x0 & pgcRegLPReg 
 {
@@ -135,6 +161,7 @@ ProgCtrl:^"TestSet" "TESTSET ("pgcRegLPReg")"
 <is_set>
 	*[ram]:1 pgcRegLPReg = testVal | 0x80;
 }
+
 ProgCtrl:^"Sync" "STI IDLE "pgcRegLDReg
 	is pgcSig=0x00 & pgcOpc=0xc & pgcRegH=0x0 & pgcRegLDReg 
 {
@@ -144,4 +171,5 @@ ProgCtrl:^"Sync" "STI IDLE "pgcRegLDReg
 }
 
 
-All:^ProgCtrl is ProgCtrl { build ProgCtrl; }
+
+:^ProgCtrl is ProgCtrl { build ProgCtrl; }

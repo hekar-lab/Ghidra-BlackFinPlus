@@ -20,12 +20,12 @@ define token c3oInstr16 (16)
 
 ### Variables ###
 
-attach variables c3oDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
-attach variables c3oSrc0DReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables c3oSrc1DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables c3oSrc0DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables c3oDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables c3oSrc0PReg [P0 P1 P2 P3 P4 P5 SP FP];
 attach variables c3oDstPReg [P0 P1 P2 P3 P4 P5 SP FP];
 attach variables c3oSrc1PReg [P0 P1 P2 P3 P4 P5 SP FP];
-attach variables c3oSrc0PReg [P0 P1 P2 P3 P4 P5 SP FP];
 
 
 ### Instructions ###
@@ -35,36 +35,43 @@ Comp3op:^"AddSub32" c3oDstDReg" = "c3oSrc0DReg" + "c3oSrc1DReg
 {
 	c3oDstDReg = c3oSrc0DReg + c3oSrc1DReg;
 }
+
 Comp3op:^"AddSub32" c3oDstDReg" = "c3oSrc0DReg" - "c3oSrc1DReg
 	is c3oSig=0x5 & c3oOpc=0x1 & c3oDstDReg & c3oSrc1DReg & c3oSrc0DReg 
 {
 	c3oDstDReg = c3oSrc0DReg - c3oSrc1DReg;
 }
+
 Comp3op:^"Logic32" c3oDstDReg" = "c3oSrc0DReg" & "c3oSrc1DReg
 	is c3oSig=0x5 & c3oOpc=0x2 & c3oDstDReg & c3oSrc1DReg & c3oSrc0DReg 
 {
 	c3oDstDReg = c3oSrc0DReg & c3oSrc1DReg;
 }
+
 Comp3op:^"Logic32" c3oDstDReg" = "c3oSrc0DReg" | "c3oSrc1DReg
 	is c3oSig=0x5 & c3oOpc=0x3 & c3oDstDReg & c3oSrc1DReg & c3oSrc0DReg 
 {
 	c3oDstDReg = c3oSrc0DReg | c3oSrc1DReg;
 }
+
 Comp3op:^"Logic32" c3oDstDReg" = "c3oSrc0DReg" ^ "c3oSrc1DReg
 	is c3oSig=0x5 & c3oOpc=0x4 & c3oDstDReg & c3oSrc1DReg & c3oSrc0DReg 
 {
 	c3oDstDReg = c3oSrc0DReg ^ c3oSrc1DReg;
 }
+
 Comp3op:^"DagAdd32" c3oDstPReg" = "c3oSrc0PReg" + "c3oSrc1PReg
 	is c3oSig=0x5 & c3oOpc=0x5 & c3oDstPReg & c3oSrc1PReg & c3oSrc0PReg 
 {
 	c3oDstPReg = c3oSrc0PReg + c3oSrc1PReg;
 }
+
 Comp3op:^"PtrOp" c3oDstPReg" = "c3oSrc0PReg" + ("c3oSrc1PReg" << 1)"
 	is c3oSig=0x5 & c3oOpc=0x6 & c3oDstPReg & c3oSrc1PReg & c3oSrc0PReg 
 {
 	c3oDstPReg = c3oSrc0PReg + (c3oSrc1PReg << 0x1);
 }
+
 Comp3op:^"PtrOp" c3oDstPReg" = "c3oSrc0PReg" + ("c3oSrc1PReg" << 2)"
 	is c3oSig=0x5 & c3oOpc=0x7 & c3oDstPReg & c3oSrc1PReg & c3oSrc0PReg 
 {
@@ -72,4 +79,5 @@ Comp3op:^"PtrOp" c3oDstPReg" = "c3oSrc0PReg" + ("c3oSrc1PReg" << 2)"
 }
 
 
-All:^Comp3op is Comp3op { build Comp3op; }
+
+:^Comp3op is Comp3op { build Comp3op; }

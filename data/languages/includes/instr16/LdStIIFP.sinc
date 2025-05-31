@@ -31,6 +31,7 @@ LdStIIFP:^"LdM32bitToDreg" lsfpRegDReg" = [FP - "imm"]"
 ] {
 	lsfpRegDReg = *[ram]:4 (FP - imm);
 }
+
 LdStIIFP:^"LdM32bitToPreg" lsfpRegPReg" = [FP - "imm"]"
 	is lsfpSig=0x2e & lsfpW=0x0 & lsfpOffUImm & lsfpG=0x1 & lsfpRegPReg 
 [
@@ -38,6 +39,7 @@ LdStIIFP:^"LdM32bitToPreg" lsfpRegPReg" = [FP - "imm"]"
 ] {
 	lsfpRegPReg = *[ram]:4 (FP - imm);
 }
+
 LdStIIFP:^"StDregToM32bit" "[FP - "imm"] = "lsfpRegDReg
 	is lsfpSig=0x2e & lsfpW=0x1 & lsfpOffUImm & lsfpG=0x0 & lsfpRegDReg 
 [
@@ -45,6 +47,7 @@ LdStIIFP:^"StDregToM32bit" "[FP - "imm"] = "lsfpRegDReg
 ] {
 	*[ram]:4 (FP - imm) = lsfpRegDReg;
 }
+
 LdStIIFP:^"StPregToM32bit" "[FP - "imm"] = "lsfpRegPReg
 	is lsfpSig=0x2e & lsfpW=0x1 & lsfpOffUImm & lsfpG=0x1 & lsfpRegPReg 
 [
@@ -54,4 +57,5 @@ LdStIIFP:^"StPregToM32bit" "[FP - "imm"] = "lsfpRegPReg
 }
 
 
-All:^LdStIIFP is LdStIIFP { build LdStIIFP; }
+
+:^LdStIIFP is LdStIIFP { build LdStIIFP; }

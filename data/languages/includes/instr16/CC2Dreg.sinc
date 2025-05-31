@@ -25,21 +25,26 @@ CC2Dreg:^"CCToDreg" c2dRegDReg" = CC"
 {
 	c2dRegDReg = zext(CC);
 }
+
 CC2Dreg:^"MvToCC" "CC = "c2dRegDReg
 	is c2dSig=0x010 & c2dOpc=0x1 & c2dRegDReg 
 {
 	CC = c2dRegDReg != 0x0;
 }
+
 CC2Dreg:^"CCToDreg" c2dRegDReg" = !CC"
 	is c2dSig=0x010 & c2dOpc=0x2 & c2dRegDReg 
 {
 	c2dRegDReg = zext(!CC);
 }
-CC2Dreg:^"MvToCC" "CC = !CC"
-	is c2dSig=0x010 & c2dOpc=0x3 
+
+CC2DregDesc3: "CC = !CC" is epsilon {}
+CC2Dreg:^"MvToCC" CC2DregDesc3
+	is CC2DregDesc3 & c2dSig=0x010 & c2dOpc=0x3 
 {
 	CC = !CC;
 }
 
 
-All:^CC2Dreg is CC2Dreg { build CC2Dreg; }
+
+:^CC2Dreg is CC2Dreg { build CC2Dreg; }
