@@ -28,6 +28,21 @@
 ## 32-bits instructions ##
 
 @include "instr32/NOP32.sinc"
+@include "instr32/Dsp32Mac.sinc"
+@include "instr32/Dsp32Mult.sinc"
+@include "instr32/Dsp32Alu.sinc"
+@include "instr32/Dsp32Shf.sinc"
+@include "instr32/Dsp32ShfImm.sinc"
+@include "instr32/LoopSetupImm.sinc"
+@include "instr32/LoopSetup.sinc"
+@include "instr32/LdImmHalf.sinc"
+@include "instr32/CallA.sinc"
+@include "instr32/LdStIdxI.sinc"
+@include "instr32/Linkage.sinc"
+@include "instr32/LdStExcl.sinc"
 
 ## 64-bits instructions ##
 
+@include "instr64/LdStAbs.sinc"
+@include "instr64/LdImm.sinc"
+@include "instr64/Jump32.sinc"

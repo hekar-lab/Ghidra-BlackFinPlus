@@ -18,31 +18,31 @@ define token ppmInstr16 (16)
 
 ### Instructions ###
 
-PushPopMultDesc0: "[--SP] = (R7:0)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc0
-	is PushPopMultDesc0 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x0 
+PushPopMultDesc00: "[--SP] = (R7:0)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc00
+	is PushPopMultDesc00 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = R7;
 }
 
-PushPopMultDesc1: "(R7:0) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc1
-	is PushPopMultDesc1 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x0 
+PushPopMultDesc01: "(R7:0) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc01
+	is PushPopMultDesc01 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x0 
 {
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -62,29 +62,29 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc1
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc2: "[--SP] = (R7:1)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc2
-	is PushPopMultDesc2 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x1 
+PushPopMultDesc02: "[--SP] = (R7:1)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc02
+	is PushPopMultDesc02 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x1 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = R7;
 }
 
-PushPopMultDesc3: "(R7:1) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc3
-	is PushPopMultDesc3 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x1 
+PushPopMultDesc03: "(R7:1) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc03
+	is PushPopMultDesc03 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x1 
 {
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -102,27 +102,27 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc3
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc4: "[--SP] = (R7:2)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc4
-	is PushPopMultDesc4 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x2 
+PushPopMultDesc04: "[--SP] = (R7:2)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc04
+	is PushPopMultDesc04 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = R7;
 }
 
-PushPopMultDesc5: "(R7:2) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc5
-	is PushPopMultDesc5 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x2 
+PushPopMultDesc05: "(R7:2) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc05
+	is PushPopMultDesc05 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x2 
 {
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -138,25 +138,25 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc5
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc6: "[--SP] = (R7:3)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc6
-	is PushPopMultDesc6 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x3 
+PushPopMultDesc06: "[--SP] = (R7:3)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc06
+	is PushPopMultDesc06 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x3 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = R7;
 }
 
-PushPopMultDesc7: "(R7:3) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc7
-	is PushPopMultDesc7 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x3 
+PushPopMultDesc07: "(R7:3) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc07
+	is PushPopMultDesc07 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x3 
 {
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -170,23 +170,23 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc7
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc8: "[--SP] = (R7:4)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc8
-	is PushPopMultDesc8 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x4 
+PushPopMultDesc08: "[--SP] = (R7:4)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc08
+	is PushPopMultDesc08 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = R7;
 }
 
-PushPopMultDesc9: "(R7:4) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc9
-	is PushPopMultDesc9 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x4 
+PushPopMultDesc09: "(R7:4) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc09
+	is PushPopMultDesc09 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x4 
 {
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -198,87 +198,177 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc9
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc10: "[--SP] = (R7:5)" is epsilon {}
+PushPopMultDesc0A: "[--SP] = (R7:5)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc0A
+	is PushPopMultDesc0A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x5 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+}
+
+PushPopMultDesc0B: "(R7:5) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc0B
+	is PushPopMultDesc0B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x5 
+{
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc0C: "[--SP] = (R7:6)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc0C
+	is PushPopMultDesc0C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x6 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+}
+
+PushPopMultDesc0D: "(R7:6) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc0D
+	is PushPopMultDesc0D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x6 
+{
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc0E: "[--SP] = (R7:7)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc0E
+	is PushPopMultDesc0E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x7 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+}
+
+PushPopMultDesc0F: "(R7:7) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc0F
+	is PushPopMultDesc0F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x7 
+{
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc10: "[--SP] = (P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc10
-	is PushPopMultDesc10 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x5 
+	is PushPopMultDesc10 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc11: "(R7:5) = [SP++]" is epsilon {}
+PushPopMultDesc11: "(P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc11
-	is PushPopMultDesc11 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x5 
+	is PushPopMultDesc11 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x0 
 {
-	R7 = *[ram]:4 SP;
+	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
+	P4 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P0 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc12: "[--SP] = (R7:6)" is epsilon {}
+PushPopMultDesc12: "[--SP] = (P5:1)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc12
-	is PushPopMultDesc12 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x6 
+	is PushPopMultDesc12 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x1 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc13: "(R7:6) = [SP++]" is epsilon {}
+PushPopMultDesc13: "(P5:1) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc13
-	is PushPopMultDesc13 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x6 
+	is PushPopMultDesc13 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x1 
 {
-	R7 = *[ram]:4 SP;
+	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc14: "[--SP] = (R7:7)" is epsilon {}
+PushPopMultDesc14: "[--SP] = (P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc14
-	is PushPopMultDesc14 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x1 & ppmDr=0x7 
+	is PushPopMultDesc14 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc15: "(R7:7) = [SP++]" is epsilon {}
+PushPopMultDesc15: "(P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc15
-	is PushPopMultDesc15 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x0 & ppmW=0x0 & ppmDr=0x7 
+	is PushPopMultDesc15 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x2 
 {
-	R7 = *[ram]:4 SP;
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc16: "[--SP] = (P5:0)" is epsilon {}
+PushPopMultDesc16: "[--SP] = (P5:3)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc16
-	is PushPopMultDesc16 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x0 
+	is PushPopMultDesc16 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x3 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc17: "(P5:0) = [SP++]" is epsilon {}
+PushPopMultDesc17: "(P5:3) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc17
-	is PushPopMultDesc17 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x0 
+	is PushPopMultDesc17 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x3 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -286,33 +376,81 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc17
 	SP = SP + 0x4;
 	P3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc18: "[--SP] = (P5:1)" is epsilon {}
+PushPopMultDesc18: "[--SP] = (P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc18
-	is PushPopMultDesc18 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x1 
+	is PushPopMultDesc18 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc19: "(P5:1) = [SP++]" is epsilon {}
+PushPopMultDesc19: "(P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc19
-	is PushPopMultDesc19 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x1 
+	is PushPopMultDesc19 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x4 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc1A: "[--SP] = (P5:5)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc1A
+	is PushPopMultDesc1A & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x5 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc1B: "(P5:5) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc1B
+	is PushPopMultDesc1B & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x5 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc1C: "[--SP] = (R7:0, P5:0)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc1C
+	is PushPopMultDesc1C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x0 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R0;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P0;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc1D: "(R7:0, P5:0) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc1D
+	is PushPopMultDesc1D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x0 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -324,25 +462,123 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc19
 	SP = SP + 0x4;
 	P1 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	P0 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R0 = *[ram]:4 SP;
+	SP = SP + 0x4;
 }
 
-PushPopMultDesc20: "[--SP] = (P5:2)" is epsilon {}
+PushPopMultDesc1E: "[--SP] = (R7:0, P5:1)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc1E
+	is PushPopMultDesc1E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x1 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R0;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc1F: "(R7:0, P5:1) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc1F
+	is PushPopMultDesc1F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x1 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R0 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc20: "[--SP] = (R7:0, P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc20
-	is PushPopMultDesc20 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x2 
+	is PushPopMultDesc20 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
+	*[ram]:4 SP = R0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc21: "(P5:2) = [SP++]" is epsilon {}
+PushPopMultDesc21: "(R7:0, P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc21
-	is PushPopMultDesc21 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x2 
+	is PushPopMultDesc21 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x2 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -352,23 +588,55 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc21
 	SP = SP + 0x4;
 	P2 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R0 = *[ram]:4 SP;
+	SP = SP + 0x4;
 }
 
-PushPopMultDesc22: "[--SP] = (P5:3)" is epsilon {}
+PushPopMultDesc22: "[--SP] = (R7:0, P5:3)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc22
-	is PushPopMultDesc22 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x3 
+	is PushPopMultDesc22 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x3 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
+	*[ram]:4 SP = R0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc23: "(P5:3) = [SP++]" is epsilon {}
+PushPopMultDesc23: "(R7:0, P5:3) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc23
-	is PushPopMultDesc23 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x3 
+	is PushPopMultDesc23 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x3 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -376,81 +644,159 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc23
 	SP = SP + 0x4;
 	P3 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R0 = *[ram]:4 SP;
+	SP = SP + 0x4;
 }
 
-PushPopMultDesc24: "[--SP] = (P5:4)" is epsilon {}
+PushPopMultDesc24: "[--SP] = (R7:0, P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc24
-	is PushPopMultDesc24 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x4 
+	is PushPopMultDesc24 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
+	*[ram]:4 SP = R0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc25: "(P5:4) = [SP++]" is epsilon {}
+PushPopMultDesc25: "(R7:0, P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc25
-	is PushPopMultDesc25 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x4 
+	is PushPopMultDesc25 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x4 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R0 = *[ram]:4 SP;
+	SP = SP + 0x4;
 }
 
-PushPopMultDesc26: "[--SP] = (P5:5)" is epsilon {}
+PushPopMultDesc26: "[--SP] = (R7:0, P5:5)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc26
-	is PushPopMultDesc26 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x1 & ppmPr=0x5 
+	is PushPopMultDesc26 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x5 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = R0;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc27: "(P5:5) = [SP++]" is epsilon {}
+PushPopMultDesc27: "(R7:0, P5:5) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc27
-	is PushPopMultDesc27 & ppmSig=0x02 & ppmD=0x0 & ppmP=0x1 & ppmW=0x0 & ppmPr=0x5 
+	is PushPopMultDesc27 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x5 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R0 = *[ram]:4 SP;
+	SP = SP + 0x4;
 }
 
-PushPopMultDesc28: "[--SP] = (R7:0, P5:0)" is epsilon {}
+PushPopMultDesc28: "[--SP] = (R7:1, P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc28
-	is PushPopMultDesc28 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x0 
+	is PushPopMultDesc28 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc29: "(R7:0, P5:0) = [SP++]" is epsilon {}
+PushPopMultDesc29: "(R7:1, P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc29
-	is PushPopMultDesc29 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x0 
+	is PushPopMultDesc29 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x0 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -478,55 +824,207 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc29
 	SP = SP + 0x4;
 	R1 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R0 = *[ram]:4 SP;
+}
+
+PushPopMultDesc2A: "[--SP] = (R7:1, P5:1)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc2A
+	is PushPopMultDesc2A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x1 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc2B: "(R7:1, P5:1) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc2B
+	is PushPopMultDesc2B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x1 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc30: "[--SP] = (R7:0, P5:1)" is epsilon {}
+PushPopMultDesc2C: "[--SP] = (R7:1, P5:2)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc2C
+	is PushPopMultDesc2C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x2 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc2D: "(R7:1, P5:2) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc2D
+	is PushPopMultDesc2D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x2 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc2E: "[--SP] = (R7:1, P5:3)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc2E
+	is PushPopMultDesc2E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x3 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc2F: "(R7:1, P5:3) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc2F
+	is PushPopMultDesc2F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x3 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc30: "[--SP] = (R7:1, P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc30
-	is PushPopMultDesc30 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x1 
+	is PushPopMultDesc30 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc31: "(R7:0, P5:1) = [SP++]" is epsilon {}
+PushPopMultDesc31: "(R7:1, P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc31
-	is PushPopMultDesc31 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x1 
+	is PushPopMultDesc31 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x4 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -542,51 +1040,35 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc31
 	SP = SP + 0x4;
 	R1 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc32: "[--SP] = (R7:0, P5:2)" is epsilon {}
+PushPopMultDesc32: "[--SP] = (R7:1, P5:5)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc32
-	is PushPopMultDesc32 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x2 
+	is PushPopMultDesc32 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x5 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc33: "(R7:0, P5:2) = [SP++]" is epsilon {}
+PushPopMultDesc33: "(R7:1, P5:5) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc33
-	is PushPopMultDesc33 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x2 
+	is PushPopMultDesc33 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x5 
 {
 	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -602,47 +1084,53 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc33
 	SP = SP + 0x4;
 	R1 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc34: "[--SP] = (R7:0, P5:3)" is epsilon {}
+PushPopMultDesc34: "[--SP] = (R7:2, P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc34
-	is PushPopMultDesc34 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x3 
+	is PushPopMultDesc34 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc35: "(R7:0, P5:3) = [SP++]" is epsilon {}
+PushPopMultDesc35: "(R7:2, P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc35
-	is PushPopMultDesc35 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x3 
+	is PushPopMultDesc35 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x0 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P0 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -656,45 +1144,49 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc35
 	SP = SP + 0x4;
 	R2 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc36: "[--SP] = (R7:0, P5:4)" is epsilon {}
+PushPopMultDesc36: "[--SP] = (R7:2, P5:1)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc36
-	is PushPopMultDesc36 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x4 
+	is PushPopMultDesc36 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x1 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc37: "(R7:0, P5:4) = [SP++]" is epsilon {}
+PushPopMultDesc37: "(R7:2, P5:1) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc37
-	is PushPopMultDesc37 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x4 
+	is PushPopMultDesc37 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x1 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -708,39 +1200,175 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc37
 	SP = SP + 0x4;
 	R2 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc38: "[--SP] = (R7:0, P5:5)" is epsilon {}
+PushPopMultDesc38: "[--SP] = (R7:2, P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc38
-	is PushPopMultDesc38 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x0 & ppmPr=0x5 
+	is PushPopMultDesc38 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R0:4;
+	*[ram]:4 SP = R2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc39: "(R7:0, P5:5) = [SP++]" is epsilon {}
+PushPopMultDesc39: "(R7:2, P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc39
-	is PushPopMultDesc39 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x0 & ppmPr=0x5 
+	is PushPopMultDesc39 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x2 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc3A: "[--SP] = (R7:2, P5:3)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc3A
+	is PushPopMultDesc3A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x3 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc3B: "(R7:2, P5:3) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc3B
+	is PushPopMultDesc3B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x3 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc3C: "[--SP] = (R7:2, P5:4)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc3C
+	is PushPopMultDesc3C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x4 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc3D: "(R7:2, P5:4) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc3D
+	is PushPopMultDesc3D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x4 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc3E: "[--SP] = (R7:2, P5:5)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc3E
+	is PushPopMultDesc3E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x5 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc3F: "(R7:2, P5:5) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc3F
+	is PushPopMultDesc3F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x5 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -756,47 +1384,39 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc39
 	SP = SP + 0x4;
 	R2 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc40: "[--SP] = (R7:1, P5:0)" is epsilon {}
+PushPopMultDesc40: "[--SP] = (R7:3, P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc40
-	is PushPopMultDesc40 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x0 
+	is PushPopMultDesc40 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc41: "(R7:1, P5:0) = [SP++]" is epsilon {}
+PushPopMultDesc41: "(R7:3, P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc41
-	is PushPopMultDesc41 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x0 
+	is PushPopMultDesc41 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x0 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -820,45 +1440,37 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc41
 	SP = SP + 0x4;
 	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc42: "[--SP] = (R7:1, P5:1)" is epsilon {}
+PushPopMultDesc42: "[--SP] = (R7:3, P5:1)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc42
-	is PushPopMultDesc42 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x1 
+	is PushPopMultDesc42 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x1 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc43: "(R7:1, P5:1) = [SP++]" is epsilon {}
+PushPopMultDesc43: "(R7:3, P5:1) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc43
-	is PushPopMultDesc43 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x1 
+	is PushPopMultDesc43 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x1 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -880,43 +1492,35 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc43
 	SP = SP + 0x4;
 	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc44: "[--SP] = (R7:1, P5:2)" is epsilon {}
+PushPopMultDesc44: "[--SP] = (R7:3, P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc44
-	is PushPopMultDesc44 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x2 
+	is PushPopMultDesc44 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc45: "(R7:1, P5:2) = [SP++]" is epsilon {}
+PushPopMultDesc45: "(R7:3, P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc45
-	is PushPopMultDesc45 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x2 
+	is PushPopMultDesc45 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x2 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -936,41 +1540,33 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc45
 	SP = SP + 0x4;
 	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc46: "[--SP] = (R7:1, P5:3)" is epsilon {}
+PushPopMultDesc46: "[--SP] = (R7:3, P5:3)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc46
-	is PushPopMultDesc46 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x3 
+	is PushPopMultDesc46 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x3 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc47: "(R7:1, P5:3) = [SP++]" is epsilon {}
+PushPopMultDesc47: "(R7:3, P5:3) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc47
-	is PushPopMultDesc47 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x3 
+	is PushPopMultDesc47 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x3 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -988,39 +1584,31 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc47
 	SP = SP + 0x4;
 	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc48: "[--SP] = (R7:1, P5:4)" is epsilon {}
+PushPopMultDesc48: "[--SP] = (R7:3, P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc48
-	is PushPopMultDesc48 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x4 
+	is PushPopMultDesc48 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc49: "(R7:1, P5:4) = [SP++]" is epsilon {}
+PushPopMultDesc49: "(R7:3, P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc49
-	is PushPopMultDesc49 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x4 
+	is PushPopMultDesc49 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x4 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1036,39 +1624,177 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc49
 	SP = SP + 0x4;
 	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
+}
+
+PushPopMultDesc4A: "[--SP] = (R7:3, P5:5)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc4A
+	is PushPopMultDesc4A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x5 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc4B: "(R7:3, P5:5) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc4B
+	is PushPopMultDesc4B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x5 
+{
+	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc50: "[--SP] = (R7:1, P5:5)" is epsilon {}
+PushPopMultDesc4C: "[--SP] = (R7:4, P5:0)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc4C
+	is PushPopMultDesc4C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x0 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P0;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc4D: "(R7:4, P5:0) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc4D
+	is PushPopMultDesc4D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x0 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P0 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc4E: "[--SP] = (R7:4, P5:1)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc4E
+	is PushPopMultDesc4E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x1 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc4F: "(R7:4, P5:1) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc4F
+	is PushPopMultDesc4F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x1 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc50: "[--SP] = (R7:4, P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc50
-	is PushPopMultDesc50 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x1 & ppmPr=0x5 
+	is PushPopMultDesc50 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R1:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc51: "(R7:1, P5:5) = [SP++]" is epsilon {}
+PushPopMultDesc51: "(R7:4, P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc51
-	is PushPopMultDesc51 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x1 & ppmPr=0x5 
+	is PushPopMultDesc51 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x2 
 {
 	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1078,59 +1804,37 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc51
 	SP = SP + 0x4;
 	R4 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R1 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc52: "[--SP] = (R7:2, P5:0)" is epsilon {}
+PushPopMultDesc52: "[--SP] = (R7:4, P5:3)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc52
-	is PushPopMultDesc52 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x0 
+	is PushPopMultDesc52 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x3 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc53: "(R7:2, P5:0) = [SP++]" is epsilon {}
+PushPopMultDesc53: "(R7:4, P5:3) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc53
-	is PushPopMultDesc53 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x0 
+	is PushPopMultDesc53 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x3 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P0 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1140,53 +1844,33 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc53
 	SP = SP + 0x4;
 	R4 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc54: "[--SP] = (R7:2, P5:1)" is epsilon {}
+PushPopMultDesc54: "[--SP] = (R7:4, P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc54
-	is PushPopMultDesc54 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x1 
+	is PushPopMultDesc54 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc55: "(R7:2, P5:1) = [SP++]" is epsilon {}
+PushPopMultDesc55: "(R7:4, P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc55
-	is PushPopMultDesc55 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x1 
+	is PushPopMultDesc55 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x4 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1196,49 +1880,29 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc55
 	SP = SP + 0x4;
 	R4 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc56: "[--SP] = (R7:2, P5:2)" is epsilon {}
+PushPopMultDesc56: "[--SP] = (R7:4, P5:5)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc56
-	is PushPopMultDesc56 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x2 
+	is PushPopMultDesc56 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x5 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc57: "(R7:2, P5:2) = [SP++]" is epsilon {}
+PushPopMultDesc57: "(R7:4, P5:5) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc57
-	is PushPopMultDesc57 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x2 
+	is PushPopMultDesc57 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x5 
 {
 	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1248,39 +1912,161 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc57
 	SP = SP + 0x4;
 	R4 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc58: "[--SP] = (R7:2, P5:3)" is epsilon {}
+PushPopMultDesc58: "[--SP] = (R7:5, P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc58
-	is PushPopMultDesc58 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x3 
+	is PushPopMultDesc58 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc59: "(R7:2, P5:3) = [SP++]" is epsilon {}
+PushPopMultDesc59: "(R7:5, P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc59
-	is PushPopMultDesc59 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x3 
+	is PushPopMultDesc59 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x0 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P0 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc5A: "[--SP] = (R7:5, P5:1)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc5A
+	is PushPopMultDesc5A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x1 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P1;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc5B: "(R7:5, P5:1) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc5B
+	is PushPopMultDesc5B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x1 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc5C: "[--SP] = (R7:5, P5:2)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc5C
+	is PushPopMultDesc5C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x2 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P2;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc5D: "(R7:5, P5:2) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc5D
+	is PushPopMultDesc5D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x2 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc5E: "[--SP] = (R7:5, P5:3)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc5E
+	is PushPopMultDesc5E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x3 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R5;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc5F: "(R7:5, P5:3) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc5F
+	is PushPopMultDesc5F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x3 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1294,39 +2080,27 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc59
 	SP = SP + 0x4;
 	R5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc60: "[--SP] = (R7:2, P5:4)" is epsilon {}
+PushPopMultDesc60: "[--SP] = (R7:5, P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc60
-	is PushPopMultDesc60 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x4 
+	is PushPopMultDesc60 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc61: "(R7:2, P5:4) = [SP++]" is epsilon {}
+PushPopMultDesc61: "(R7:5, P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc61
-	is PushPopMultDesc61 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x4 
+	is PushPopMultDesc61 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x4 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1338,37 +2112,25 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc61
 	SP = SP + 0x4;
 	R5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc62: "[--SP] = (R7:2, P5:5)" is epsilon {}
+PushPopMultDesc62: "[--SP] = (R7:5, P5:5)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc62
-	is PushPopMultDesc62 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x2 & ppmPr=0x5 
+	is PushPopMultDesc62 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x5 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R2:4;
+	*[ram]:4 SP = R5;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc63: "(R7:2, P5:5) = [SP++]" is epsilon {}
+PushPopMultDesc63: "(R7:5, P5:5) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc63
-	is PushPopMultDesc63 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x2 & ppmPr=0x5 
+	is PushPopMultDesc63 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x5 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1378,45 +2140,33 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc63
 	SP = SP + 0x4;
 	R5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R2 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc64: "[--SP] = (R7:3, P5:0)" is epsilon {}
+PushPopMultDesc64: "[--SP] = (R7:6, P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc64
-	is PushPopMultDesc64 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x0 
+	is PushPopMultDesc64 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc65: "(R7:3, P5:0) = [SP++]" is epsilon {}
+PushPopMultDesc65: "(R7:6, P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc65
-	is PushPopMultDesc65 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x0 
+	is PushPopMultDesc65 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x0 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1434,43 +2184,31 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc65
 	SP = SP + 0x4;
 	R6 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc66: "[--SP] = (R7:3, P5:1)" is epsilon {}
+PushPopMultDesc66: "[--SP] = (R7:6, P5:1)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc66
-	is PushPopMultDesc66 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x1 
+	is PushPopMultDesc66 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x1 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc67: "(R7:3, P5:1) = [SP++]" is epsilon {}
+PushPopMultDesc67: "(R7:6, P5:1) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc67
-	is PushPopMultDesc67 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x1 
+	is PushPopMultDesc67 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x1 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1486,41 +2224,29 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc67
 	SP = SP + 0x4;
 	R6 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
-	SP = SP + 0x4;
 }
 
-PushPopMultDesc68: "[--SP] = (R7:3, P5:2)" is epsilon {}
+PushPopMultDesc68: "[--SP] = (R7:6, P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc68
-	is PushPopMultDesc68 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x2 
+	is PushPopMultDesc68 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R6;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc69: "(R7:3, P5:2) = [SP++]" is epsilon {}
+PushPopMultDesc69: "(R7:6, P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc69
-	is PushPopMultDesc69 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x2 
+	is PushPopMultDesc69 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x2 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1534,39 +2260,115 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc69
 	SP = SP + 0x4;
 	R6 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
+}
+
+PushPopMultDesc6A: "[--SP] = (R7:6, P5:3)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc6A
+	is PushPopMultDesc6A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x3 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P3;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc6B: "(R7:6, P5:3) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc6B
+	is PushPopMultDesc6B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x3 
+{
+	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
+	P4 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc70: "[--SP] = (R7:3, P5:3)" is epsilon {}
+PushPopMultDesc6C: "[--SP] = (R7:6, P5:4)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc6C
+	is PushPopMultDesc6C & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x4 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P4;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc6D: "(R7:6, P5:4) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc6D
+	is PushPopMultDesc6D & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x4 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc6E: "[--SP] = (R7:6, P5:5)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc6E
+	is PushPopMultDesc6E & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x5 
+{
+	SP = SP - 0x4;
+	*[ram]:4 SP = R6;
+	SP = SP - 0x4;
+	*[ram]:4 SP = R7;
+	SP = SP - 0x4;
+	*[ram]:4 SP = P5;
+}
+
+PushPopMultDesc6F: "(R7:6, P5:5) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc6F
+	is PushPopMultDesc6F & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x5 
+{
+	P5 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R7 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	R6 = *[ram]:4 SP;
+	SP = SP + 0x4;
+}
+
+PushPopMultDesc70: "[--SP] = (R7:7, P5:0)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc70
-	is PushPopMultDesc70 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x3 
+	is PushPopMultDesc70 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x0 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = P0;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc71: "(R7:3, P5:3) = [SP++]" is epsilon {}
+PushPopMultDesc71: "(R7:7, P5:0) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc71
-	is PushPopMultDesc71 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x3 
+	is PushPopMultDesc71 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x0 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1574,123 +2376,101 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc71
 	SP = SP + 0x4;
 	P3 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P0 = *[ram]:4 SP;
+	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc72: "[--SP] = (R7:3, P5:4)" is epsilon {}
+PushPopMultDesc72: "[--SP] = (R7:7, P5:1)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc72
-	is PushPopMultDesc72 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x4 
+	is PushPopMultDesc72 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x1 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = P1;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc73: "(R7:3, P5:4) = [SP++]" is epsilon {}
+PushPopMultDesc73: "(R7:7, P5:1) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc73
-	is PushPopMultDesc73 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x4 
+	is PushPopMultDesc73 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x1 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
 	P4 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P1 = *[ram]:4 SP;
+	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc74: "[--SP] = (R7:3, P5:5)" is epsilon {}
+PushPopMultDesc74: "[--SP] = (R7:7, P5:2)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc74
-	is PushPopMultDesc74 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x3 & ppmPr=0x5 
+	is PushPopMultDesc74 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x2 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R3:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = P2;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc75: "(R7:3, P5:5) = [SP++]" is epsilon {}
+PushPopMultDesc75: "(R7:7, P5:2) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc75
-	is PushPopMultDesc75 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x3 & ppmPr=0x5 
+	is PushPopMultDesc75 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x2 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
+	P4 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P3 = *[ram]:4 SP;
+	SP = SP + 0x4;
+	P2 = *[ram]:4 SP;
+	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R3 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc76: "[--SP] = (R7:4, P5:0)" is epsilon {}
+PushPopMultDesc76: "[--SP] = (R7:7, P5:3)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc76
-	is PushPopMultDesc76 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x0 
+	is PushPopMultDesc76 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x3 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P3;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc77: "(R7:4, P5:0) = [SP++]" is epsilon {}
+PushPopMultDesc77: "(R7:7, P5:3) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc77
-	is PushPopMultDesc77 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x0 
+	is PushPopMultDesc77 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x3 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -1698,805 +2478,25 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc77
 	SP = SP + 0x4;
 	P3 = *[ram]:4 SP;
 	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P0 = *[ram]:4 SP;
-	SP = SP + 0x4;
 	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc78: "[--SP] = (R7:4, P5:1)" is epsilon {}
+PushPopMultDesc78: "[--SP] = (R7:7, P5:4)" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc78
-	is PushPopMultDesc78 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x1 
+	is PushPopMultDesc78 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x4 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
+	*[ram]:4 SP = P4;
 	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc79: "(R7:4, P5:1) = [SP++]" is epsilon {}
+PushPopMultDesc79: "(R7:7, P5:4) = [SP++]" is epsilon {}
 PushPopMult:^"PushPopMul16" PushPopMultDesc79
-	is PushPopMultDesc79 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x1 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc80: "[--SP] = (R7:4, P5:2)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc80
-	is PushPopMultDesc80 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x2 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc81: "(R7:4, P5:2) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc81
-	is PushPopMultDesc81 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x2 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc82: "[--SP] = (R7:4, P5:3)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc82
-	is PushPopMultDesc82 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x3 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc83: "(R7:4, P5:3) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc83
-	is PushPopMultDesc83 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x3 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc84: "[--SP] = (R7:4, P5:4)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc84
-	is PushPopMultDesc84 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x4 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc85: "(R7:4, P5:4) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc85
-	is PushPopMultDesc85 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x4 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc86: "[--SP] = (R7:4, P5:5)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc86
-	is PushPopMultDesc86 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x4 & ppmPr=0x5 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc87: "(R7:4, P5:5) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc87
-	is PushPopMultDesc87 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x4 & ppmPr=0x5 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc88: "[--SP] = (R7:5, P5:0)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc88
-	is PushPopMultDesc88 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x0 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc89: "(R7:5, P5:0) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc89
-	is PushPopMultDesc89 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x0 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P0 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc90: "[--SP] = (R7:5, P5:1)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc90
-	is PushPopMultDesc90 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x1 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc91: "(R7:5, P5:1) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc91
-	is PushPopMultDesc91 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x1 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc92: "[--SP] = (R7:5, P5:2)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc92
-	is PushPopMultDesc92 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x2 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc93: "(R7:5, P5:2) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc93
-	is PushPopMultDesc93 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x2 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc94: "[--SP] = (R7:5, P5:3)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc94
-	is PushPopMultDesc94 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x3 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc95: "(R7:5, P5:3) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc95
-	is PushPopMultDesc95 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x3 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc96: "[--SP] = (R7:5, P5:4)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc96
-	is PushPopMultDesc96 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x4 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc97: "(R7:5, P5:4) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc97
-	is PushPopMultDesc97 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x4 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc98: "[--SP] = (R7:5, P5:5)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc98
-	is PushPopMultDesc98 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x5 & ppmPr=0x5 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R5:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc99: "(R7:5, P5:5) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc99
-	is PushPopMultDesc99 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x5 & ppmPr=0x5 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc100: "[--SP] = (R7:6, P5:0)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc100
-	is PushPopMultDesc100 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x0 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc101: "(R7:6, P5:0) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc101
-	is PushPopMultDesc101 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x0 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P0 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc102: "[--SP] = (R7:6, P5:1)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc102
-	is PushPopMultDesc102 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x1 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc103: "(R7:6, P5:1) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc103
-	is PushPopMultDesc103 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x1 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc104: "[--SP] = (R7:6, P5:2)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc104
-	is PushPopMultDesc104 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x2 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc105: "(R7:6, P5:2) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc105
-	is PushPopMultDesc105 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x2 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc106: "[--SP] = (R7:6, P5:3)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc106
-	is PushPopMultDesc106 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x3 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc107: "(R7:6, P5:3) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc107
-	is PushPopMultDesc107 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x3 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc108: "[--SP] = (R7:6, P5:4)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc108
-	is PushPopMultDesc108 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x4 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc109: "(R7:6, P5:4) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc109
-	is PushPopMultDesc109 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x4 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc110: "[--SP] = (R7:6, P5:5)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc110
-	is PushPopMultDesc110 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x6 & ppmPr=0x5 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R6:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc111: "(R7:6, P5:5) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc111
-	is PushPopMultDesc111 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x6 & ppmPr=0x5 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R6 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc112: "[--SP] = (R7:7, P5:0)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc112
-	is PushPopMultDesc112 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x0 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P0:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc113: "(R7:7, P5:0) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc113
-	is PushPopMultDesc113 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x0 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P0 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc114: "[--SP] = (R7:7, P5:1)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc114
-	is PushPopMultDesc114 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x1 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P1:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc115: "(R7:7, P5:1) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc115
-	is PushPopMultDesc115 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x1 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P1 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc116: "[--SP] = (R7:7, P5:2)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc116
-	is PushPopMultDesc116 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x2 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P2:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc117: "(R7:7, P5:2) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc117
-	is PushPopMultDesc117 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x2 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P2 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc118: "[--SP] = (R7:7, P5:3)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc118
-	is PushPopMultDesc118 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x3 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P3:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc119: "(R7:7, P5:3) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc119
-	is PushPopMultDesc119 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x3 
-{
-	P5 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P4 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	P3 = *[ram]:4 SP;
-	SP = SP + 0x4;
-	R7 = *[ram]:4 SP;
-	SP = SP + 0x4;
-}
-
-PushPopMultDesc120: "[--SP] = (R7:7, P5:4)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc120
-	is PushPopMultDesc120 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x4 
-{
-	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P4:4;
-	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
-}
-
-PushPopMultDesc121: "(R7:7, P5:4) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc121
-	is PushPopMultDesc121 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x4 
+	is PushPopMultDesc79 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x4 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;
@@ -2506,19 +2506,19 @@ PushPopMult:^"PushPopMul16" PushPopMultDesc121
 	SP = SP + 0x4;
 }
 
-PushPopMultDesc122: "[--SP] = (R7:7, P5:5)" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc122
-	is PushPopMultDesc122 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x5 
+PushPopMultDesc7A: "[--SP] = (R7:7, P5:5)" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc7A
+	is PushPopMultDesc7A & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x1 & ppmDr=0x7 & ppmPr=0x5 
 {
 	SP = SP - 0x4;
-	*[ram]:4 SP = R7:4;
+	*[ram]:4 SP = R7;
 	SP = SP - 0x4;
-	*[ram]:4 SP = P5:4;
+	*[ram]:4 SP = P5;
 }
 
-PushPopMultDesc123: "(R7:7, P5:5) = [SP++]" is epsilon {}
-PushPopMult:^"PushPopMul16" PushPopMultDesc123
-	is PushPopMultDesc123 & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x5 
+PushPopMultDesc7B: "(R7:7, P5:5) = [SP++]" is epsilon {}
+PushPopMult:^"PushPopMul16" PushPopMultDesc7B
+	is PushPopMultDesc7B & ppmSig=0x02 & ppmD=0x1 & ppmP=0x1 & ppmW=0x0 & ppmDr=0x7 & ppmPr=0x5 
 {
 	P5 = *[ram]:4 SP;
 	SP = SP + 0x4;

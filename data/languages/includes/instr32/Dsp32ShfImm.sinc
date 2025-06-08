@@ -1,0 +1,1314 @@
+## Shift Immediate (Dsp32ShfImm)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 1 | 1 | 0 | 1 |.dead..|.......sopc........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..sop..|..hls..|....dst....|..........imm..........|....src....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dsiInstr16 (16)
+	dsiSigDsp        = (12,15) 
+	dsiM             = (11,11) 
+	dsiSig           = ( 7,10) 
+	dsiSopc          = ( 0, 4) 
+;
+
+define token dsiInstr32 (16)
+	dsiSop           = (14,15) 
+	dsiHls           = (12,13) 
+	dsiDstDReg       = ( 9,11) 
+	dsiDstDRegL      = ( 9,11) 
+	dsiDstDRegH      = ( 9,11) 
+	dsiImmSImm       = ( 3, 8) signed
+	dsiImmSig2       = ( 7, 8) 
+	dsiImmSig1       = ( 8, 8) 
+	dsiImm5UImm      = ( 3, 7) 
+	dsiImm4UImm      = ( 3, 6) 
+	dsiSrcDReg       = ( 0, 2) 
+	dsiSrcDRegL      = ( 0, 2) 
+	dsiSrcDRegH      = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables dsiDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dsiSrcDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dsiSrcDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dsiDstDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dsiSrcDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dsiDstDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+
+
+### Instructions ###
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegL" <<< "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiDstDRegL & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegL 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegL << shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegL" >>> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiDstDRegL & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegL 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegL << shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegH" <<< "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x1 & dsiDstDRegL & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegH 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegH << shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegH" >>> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x1 & dsiDstDRegL & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegH 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegH << shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegL" <<< "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x2 & dsiDstDRegH & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegL 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegL << shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegL" >>> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x2 & dsiDstDRegH & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegL 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegL << shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegH" <<< "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x3 & dsiDstDRegH & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegH 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegH << shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegH" >>> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x0 & dsiHls=0x3 & dsiDstDRegH & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegH 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	shft_res_AShift16 = dsiSrcDRegH << shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegL" <<< "dsiImm4UImm" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiDstDRegL & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegL 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegL) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegL" >>> "negImm4" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiDstDRegL & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegL 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegL) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegH" <<< "dsiImm4UImm" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x1 & dsiDstDRegL & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegH 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegH) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegL" = "dsiSrcDRegH" >>> "negImm4" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x1 & dsiDstDRegL & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegH 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegL = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegL = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegH) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegL = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegL" <<< "dsiImm4UImm" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x2 & dsiDstDRegH & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegL 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegL) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegL" >>> "negImm4" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x2 & dsiDstDRegH & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegL 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegL;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegL s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegL) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegH" <<< "dsiImm4UImm" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x3 & dsiDstDRegH & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegH 
+{
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = dsiImm4UImm;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegH) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"AShift16" dsiDstDRegH" = "dsiSrcDRegH" >>> "negImm4" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x1 & dsiHls=0x3 & dsiDstDRegH & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegH 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_AShift16:2;
+	local shift_AShift16:1 = negImm4;
+	if (shift_AShift16 s> 0x0) goto <rshift_AShift16>;
+	if (shift_AShift16 s< 0x0) goto <lshift_AShift16>;
+	dsiDstDRegH = dsiSrcDRegH;
+	goto <end_shift_AShift16>;
+<rshift_AShift16>
+	shft_res_AShift16 = dsiSrcDRegH s>> shift_AShift16;
+	dsiDstDRegH = shft_res_AShift16;
+	goto <end_shift_AShift16>;
+<lshift_AShift16>
+	shift_AShift16 = -shift_AShift16;
+	local shft_buf_AShift16:4;
+	shft_buf_AShift16 = sext(dsiSrcDRegH) << shift_AShift16;
+	shft_res_AShift16 = shft_buf_AShift16:2;
+	if (sext(shft_res_AShift16) == shft_buf_AShift16) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = (0x1 << 0xf);
+	if (shft_buf_AShift16 s< 0x0) goto <end_strunc_shift_AShift16>;
+	shft_res_AShift16 = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16>
+	dsiDstDRegH = shft_res_AShift16;
+<end_shift_AShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegL" = "dsiSrcDRegL" << "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiDstDRegL & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegL 
+{
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = dsiImm4UImm;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegL = dsiSrcDRegL;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegL >> shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegL << shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegL" = "dsiSrcDRegL" >> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiDstDRegL & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegL 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = negImm4;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegL = dsiSrcDRegL;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegL >> shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegL << shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegL" = "dsiSrcDRegH" << "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x1 & dsiDstDRegL & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegH 
+{
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = dsiImm4UImm;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegL = dsiSrcDRegH;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegH >> shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegH << shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegL" = "dsiSrcDRegH" >> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x1 & dsiDstDRegL & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegH 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = negImm4;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegL = dsiSrcDRegH;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegH >> shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegH << shift_LShift16;
+	dsiDstDRegL = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegH" = "dsiSrcDRegL" << "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x2 & dsiDstDRegH & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegL 
+{
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = dsiImm4UImm;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegH = dsiSrcDRegL;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegL >> shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegL << shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegH" = "dsiSrcDRegL" >> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x2 & dsiDstDRegH & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegL 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = negImm4;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegH = dsiSrcDRegL;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegL >> shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegL << shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegH" = "dsiSrcDRegH" << "dsiImm4UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x3 & dsiDstDRegH & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDRegH 
+{
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = dsiImm4UImm;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegH = dsiSrcDRegH;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegH >> shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegH << shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"LShift16" dsiDstDRegH" = "dsiSrcDRegH" >> "negImm4
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x00 
+	 ; dsiSop=0x2 & dsiHls=0x3 & dsiDstDRegH & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDRegH 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local shft_res_LShift16:2;
+	local shift_LShift16:1 = negImm4;
+	if (shift_LShift16 s> 0x0) goto <rshift_LShift16>;
+	if (shift_LShift16 s< 0x0) goto <lshift_LShift16>;
+	dsiDstDRegH = dsiSrcDRegH;
+	goto <end_shift_LShift16>;
+<rshift_LShift16>
+	shft_res_LShift16 = dsiSrcDRegH >> shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+	goto <end_shift_LShift16>;
+<lshift_LShift16>
+	shift_LShift16 = -shift_LShift16;
+	shft_res_LShift16 = dsiSrcDRegH << shift_LShift16;
+	dsiDstDRegH = shft_res_LShift16;
+<end_shift_LShift16>
+}
+
+Dsp32ShfImm:^"AShift16Vec" dsiDstDReg" = "dsiSrcDReg" <<< "dsiImm4UImm"V"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x01 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiDstDReg & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDReg 
+{
+	local src_vecL:2 = dsiSrcDReg:2;
+	local src_vecH:2 = dsiSrcDReg(2);
+	local res_vecL:2;
+	local res_vecH:2;
+	local shft_res_AShift16VecL:2;
+	local shift_AShift16VecL:1 = dsiImm4UImm;
+	if (shift_AShift16VecL s> 0x0) goto <rshift_AShift16VecL>;
+	if (shift_AShift16VecL s< 0x0) goto <lshift_AShift16VecL>;
+	res_vecL = src_vecL;
+	goto <end_shift_AShift16VecL>;
+<rshift_AShift16VecL>
+	shft_res_AShift16VecL = src_vecL s>> shift_AShift16VecL;
+	res_vecL = shft_res_AShift16VecL;
+	goto <end_shift_AShift16VecL>;
+<lshift_AShift16VecL>
+	shift_AShift16VecL = -shift_AShift16VecL;
+	shft_res_AShift16VecL = src_vecL << shift_AShift16VecL;
+	res_vecL = shft_res_AShift16VecL;
+<end_shift_AShift16VecL>
+	local shft_res_AShift16VecH:2;
+	local shift_AShift16VecH:1 = dsiImm4UImm;
+	if (shift_AShift16VecH s> 0x0) goto <rshift_AShift16VecH>;
+	if (shift_AShift16VecH s< 0x0) goto <lshift_AShift16VecH>;
+	res_vecH = src_vecH;
+	goto <end_shift_AShift16VecH>;
+<rshift_AShift16VecH>
+	shft_res_AShift16VecH = src_vecH s>> shift_AShift16VecH;
+	res_vecH = shft_res_AShift16VecH;
+	goto <end_shift_AShift16VecH>;
+<lshift_AShift16VecH>
+	shift_AShift16VecH = -shift_AShift16VecH;
+	shft_res_AShift16VecH = src_vecH << shift_AShift16VecH;
+	res_vecH = shft_res_AShift16VecH;
+<end_shift_AShift16VecH>
+	dsiDstDReg = zext(res_vecH) << 0x10 | zext(res_vecL);
+}
+
+Dsp32ShfImm:^"AShift16Vec" dsiDstDReg" = "dsiSrcDReg" >>> "negImm4"V"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x01 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiDstDReg & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDReg 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local src_vecL:2 = dsiSrcDReg:2;
+	local src_vecH:2 = dsiSrcDReg(2);
+	local res_vecL:2;
+	local res_vecH:2;
+	local shft_res_AShift16VecL:2;
+	local shift_AShift16VecL:1 = negImm4;
+	if (shift_AShift16VecL s> 0x0) goto <rshift_AShift16VecL>;
+	if (shift_AShift16VecL s< 0x0) goto <lshift_AShift16VecL>;
+	res_vecL = src_vecL;
+	goto <end_shift_AShift16VecL>;
+<rshift_AShift16VecL>
+	shft_res_AShift16VecL = src_vecL s>> shift_AShift16VecL;
+	res_vecL = shft_res_AShift16VecL;
+	goto <end_shift_AShift16VecL>;
+<lshift_AShift16VecL>
+	shift_AShift16VecL = -shift_AShift16VecL;
+	shft_res_AShift16VecL = src_vecL << shift_AShift16VecL;
+	res_vecL = shft_res_AShift16VecL;
+<end_shift_AShift16VecL>
+	local shft_res_AShift16VecH:2;
+	local shift_AShift16VecH:1 = negImm4;
+	if (shift_AShift16VecH s> 0x0) goto <rshift_AShift16VecH>;
+	if (shift_AShift16VecH s< 0x0) goto <lshift_AShift16VecH>;
+	res_vecH = src_vecH;
+	goto <end_shift_AShift16VecH>;
+<rshift_AShift16VecH>
+	shft_res_AShift16VecH = src_vecH s>> shift_AShift16VecH;
+	res_vecH = shft_res_AShift16VecH;
+	goto <end_shift_AShift16VecH>;
+<lshift_AShift16VecH>
+	shift_AShift16VecH = -shift_AShift16VecH;
+	shft_res_AShift16VecH = src_vecH << shift_AShift16VecH;
+	res_vecH = shft_res_AShift16VecH;
+<end_shift_AShift16VecH>
+	dsiDstDReg = zext(res_vecH) << 0x10 | zext(res_vecL);
+}
+
+Dsp32ShfImm:^"AShift16Vec" dsiDstDReg" = "dsiSrcDReg" <<< "dsiImm4UImm"V, S"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x01 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiDstDReg & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDReg 
+{
+	local src_vecL:2 = dsiSrcDReg:2;
+	local src_vecH:2 = dsiSrcDReg(2);
+	local res_vecL:2;
+	local res_vecH:2;
+	local shft_res_AShift16VecL:2;
+	local shift_AShift16VecL:1 = dsiImm4UImm;
+	if (shift_AShift16VecL s> 0x0) goto <rshift_AShift16VecL>;
+	if (shift_AShift16VecL s< 0x0) goto <lshift_AShift16VecL>;
+	res_vecL = src_vecL;
+	goto <end_shift_AShift16VecL>;
+<rshift_AShift16VecL>
+	shft_res_AShift16VecL = src_vecL s>> shift_AShift16VecL;
+	res_vecL = shft_res_AShift16VecL;
+	goto <end_shift_AShift16VecL>;
+<lshift_AShift16VecL>
+	shift_AShift16VecL = -shift_AShift16VecL;
+	local shft_buf_AShift16VecL:4;
+	shft_buf_AShift16VecL = sext(src_vecL) << shift_AShift16VecL;
+	shft_res_AShift16VecL = shft_buf_AShift16VecL:2;
+	if (sext(shft_res_AShift16VecL) == shft_buf_AShift16VecL) goto <end_strunc_shift_AShift16VecL>;
+	shft_res_AShift16VecL = (0x1 << 0xf);
+	if (shft_buf_AShift16VecL s< 0x0) goto <end_strunc_shift_AShift16VecL>;
+	shft_res_AShift16VecL = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16VecL>
+	res_vecL = shft_res_AShift16VecL;
+<end_shift_AShift16VecL>
+	local shft_res_AShift16VecH:2;
+	local shift_AShift16VecH:1 = dsiImm4UImm;
+	if (shift_AShift16VecH s> 0x0) goto <rshift_AShift16VecH>;
+	if (shift_AShift16VecH s< 0x0) goto <lshift_AShift16VecH>;
+	res_vecH = src_vecH;
+	goto <end_shift_AShift16VecH>;
+<rshift_AShift16VecH>
+	shft_res_AShift16VecH = src_vecH s>> shift_AShift16VecH;
+	res_vecH = shft_res_AShift16VecH;
+	goto <end_shift_AShift16VecH>;
+<lshift_AShift16VecH>
+	shift_AShift16VecH = -shift_AShift16VecH;
+	local shft_buf_AShift16VecH:4;
+	shft_buf_AShift16VecH = sext(src_vecH) << shift_AShift16VecH;
+	shft_res_AShift16VecH = shft_buf_AShift16VecH:2;
+	if (sext(shft_res_AShift16VecH) == shft_buf_AShift16VecH) goto <end_strunc_shift_AShift16VecH>;
+	shft_res_AShift16VecH = (0x1 << 0xf);
+	if (shft_buf_AShift16VecH s< 0x0) goto <end_strunc_shift_AShift16VecH>;
+	shft_res_AShift16VecH = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16VecH>
+	res_vecH = shft_res_AShift16VecH;
+<end_shift_AShift16VecH>
+	dsiDstDReg = zext(res_vecH) << 0x10 | zext(res_vecL);
+}
+
+Dsp32ShfImm:^"AShift16Vec" dsiDstDReg" = "dsiSrcDReg" >>> "negImm4"V, S"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x01 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiDstDReg & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDReg 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local src_vecL:2 = dsiSrcDReg:2;
+	local src_vecH:2 = dsiSrcDReg(2);
+	local res_vecL:2;
+	local res_vecH:2;
+	local shft_res_AShift16VecL:2;
+	local shift_AShift16VecL:1 = negImm4;
+	if (shift_AShift16VecL s> 0x0) goto <rshift_AShift16VecL>;
+	if (shift_AShift16VecL s< 0x0) goto <lshift_AShift16VecL>;
+	res_vecL = src_vecL;
+	goto <end_shift_AShift16VecL>;
+<rshift_AShift16VecL>
+	shft_res_AShift16VecL = src_vecL s>> shift_AShift16VecL;
+	res_vecL = shft_res_AShift16VecL;
+	goto <end_shift_AShift16VecL>;
+<lshift_AShift16VecL>
+	shift_AShift16VecL = -shift_AShift16VecL;
+	local shft_buf_AShift16VecL:4;
+	shft_buf_AShift16VecL = sext(src_vecL) << shift_AShift16VecL;
+	shft_res_AShift16VecL = shft_buf_AShift16VecL:2;
+	if (sext(shft_res_AShift16VecL) == shft_buf_AShift16VecL) goto <end_strunc_shift_AShift16VecL>;
+	shft_res_AShift16VecL = (0x1 << 0xf);
+	if (shft_buf_AShift16VecL s< 0x0) goto <end_strunc_shift_AShift16VecL>;
+	shft_res_AShift16VecL = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16VecL>
+	res_vecL = shft_res_AShift16VecL;
+<end_shift_AShift16VecL>
+	local shft_res_AShift16VecH:2;
+	local shift_AShift16VecH:1 = negImm4;
+	if (shift_AShift16VecH s> 0x0) goto <rshift_AShift16VecH>;
+	if (shift_AShift16VecH s< 0x0) goto <lshift_AShift16VecH>;
+	res_vecH = src_vecH;
+	goto <end_shift_AShift16VecH>;
+<rshift_AShift16VecH>
+	shft_res_AShift16VecH = src_vecH s>> shift_AShift16VecH;
+	res_vecH = shft_res_AShift16VecH;
+	goto <end_shift_AShift16VecH>;
+<lshift_AShift16VecH>
+	shift_AShift16VecH = -shift_AShift16VecH;
+	local shft_buf_AShift16VecH:4;
+	shft_buf_AShift16VecH = sext(src_vecH) << shift_AShift16VecH;
+	shft_res_AShift16VecH = shft_buf_AShift16VecH:2;
+	if (sext(shft_res_AShift16VecH) == shft_buf_AShift16VecH) goto <end_strunc_shift_AShift16VecH>;
+	shft_res_AShift16VecH = (0x1 << 0xf);
+	if (shft_buf_AShift16VecH s< 0x0) goto <end_strunc_shift_AShift16VecH>;
+	shft_res_AShift16VecH = ((0x1 << 0xf) - 0x1);
+<end_strunc_shift_AShift16VecH>
+	res_vecH = shft_res_AShift16VecH;
+<end_shift_AShift16VecH>
+	dsiDstDReg = zext(res_vecH) << 0x10 | zext(res_vecL);
+}
+
+Dsp32ShfImm:^"LShift16Vec" dsiDstDReg" = "dsiSrcDReg" << "dsiImm4UImm"V"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x01 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiDstDReg & dsiImmSig2=0x0 & dsiImm4UImm & dsiSrcDReg 
+{
+	local src_vecL:2 = dsiSrcDReg:2;
+	local src_vecH:2 = dsiSrcDReg(2);
+	local res_vecL:2;
+	local res_vecH:2;
+	local shft_res_LShift16VecL:2;
+	local shift_LShift16VecL:1 = dsiImm4UImm;
+	if (shift_LShift16VecL s> 0x0) goto <rshift_LShift16VecL>;
+	if (shift_LShift16VecL s< 0x0) goto <lshift_LShift16VecL>;
+	res_vecL = src_vecL;
+	goto <end_shift_LShift16VecL>;
+<rshift_LShift16VecL>
+	shft_res_LShift16VecL = src_vecL >> shift_LShift16VecL;
+	res_vecL = shft_res_LShift16VecL;
+	goto <end_shift_LShift16VecL>;
+<lshift_LShift16VecL>
+	shift_LShift16VecL = -shift_LShift16VecL;
+	shft_res_LShift16VecL = src_vecL << shift_LShift16VecL;
+	res_vecL = shft_res_LShift16VecL;
+<end_shift_LShift16VecL>
+	local shft_res_LShift16VecH:2;
+	local shift_LShift16VecH:1 = dsiImm4UImm;
+	if (shift_LShift16VecH s> 0x0) goto <rshift_LShift16VecH>;
+	if (shift_LShift16VecH s< 0x0) goto <lshift_LShift16VecH>;
+	res_vecH = src_vecH;
+	goto <end_shift_LShift16VecH>;
+<rshift_LShift16VecH>
+	shft_res_LShift16VecH = src_vecH >> shift_LShift16VecH;
+	res_vecH = shft_res_LShift16VecH;
+	goto <end_shift_LShift16VecH>;
+<lshift_LShift16VecH>
+	shift_LShift16VecH = -shift_LShift16VecH;
+	shft_res_LShift16VecH = src_vecH << shift_LShift16VecH;
+	res_vecH = shft_res_LShift16VecH;
+<end_shift_LShift16VecH>
+	dsiDstDReg = zext(res_vecH) << 0x10 | zext(res_vecL);
+}
+
+Dsp32ShfImm:^"LShift16Vec" dsiDstDReg" = "dsiSrcDReg" >> "negImm4"V"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x01 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiDstDReg & dsiImmSig2=0x3 & dsiImm4UImm & dsiSrcDReg 
+[
+	negImm4 = 0x10 - dsiImm4UImm;
+] {
+	local src_vecL:2 = dsiSrcDReg:2;
+	local src_vecH:2 = dsiSrcDReg(2);
+	local res_vecL:2;
+	local res_vecH:2;
+	local shft_res_LShift16VecL:2;
+	local shift_LShift16VecL:1 = negImm4;
+	if (shift_LShift16VecL s> 0x0) goto <rshift_LShift16VecL>;
+	if (shift_LShift16VecL s< 0x0) goto <lshift_LShift16VecL>;
+	res_vecL = src_vecL;
+	goto <end_shift_LShift16VecL>;
+<rshift_LShift16VecL>
+	shft_res_LShift16VecL = src_vecL >> shift_LShift16VecL;
+	res_vecL = shft_res_LShift16VecL;
+	goto <end_shift_LShift16VecL>;
+<lshift_LShift16VecL>
+	shift_LShift16VecL = -shift_LShift16VecL;
+	shft_res_LShift16VecL = src_vecL << shift_LShift16VecL;
+	res_vecL = shft_res_LShift16VecL;
+<end_shift_LShift16VecL>
+	local shft_res_LShift16VecH:2;
+	local shift_LShift16VecH:1 = negImm4;
+	if (shift_LShift16VecH s> 0x0) goto <rshift_LShift16VecH>;
+	if (shift_LShift16VecH s< 0x0) goto <lshift_LShift16VecH>;
+	res_vecH = src_vecH;
+	goto <end_shift_LShift16VecH>;
+<rshift_LShift16VecH>
+	shft_res_LShift16VecH = src_vecH >> shift_LShift16VecH;
+	res_vecH = shft_res_LShift16VecH;
+	goto <end_shift_LShift16VecH>;
+<lshift_LShift16VecH>
+	shift_LShift16VecH = -shift_LShift16VecH;
+	shft_res_LShift16VecH = src_vecH << shift_LShift16VecH;
+	res_vecH = shft_res_LShift16VecH;
+<end_shift_LShift16VecH>
+	dsiDstDReg = zext(res_vecH) << 0x10 | zext(res_vecL);
+}
+
+Dsp32ShfImm:^"AShift32" dsiDstDReg" = "dsiSrcDReg" <<< "dsiImm5UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiDstDReg & dsiImmSig1=0x0 & dsiImm5UImm & dsiSrcDReg 
+{
+	local shft_res_AShift32:4;
+	local shift_AShift32:1 = dsiImm5UImm;
+	if (shift_AShift32 s> 0x0) goto <rshift_AShift32>;
+	if (shift_AShift32 s< 0x0) goto <lshift_AShift32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_shift_AShift32>;
+<rshift_AShift32>
+	shft_res_AShift32 = dsiSrcDReg s>> shift_AShift32;
+	dsiDstDReg = shft_res_AShift32;
+	goto <end_shift_AShift32>;
+<lshift_AShift32>
+	shift_AShift32 = -shift_AShift32;
+	shft_res_AShift32 = dsiSrcDReg << shift_AShift32;
+	dsiDstDReg = shft_res_AShift32;
+<end_shift_AShift32>
+}
+
+Dsp32ShfImm:^"AShift32" dsiDstDReg" = "dsiSrcDReg" >>> "negImm5
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiDstDReg & dsiImmSig1=0x1 & dsiImm5UImm & dsiSrcDReg 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_AShift32:4;
+	local shift_AShift32:1 = negImm5;
+	if (shift_AShift32 s> 0x0) goto <rshift_AShift32>;
+	if (shift_AShift32 s< 0x0) goto <lshift_AShift32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_shift_AShift32>;
+<rshift_AShift32>
+	shft_res_AShift32 = dsiSrcDReg s>> shift_AShift32;
+	dsiDstDReg = shft_res_AShift32;
+	goto <end_shift_AShift32>;
+<lshift_AShift32>
+	shift_AShift32 = -shift_AShift32;
+	shft_res_AShift32 = dsiSrcDReg << shift_AShift32;
+	dsiDstDReg = shft_res_AShift32;
+<end_shift_AShift32>
+}
+
+Dsp32ShfImm:^"AShift32" dsiDstDReg" = "dsiSrcDReg" <<< "dsiImm5UImm" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiDstDReg & dsiImmSig1=0x0 & dsiImm5UImm & dsiSrcDReg 
+{
+	local shft_res_AShift32:4;
+	local shift_AShift32:1 = dsiImm5UImm;
+	if (shift_AShift32 s> 0x0) goto <rshift_AShift32>;
+	if (shift_AShift32 s< 0x0) goto <lshift_AShift32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_shift_AShift32>;
+<rshift_AShift32>
+	shft_res_AShift32 = dsiSrcDReg s>> shift_AShift32;
+	dsiDstDReg = shft_res_AShift32;
+	goto <end_shift_AShift32>;
+<lshift_AShift32>
+	shift_AShift32 = -shift_AShift32;
+	local shft_buf_AShift32:8;
+	shft_buf_AShift32 = sext(dsiSrcDReg) << shift_AShift32;
+	shft_res_AShift32 = shft_buf_AShift32:4;
+	if (sext(shft_res_AShift32) == shft_buf_AShift32) goto <end_strunc_shift_AShift32>;
+	shft_res_AShift32 = (0x1 << 0x1f);
+	if (shft_buf_AShift32 s< 0x0) goto <end_strunc_shift_AShift32>;
+	shft_res_AShift32 = ((0x1 << 0x1f) - 0x1);
+<end_strunc_shift_AShift32>
+	dsiDstDReg = shft_res_AShift32;
+<end_shift_AShift32>
+}
+
+Dsp32ShfImm:^"AShift32" dsiDstDReg" = "dsiSrcDReg" >>> "negImm5" (S)"
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiDstDReg & dsiImmSig1=0x1 & dsiImm5UImm & dsiSrcDReg 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_AShift32:4;
+	local shift_AShift32:1 = negImm5;
+	if (shift_AShift32 s> 0x0) goto <rshift_AShift32>;
+	if (shift_AShift32 s< 0x0) goto <lshift_AShift32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_shift_AShift32>;
+<rshift_AShift32>
+	shft_res_AShift32 = dsiSrcDReg s>> shift_AShift32;
+	dsiDstDReg = shft_res_AShift32;
+	goto <end_shift_AShift32>;
+<lshift_AShift32>
+	shift_AShift32 = -shift_AShift32;
+	local shft_buf_AShift32:8;
+	shft_buf_AShift32 = sext(dsiSrcDReg) << shift_AShift32;
+	shft_res_AShift32 = shft_buf_AShift32:4;
+	if (sext(shft_res_AShift32) == shft_buf_AShift32) goto <end_strunc_shift_AShift32>;
+	shft_res_AShift32 = (0x1 << 0x1f);
+	if (shft_buf_AShift32 s< 0x0) goto <end_strunc_shift_AShift32>;
+	shft_res_AShift32 = ((0x1 << 0x1f) - 0x1);
+<end_strunc_shift_AShift32>
+	dsiDstDReg = shft_res_AShift32;
+<end_shift_AShift32>
+}
+
+Dsp32ShfImm:^"LShift32" dsiDstDReg" = "dsiSrcDReg" << "dsiImm5UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiDstDReg & dsiImmSig1=0x0 & dsiImm5UImm & dsiSrcDReg 
+{
+	local shft_res_LShift32:4;
+	local shift_LShift32:1 = dsiImm5UImm;
+	if (shift_LShift32 s> 0x0) goto <rshift_LShift32>;
+	if (shift_LShift32 s< 0x0) goto <lshift_LShift32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_shift_LShift32>;
+<rshift_LShift32>
+	shft_res_LShift32 = dsiSrcDReg >> shift_LShift32;
+	dsiDstDReg = shft_res_LShift32;
+	goto <end_shift_LShift32>;
+<lshift_LShift32>
+	shift_LShift32 = -shift_LShift32;
+	shft_res_LShift32 = dsiSrcDReg << shift_LShift32;
+	dsiDstDReg = shft_res_LShift32;
+<end_shift_LShift32>
+}
+
+Dsp32ShfImm:^"LShift32" dsiDstDReg" = "dsiSrcDReg" >> "negImm5
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiDstDReg & dsiImmSig1=0x1 & dsiImm5UImm & dsiSrcDReg 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_LShift32:4;
+	local shift_LShift32:1 = negImm5;
+	if (shift_LShift32 s> 0x0) goto <rshift_LShift32>;
+	if (shift_LShift32 s< 0x0) goto <lshift_LShift32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_shift_LShift32>;
+<rshift_LShift32>
+	shft_res_LShift32 = dsiSrcDReg >> shift_LShift32;
+	dsiDstDReg = shft_res_LShift32;
+	goto <end_shift_LShift32>;
+<lshift_LShift32>
+	shift_LShift32 = -shift_LShift32;
+	shft_res_LShift32 = dsiSrcDReg << shift_LShift32;
+	dsiDstDReg = shft_res_LShift32;
+<end_shift_LShift32>
+}
+
+Dsp32ShfImm:^"Rot32" dsiDstDReg" = ROT "dsiSrcDReg" BY "dsiImmSImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x02 
+	 ; dsiSop=0x3 & dsiHls=0x0 & dsiDstDReg & dsiImmSImm & dsiSrcDReg 
+{
+	local rot_res_Rot32:4;
+	local cc_bit_Rot32:4;
+	local rot_Rot32:1 = dsiImmSImm;
+	if (rot_Rot32 s> 0x0) goto <rrot_Rot32>;
+	if (rot_Rot32 s< 0x0) goto <lrot_Rot32>;
+	dsiDstDReg = dsiSrcDReg;
+	goto <end_rot_Rot32>;
+<rrot_Rot32>
+	cc_bit_Rot32 = 0x1 & (dsiSrcDReg >> (0x20 - rot_Rot32));
+	rot_res_Rot32 = (dsiSrcDReg << rot_Rot32) | (zext(CC) << (rot_Rot32 - 0x1)) | (dsiSrcDReg >> (0x21 - rot_Rot32));
+	CC = cc_bit_Rot32:1;
+	dsiDstDReg = rot_res_Rot32;
+	goto <end_rot_Rot32>;
+<lrot_Rot32>
+	rot_Rot32 = -rot_Rot32;
+	cc_bit_Rot32 = 0x1 & (dsiSrcDReg >> (rot_Rot32 - 0x1));
+	rot_res_Rot32 = (dsiSrcDReg << (0x21 - rot_Rot32)) | (zext(CC) << (0x20 - rot_Rot32)) | (dsiSrcDReg >> rot_Rot32);
+	CC = cc_bit_Rot32:1;
+	dsiDstDReg = rot_res_Rot32;
+<end_rot_Rot32>
+}
+
+Dsp32ShfImm:^"AShiftAcc" "A0 = A0 <<< "dsiImm5UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiImmSig1=0x0 & dsiImm5UImm 
+{
+	local shft_res_AShiftAcc:5;
+	local shift_AShiftAcc:1 = dsiImm5UImm;
+	if (shift_AShiftAcc s> 0x0) goto <rshift_AShiftAcc>;
+	if (shift_AShiftAcc s< 0x0) goto <lshift_AShiftAcc>;
+	A0 = A0;
+	goto <end_shift_AShiftAcc>;
+<rshift_AShiftAcc>
+	shft_res_AShiftAcc = A0 s>> shift_AShiftAcc;
+	A0 = shft_res_AShiftAcc;
+	goto <end_shift_AShiftAcc>;
+<lshift_AShiftAcc>
+	shift_AShiftAcc = -shift_AShiftAcc;
+	shft_res_AShiftAcc = A0 << shift_AShiftAcc;
+	A0 = shft_res_AShiftAcc;
+<end_shift_AShiftAcc>
+}
+
+Dsp32ShfImm:^"AShiftAcc" "A0 = A0 >>> "negImm5
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x0 & dsiHls=0x0 & dsiImmSig1=0x1 & dsiImm5UImm 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_AShiftAcc:5;
+	local shift_AShiftAcc:1 = negImm5;
+	if (shift_AShiftAcc s> 0x0) goto <rshift_AShiftAcc>;
+	if (shift_AShiftAcc s< 0x0) goto <lshift_AShiftAcc>;
+	A0 = A0;
+	goto <end_shift_AShiftAcc>;
+<rshift_AShiftAcc>
+	shft_res_AShiftAcc = A0 s>> shift_AShiftAcc;
+	A0 = shft_res_AShiftAcc;
+	goto <end_shift_AShiftAcc>;
+<lshift_AShiftAcc>
+	shift_AShiftAcc = -shift_AShiftAcc;
+	shft_res_AShiftAcc = A0 << shift_AShiftAcc;
+	A0 = shft_res_AShiftAcc;
+<end_shift_AShiftAcc>
+}
+
+Dsp32ShfImm:^"AShiftAcc" "A1 = A1 <<< "dsiImm5UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x0 & dsiHls=0x1 & dsiImmSig1=0x0 & dsiImm5UImm 
+{
+	local shft_res_AShiftAcc:5;
+	local shift_AShiftAcc:1 = dsiImm5UImm;
+	if (shift_AShiftAcc s> 0x0) goto <rshift_AShiftAcc>;
+	if (shift_AShiftAcc s< 0x0) goto <lshift_AShiftAcc>;
+	A1 = A1;
+	goto <end_shift_AShiftAcc>;
+<rshift_AShiftAcc>
+	shft_res_AShiftAcc = A1 s>> shift_AShiftAcc;
+	A1 = shft_res_AShiftAcc;
+	goto <end_shift_AShiftAcc>;
+<lshift_AShiftAcc>
+	shift_AShiftAcc = -shift_AShiftAcc;
+	shft_res_AShiftAcc = A1 << shift_AShiftAcc;
+	A1 = shft_res_AShiftAcc;
+<end_shift_AShiftAcc>
+}
+
+Dsp32ShfImm:^"AShiftAcc" "A1 = A1 >>> "negImm5
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x0 & dsiHls=0x1 & dsiImmSig1=0x1 & dsiImm5UImm 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_AShiftAcc:5;
+	local shift_AShiftAcc:1 = negImm5;
+	if (shift_AShiftAcc s> 0x0) goto <rshift_AShiftAcc>;
+	if (shift_AShiftAcc s< 0x0) goto <lshift_AShiftAcc>;
+	A1 = A1;
+	goto <end_shift_AShiftAcc>;
+<rshift_AShiftAcc>
+	shft_res_AShiftAcc = A1 s>> shift_AShiftAcc;
+	A1 = shft_res_AShiftAcc;
+	goto <end_shift_AShiftAcc>;
+<lshift_AShiftAcc>
+	shift_AShiftAcc = -shift_AShiftAcc;
+	shft_res_AShiftAcc = A1 << shift_AShiftAcc;
+	A1 = shft_res_AShiftAcc;
+<end_shift_AShiftAcc>
+}
+
+Dsp32ShfImm:^"LShiftAcc" "A0 = A0 << "dsiImm5UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiImmSig1=0x0 & dsiImm5UImm 
+{
+	local shft_res_LShiftAcc:5;
+	local shift_LShiftAcc:1 = dsiImm5UImm;
+	if (shift_LShiftAcc s> 0x0) goto <rshift_LShiftAcc>;
+	if (shift_LShiftAcc s< 0x0) goto <lshift_LShiftAcc>;
+	A0 = A0;
+	goto <end_shift_LShiftAcc>;
+<rshift_LShiftAcc>
+	shft_res_LShiftAcc = A0 >> shift_LShiftAcc;
+	A0 = shft_res_LShiftAcc;
+	goto <end_shift_LShiftAcc>;
+<lshift_LShiftAcc>
+	shift_LShiftAcc = -shift_LShiftAcc;
+	shft_res_LShiftAcc = A0 << shift_LShiftAcc;
+	A0 = shft_res_LShiftAcc;
+<end_shift_LShiftAcc>
+}
+
+Dsp32ShfImm:^"LShiftAcc" "A0 = A0 >> "negImm5
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x1 & dsiHls=0x0 & dsiImmSig1=0x1 & dsiImm5UImm 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_LShiftAcc:5;
+	local shift_LShiftAcc:1 = negImm5;
+	if (shift_LShiftAcc s> 0x0) goto <rshift_LShiftAcc>;
+	if (shift_LShiftAcc s< 0x0) goto <lshift_LShiftAcc>;
+	A0 = A0;
+	goto <end_shift_LShiftAcc>;
+<rshift_LShiftAcc>
+	shft_res_LShiftAcc = A0 >> shift_LShiftAcc;
+	A0 = shft_res_LShiftAcc;
+	goto <end_shift_LShiftAcc>;
+<lshift_LShiftAcc>
+	shift_LShiftAcc = -shift_LShiftAcc;
+	shft_res_LShiftAcc = A0 << shift_LShiftAcc;
+	A0 = shft_res_LShiftAcc;
+<end_shift_LShiftAcc>
+}
+
+Dsp32ShfImm:^"LShiftAcc" "A1 = A1 << "dsiImm5UImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x1 & dsiHls=0x1 & dsiImmSig1=0x0 & dsiImm5UImm 
+{
+	local shft_res_LShiftAcc:5;
+	local shift_LShiftAcc:1 = dsiImm5UImm;
+	if (shift_LShiftAcc s> 0x0) goto <rshift_LShiftAcc>;
+	if (shift_LShiftAcc s< 0x0) goto <lshift_LShiftAcc>;
+	A1 = A1;
+	goto <end_shift_LShiftAcc>;
+<rshift_LShiftAcc>
+	shft_res_LShiftAcc = A1 >> shift_LShiftAcc;
+	A1 = shft_res_LShiftAcc;
+	goto <end_shift_LShiftAcc>;
+<lshift_LShiftAcc>
+	shift_LShiftAcc = -shift_LShiftAcc;
+	shft_res_LShiftAcc = A1 << shift_LShiftAcc;
+	A1 = shft_res_LShiftAcc;
+<end_shift_LShiftAcc>
+}
+
+Dsp32ShfImm:^"LShiftAcc" "A1 = A1 >> "negImm5
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x1 & dsiHls=0x1 & dsiImmSig1=0x1 & dsiImm5UImm 
+[
+	negImm5 = 0x20 - dsiImm5UImm;
+] {
+	local shft_res_LShiftAcc:5;
+	local shift_LShiftAcc:1 = negImm5;
+	if (shift_LShiftAcc s> 0x0) goto <rshift_LShiftAcc>;
+	if (shift_LShiftAcc s< 0x0) goto <lshift_LShiftAcc>;
+	A1 = A1;
+	goto <end_shift_LShiftAcc>;
+<rshift_LShiftAcc>
+	shft_res_LShiftAcc = A1 >> shift_LShiftAcc;
+	A1 = shft_res_LShiftAcc;
+	goto <end_shift_LShiftAcc>;
+<lshift_LShiftAcc>
+	shift_LShiftAcc = -shift_LShiftAcc;
+	shft_res_LShiftAcc = A1 << shift_LShiftAcc;
+	A1 = shft_res_LShiftAcc;
+<end_shift_LShiftAcc>
+}
+
+Dsp32ShfImm:^"ShiftRotAcc" "A0 = ROT A0 BY "dsiImmSImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x2 & dsiHls=0x0 & dsiImmSImm 
+{
+	local rot_res_ShiftRotAcc:5;
+	local cc_bit_ShiftRotAcc:5;
+	local rot_ShiftRotAcc:1 = dsiImmSImm;
+	if (rot_ShiftRotAcc s> 0x0) goto <rrot_ShiftRotAcc>;
+	if (rot_ShiftRotAcc s< 0x0) goto <lrot_ShiftRotAcc>;
+	A0 = A0;
+	goto <end_rot_ShiftRotAcc>;
+<rrot_ShiftRotAcc>
+	cc_bit_ShiftRotAcc = 0x1 & (A0 >> (0x28 - rot_ShiftRotAcc));
+	rot_res_ShiftRotAcc = (A0 << rot_ShiftRotAcc) | (zext(CC) << (rot_ShiftRotAcc - 0x1)) | (A0 >> (0x29 - rot_ShiftRotAcc));
+	CC = cc_bit_ShiftRotAcc:1;
+	A0 = rot_res_ShiftRotAcc;
+	goto <end_rot_ShiftRotAcc>;
+<lrot_ShiftRotAcc>
+	rot_ShiftRotAcc = -rot_ShiftRotAcc;
+	cc_bit_ShiftRotAcc = 0x1 & (A0 >> (rot_ShiftRotAcc - 0x1));
+	rot_res_ShiftRotAcc = (A0 << (0x29 - rot_ShiftRotAcc)) | (zext(CC) << (0x28 - rot_ShiftRotAcc)) | (A0 >> rot_ShiftRotAcc);
+	CC = cc_bit_ShiftRotAcc:1;
+	A0 = rot_res_ShiftRotAcc;
+<end_rot_ShiftRotAcc>
+}
+
+Dsp32ShfImm:^"ShiftRotAcc" "A1 = ROT A1 BY "dsiImmSImm
+	is dsiSigDsp=0xc & dsiSig=0xd & dsiSopc=0x03 
+	 ; dsiSop=0x2 & dsiHls=0x1 & dsiImmSImm 
+{
+	local rot_res_ShiftRotAcc:5;
+	local cc_bit_ShiftRotAcc:5;
+	local rot_ShiftRotAcc:1 = dsiImmSImm;
+	if (rot_ShiftRotAcc s> 0x0) goto <rrot_ShiftRotAcc>;
+	if (rot_ShiftRotAcc s< 0x0) goto <lrot_ShiftRotAcc>;
+	A1 = A1;
+	goto <end_rot_ShiftRotAcc>;
+<rrot_ShiftRotAcc>
+	cc_bit_ShiftRotAcc = 0x1 & (A1 >> (0x28 - rot_ShiftRotAcc));
+	rot_res_ShiftRotAcc = (A1 << rot_ShiftRotAcc) | (zext(CC) << (rot_ShiftRotAcc - 0x1)) | (A1 >> (0x29 - rot_ShiftRotAcc));
+	CC = cc_bit_ShiftRotAcc:1;
+	A1 = rot_res_ShiftRotAcc;
+	goto <end_rot_ShiftRotAcc>;
+<lrot_ShiftRotAcc>
+	rot_ShiftRotAcc = -rot_ShiftRotAcc;
+	cc_bit_ShiftRotAcc = 0x1 & (A1 >> (rot_ShiftRotAcc - 0x1));
+	rot_res_ShiftRotAcc = (A1 << (0x29 - rot_ShiftRotAcc)) | (zext(CC) << (0x28 - rot_ShiftRotAcc)) | (A1 >> rot_ShiftRotAcc);
+	CC = cc_bit_ShiftRotAcc:1;
+	A1 = rot_res_ShiftRotAcc;
+<end_rot_ShiftRotAcc>
+}
+
+
+
+:^Dsp32ShfImm is dsiM=0x0 ... & Dsp32ShfImm { build Dsp32ShfImm; }
+:^Dsp32ShfImm is dsiM=0x1 ... & Dsp32ShfImm { build Dsp32ShfImm; delayslot(4); }

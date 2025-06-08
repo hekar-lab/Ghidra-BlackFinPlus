@@ -35,65 +35,65 @@ define pcodeop excpt;
 
 ### Instructions ###
 
-ProgCtrlDesc0: "RTS" is epsilon {}
-ProgCtrl:^"Return" ProgCtrlDesc0
-	is ProgCtrlDesc0 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x0 
+ProgCtrlDesc00: "RTS" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc00
+	is ProgCtrlDesc00 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x0 
 {
 	return [RETS];
 }
 
-ProgCtrlDesc1: "RTI" is epsilon {}
-ProgCtrl:^"Return" ProgCtrlDesc1
-	is ProgCtrlDesc1 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x1 
+ProgCtrlDesc01: "RTI" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc01
+	is ProgCtrlDesc01 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x1 
 {
 	return [RETI];
 }
 
-ProgCtrlDesc2: "RTX" is epsilon {}
-ProgCtrl:^"Return" ProgCtrlDesc2
-	is ProgCtrlDesc2 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x2 
+ProgCtrlDesc02: "RTX" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc02
+	is ProgCtrlDesc02 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x2 
 {
 	return [RETX];
 }
 
-ProgCtrlDesc3: "RTN" is epsilon {}
-ProgCtrl:^"Return" ProgCtrlDesc3
-	is ProgCtrlDesc3 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x3 
+ProgCtrlDesc03: "RTN" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc03
+	is ProgCtrlDesc03 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x3 
 {
 	return [RETN];
 }
 
-ProgCtrlDesc4: "RTE" is epsilon {}
-ProgCtrl:^"Return" ProgCtrlDesc4
-	is ProgCtrlDesc4 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x4 
+ProgCtrlDesc04: "RTE" is epsilon {}
+ProgCtrl:^"Return" ProgCtrlDesc04
+	is ProgCtrlDesc04 & pgcSig=0x00 & pgcOpc=0x1 & pgcReg=0x4 
 {
 	return [RETE];
 }
 
-ProgCtrlDesc5: "IDLE" is epsilon {}
-ProgCtrl:^"Sync" ProgCtrlDesc5
-	is ProgCtrlDesc5 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x0 
+ProgCtrlDesc05: "IDLE" is epsilon {}
+ProgCtrl:^"Sync" ProgCtrlDesc05
+	is ProgCtrlDesc05 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x0 
 {
 	idle();
 }
 
-ProgCtrlDesc6: "CSYNC" is epsilon {}
-ProgCtrl:^"Sync" ProgCtrlDesc6
-	is ProgCtrlDesc6 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x3 
+ProgCtrlDesc06: "CSYNC" is epsilon {}
+ProgCtrl:^"Sync" ProgCtrlDesc06
+	is ProgCtrlDesc06 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x3 
 {
 	csync();
 }
 
-ProgCtrlDesc7: "SSYNC" is epsilon {}
-ProgCtrl:^"Sync" ProgCtrlDesc7
-	is ProgCtrlDesc7 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x4 
+ProgCtrlDesc07: "SSYNC" is epsilon {}
+ProgCtrl:^"Sync" ProgCtrlDesc07
+	is ProgCtrlDesc07 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x4 
 {
 	ssync();
 }
 
-ProgCtrlDesc8: "EMUEXCPT" is epsilon {}
-ProgCtrl:^"Mode" ProgCtrlDesc8
-	is ProgCtrlDesc8 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x5 
+ProgCtrlDesc08: "EMUEXCPT" is epsilon {}
+ProgCtrl:^"Mode" ProgCtrlDesc08
+	is ProgCtrlDesc08 & pgcSig=0x00 & pgcOpc=0x2 & pgcReg=0x5 
 {
 	emuexcpt();
 }

@@ -1,0 +1,213 @@
+## Load Immediate Word (LdImm)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 0 | 0 | 0 |....grp....|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................immH..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................immL..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................dummy.............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token liwInstr16 (16)
+	liwSig           = ( 6,15) 
+	liwGrp           = ( 3, 5) 
+	liwReg           = ( 0, 2) 
+	liwRegDReg       = ( 0, 2) 
+	liwRegPReg       = ( 0, 2) 
+	liwRegSyRg2      = ( 0, 2) 
+	liwRegSyRg3      = ( 0, 2) 
+	liwRegH          = ( 2, 2) 
+	liwRegLIReg      = ( 0, 1) 
+	liwRegLMReg      = ( 0, 1) 
+	liwRegLBReg      = ( 0, 1) 
+	liwRegLLReg      = ( 0, 1) 
+;
+
+define token liwInstr32 (16)
+	liwImmHSImm      = ( 0,15) signed
+;
+
+define token liwInstr48 (16)
+	liwImmLUImm      = ( 0,15) 
+;
+
+define token liwInstr64 (16)
+	liwDummy         = ( 0,15) 
+;
+
+
+### Variables ###
+
+attach variables liwRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables liwRegPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables liwRegLIReg [I0 I1 I2 I3];
+attach variables liwRegLMReg [M0 M1 M2 M3];
+attach variables liwRegLBReg [B0 B1 B2 B3];
+attach variables liwRegLLReg [L0 L1 L2 L3];
+attach variables liwRegSyRg2 [LC0 LT0 LB0 LC1 LT1 LB1 CYCLES CYCLES2];
+attach variables liwRegSyRg3 [USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT];
+
+
+### Instructions ###
+
+LdImm:^"LdImmToReg" liwRegDReg" = "imm32
+	is liwSig=0x368 & liwGrp=0x0 & liwRegDReg 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegDReg = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegPReg" = "imm32
+	is liwSig=0x368 & liwGrp=0x1 & liwRegPReg 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegPReg = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegLIReg" = "imm32
+	is liwSig=0x368 & liwGrp=0x2 & liwRegH=0x0 & liwRegLIReg 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegLIReg = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegLMReg" = "imm32
+	is liwSig=0x368 & liwGrp=0x2 & liwRegH=0x1 & liwRegLMReg 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegLMReg = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegLBReg" = "imm32
+	is liwSig=0x368 & liwGrp=0x3 & liwRegH=0x0 & liwRegLBReg 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegLBReg = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegLLReg" = "imm32
+	is liwSig=0x368 & liwGrp=0x3 & liwRegH=0x1 & liwRegLLReg 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegLLReg = imm32;
+}
+
+LdImm:^"LdImmToAcc" "A0.X = "imm32
+	is liwSig=0x368 & liwGrp=0x4 & liwReg=0x0 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	A0.X = imm32:1;
+}
+
+LdImm:^"LdImmToAcc" "A0.W = "imm32
+	is liwSig=0x368 & liwGrp=0x4 & liwReg=0x1 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	A0.W = imm32;
+}
+
+LdImm:^"LdImmToAcc" "A1.X = "imm32
+	is liwSig=0x368 & liwGrp=0x4 & liwReg=0x2 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	A1.X = imm32:1;
+}
+
+LdImm:^"LdImmToAcc" "A1.W = "imm32
+	is liwSig=0x368 & liwGrp=0x4 & liwReg=0x3 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	A1.W = imm32;
+}
+
+LdImm:^"LdImmToReg" "ASTAT = "imm32
+	is liwSig=0x368 & liwGrp=0x4 & liwReg=0x6 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	ASTAT = imm32;
+}
+
+LdImm:^"LdImmToReg" "RETS = "imm32
+	is liwSig=0x368 & liwGrp=0x4 & liwReg=0x7 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	RETS = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegSyRg2" = "imm32
+	is liwSig=0x368 & liwGrp=0x6 & liwRegSyRg2 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegSyRg2 = imm32;
+}
+
+LdImm:^"LdImmToReg" liwRegSyRg3" = "imm32
+	is liwSig=0x368 & liwGrp=0x7 & liwRegSyRg3 
+	 ; liwImmHSImm 
+	 ; liwImmLUImm 
+	 ; liwDummy 
+[
+	imm32 = (liwImmHSImm << 0x10) | liwImmLUImm;
+] {
+	liwRegSyRg3 = imm32;
+}
+
+
+
+:^LdImm is LdImm { build LdImm; }

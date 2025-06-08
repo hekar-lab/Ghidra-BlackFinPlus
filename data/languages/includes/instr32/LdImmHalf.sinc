@@ -1,0 +1,237 @@
+## Load Immediate Half Word (LdImmHalf)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 1 |.z.|.h.|.s.|..grp..|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................hword.............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lihInstr16 (16)
+	lihSig           = ( 8,15) 
+	lihZ             = ( 7, 7) 
+	lihH             = ( 6, 6) 
+	lihS             = ( 5, 5) 
+	lihGrp           = ( 3, 4) 
+	lihRegDReg       = ( 0, 2) 
+	lihRegDRegL      = ( 0, 2) 
+	lihRegDRegH      = ( 0, 2) 
+	lihRegPReg       = ( 0, 2) 
+	lihRegPRegL      = ( 0, 2) 
+	lihRegPRegH      = ( 0, 2) 
+	lihRegH          = ( 2, 2) 
+	lihRegLIReg      = ( 0, 1) 
+	lihRegLIRegL     = ( 0, 1) 
+	lihRegLIRegH     = ( 0, 1) 
+	lihRegLMReg      = ( 0, 1) 
+	lihRegLMRegL     = ( 0, 1) 
+	lihRegLMRegH     = ( 0, 1) 
+	lihRegLBReg      = ( 0, 1) 
+	lihRegLBRegL     = ( 0, 1) 
+	lihRegLBRegH     = ( 0, 1) 
+	lihRegLLReg      = ( 0, 1) 
+	lihRegLLRegL     = ( 0, 1) 
+	lihRegLLRegH     = ( 0, 1) 
+;
+
+define token lihInstr32 (16)
+	lihHwordSImm     = ( 0,15) signed
+;
+
+
+### Variables ###
+
+attach variables lihRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lihRegDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables lihRegDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables lihRegPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lihRegPRegL [P0.L P1.L P2.L P3.L P4.L P5.L SP.L FP.L];
+attach variables lihRegPRegH [P0.H P1.H P2.H P3.H P4.H P5.H SP.H FP.H];
+attach variables lihRegLIReg [I0 I1 I2 I3];
+attach variables lihRegLIRegL [I0.L I1.L I2.L I3.L];
+attach variables lihRegLIRegH [I0.H I1.H I2.H I3.H];
+attach variables lihRegLMReg [M0 M1 M2 M3];
+attach variables lihRegLMRegL [M0.L M1.L M2.L M3.L];
+attach variables lihRegLMRegH [M0.H M1.H M2.H M3.H];
+attach variables lihRegLBReg [B0 B1 B2 B3];
+attach variables lihRegLBRegL [B0.L B1.L B2.L B3.L];
+attach variables lihRegLBRegH [B0.H B1.H B2.H B3.H];
+attach variables lihRegLLReg [L0 L1 L2 L3];
+attach variables lihRegLLRegL [L0.L L1.L L2.L L3.L];
+attach variables lihRegLLRegH [L0.H L1.H L2.H L3.H];
+
+
+### Instructions ###
+
+LdImmHalf:^"LdImmToDregHL" lihRegDRegL" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihGrp=0x0 & lihRegDRegL 
+	 ; lihHwordSImm 
+{
+	lihRegDRegL = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegPRegL" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihGrp=0x1 & lihRegPRegL 
+	 ; lihHwordSImm 
+{
+	lihRegPRegL = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLIRegL" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihGrp=0x2 & lihRegH=0x0 & lihRegLIRegL 
+	 ; lihHwordSImm 
+{
+	lihRegLIRegL = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLMRegL" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihGrp=0x2 & lihRegH=0x1 & lihRegLMRegL 
+	 ; lihHwordSImm 
+{
+	lihRegLMRegL = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLBRegL" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihGrp=0x3 & lihRegH=0x0 & lihRegLBRegL 
+	 ; lihHwordSImm 
+{
+	lihRegLBRegL = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLLRegL" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihGrp=0x3 & lihRegH=0x1 & lihRegLLRegL 
+	 ; lihHwordSImm 
+{
+	lihRegLLRegL = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegDReg" = "lihHwordSImm" (X)"
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihGrp=0x0 & lihRegDReg 
+	 ; lihHwordSImm 
+{
+	lihRegDReg = sext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegPReg" = "lihHwordSImm" (X)"
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihGrp=0x1 & lihRegPReg 
+	 ; lihHwordSImm 
+{
+	lihRegPReg = sext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLIReg" = "lihHwordSImm" (X)"
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihGrp=0x2 & lihRegH=0x0 & lihRegLIReg 
+	 ; lihHwordSImm 
+{
+	lihRegLIReg = sext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLMReg" = "lihHwordSImm" (X)"
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihGrp=0x2 & lihRegH=0x1 & lihRegLMReg 
+	 ; lihHwordSImm 
+{
+	lihRegLMReg = sext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLBReg" = "lihHwordSImm" (X)"
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihGrp=0x3 & lihRegH=0x0 & lihRegLBReg 
+	 ; lihHwordSImm 
+{
+	lihRegLBReg = sext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLLReg" = "lihHwordSImm" (X)"
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihGrp=0x3 & lihRegH=0x1 & lihRegLLReg 
+	 ; lihHwordSImm 
+{
+	lihRegLLReg = sext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegDReg" = "lihHwordSImm" (Z)"
+	is lihSig=0xe1 & lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihGrp=0x0 & lihRegDReg 
+	 ; lihHwordSImm 
+{
+	lihRegDReg = zext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegPReg" = "lihHwordSImm" (Z)"
+	is lihSig=0xe1 & lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihGrp=0x1 & lihRegPReg 
+	 ; lihHwordSImm 
+{
+	lihRegPReg = zext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLIReg" = "lihHwordSImm" (Z)"
+	is lihSig=0xe1 & lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihGrp=0x2 & lihRegH=0x0 & lihRegLIReg 
+	 ; lihHwordSImm 
+{
+	lihRegLIReg = zext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLMReg" = "lihHwordSImm" (Z)"
+	is lihSig=0xe1 & lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihGrp=0x2 & lihRegH=0x1 & lihRegLMReg 
+	 ; lihHwordSImm 
+{
+	lihRegLMReg = zext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLBReg" = "lihHwordSImm" (Z)"
+	is lihSig=0xe1 & lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihGrp=0x3 & lihRegH=0x0 & lihRegLBReg 
+	 ; lihHwordSImm 
+{
+	lihRegLBReg = zext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDreg" lihRegLLReg" = "lihHwordSImm" (Z)"
+	is lihSig=0xe1 & lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihGrp=0x3 & lihRegH=0x1 & lihRegLLReg 
+	 ; lihHwordSImm 
+{
+	lihRegLLReg = zext(lihHwordSImm:2);
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegDRegH" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihGrp=0x0 & lihRegDRegH 
+	 ; lihHwordSImm 
+{
+	lihRegDRegH = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegPRegH" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihGrp=0x1 & lihRegPRegH 
+	 ; lihHwordSImm 
+{
+	lihRegPRegH = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLIRegH" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihGrp=0x2 & lihRegH=0x0 & lihRegLIRegH 
+	 ; lihHwordSImm 
+{
+	lihRegLIRegH = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLMRegH" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihGrp=0x2 & lihRegH=0x1 & lihRegLMRegH 
+	 ; lihHwordSImm 
+{
+	lihRegLMRegH = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLBRegH" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihGrp=0x3 & lihRegH=0x0 & lihRegLBRegH 
+	 ; lihHwordSImm 
+{
+	lihRegLBRegH = lihHwordSImm;
+}
+
+LdImmHalf:^"LdImmToDregHL" lihRegLLRegH" = "lihHwordSImm
+	is lihSig=0xe1 & lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihGrp=0x3 & lihRegH=0x1 & lihRegLLRegH 
+	 ; lihHwordSImm 
+{
+	lihRegLLRegH = lihHwordSImm;
+}
+
+
+
+:^LdImmHalf is LdImmHalf { build LdImmHalf; }

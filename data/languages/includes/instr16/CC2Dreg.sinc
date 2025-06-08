@@ -38,9 +38,9 @@ CC2Dreg:^"CCToDreg" c2dRegDReg" = !CC"
 	c2dRegDReg = zext(!CC);
 }
 
-CC2DregDesc3: "CC = !CC" is epsilon {}
-CC2Dreg:^"MvToCC" CC2DregDesc3
-	is CC2DregDesc3 & c2dSig=0x010 & c2dOpc=0x3 
+CC2DregDesc03: "CC = !CC" is epsilon {}
+CC2Dreg:^"MvToCC" CC2DregDesc03
+	is CC2DregDesc03 & c2dSig=0x010 & c2dOpc=0x3 
 {
 	CC = !CC;
 }

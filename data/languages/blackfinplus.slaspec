@@ -6,5 +6,46 @@ define space register type=register_space size=2;
 
 @include "includes/registers.sinc"
 
-@include "includes/instructions.sinc"
+HwLoopZCheck: is zloop=0 {}
+HwLoopZCheck: is zloop=1 {
+	if (LC0 == 0) goto inst_next;
+}
+HwLoopZCheck: is zloop=2 {
+	if (LC1 == 0) goto inst_next;
+}
 
+HwLoop: is loop0active=0 & loop1active=0 {}
+HwLoop: is loop0active=1 & loop1active=0 {
+    if (LC0 == 0) goto inst_next;
+    LC0 = LC0 - 1;
+    if (LC0 == 0) goto inst_next;
+    goto [LT0];
+}
+HwLoop: is loop0active=0 & loop1active=1 {
+    if (LC1 == 0) goto inst_next;
+    LC1 = LC1 - 1;
+    if (LC1 == 0) goto inst_next;
+    goto [LT1];
+}
+HwLoop: is loop0active=1 & loop1active=1 {
+    if (LC1 == 0) goto <check_loop0>;
+    LC1 = LC1 - 1;
+    if (LC1 == 0) goto <check_loop0>;
+    goto [LT1];
+<check_loop0>
+    if (LC0 == 0) goto inst_next;
+    LC0 = LC0 - 1;
+    if (LC0 == 0) goto inst_next;
+    goto [LT0];
+}
+
+
+:^instruction is phase=0 & HwLoop & HwLoopZCheck & instruction [ phase=1; ]{ 
+	build HwLoopZCheck;
+    build instruction; 
+    build HwLoop;
+}
+
+with: phase=1 {
+@include "includes/instructions.sinc"
+}

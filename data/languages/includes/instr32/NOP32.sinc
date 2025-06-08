@@ -9,8 +9,9 @@
 ### Tokens ###
 
 define token mnopInstr16 (16)
-	mnopSigH         = (12,15) 
-	mnopX3           = ( 0,10) 
+	mnopSigDsp       = (12,15) 
+	mnopM            = (11,11) 
+	mnopSigH         = ( 0,10) 
 ;
 
 define token mnopInstr32 (16)
@@ -21,8 +22,10 @@ define token mnopInstr32 (16)
 ### Instructions ###
 
 NOP32:^"NOP32" 
-	is mnopSigH=0xc & mnopX3=0x003 ; mnopSigL=0x1800 {}
+	is mnopSigDsp=0xc & mnopSigH=0x003 
+	 ; mnopSigL=0x1800 {}
 
 
 
-:^NOP32 is NOP32 { build NOP32; }
+:^NOP32 is mnopM=0x0 ... & NOP32 { build NOP32; }
+:^NOP32 is mnopM=0x1 ... & NOP32 { build NOP32; delayslot(4); }

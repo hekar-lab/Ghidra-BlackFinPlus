@@ -1,0 +1,87 @@
+## Multiply Accumulate (Dsp32Mac)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 0 | 0 |.....mmod......|mm.|.p.|w1.|..op1..|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |h01|h11|w0.|..op0..|h00|h10|....dst....|...src0....|...src1....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dmcInstr16 (16)
+	dmcSigDsp        = (12,15) 
+	dmcM             = (11,11) 
+	dmcSig           = ( 9,10) 
+	dmcMmod          = ( 5, 8) 
+	dmcMm            = ( 4, 4) 
+	dmcP             = ( 3, 3) 
+	dmcW1            = ( 2, 2) 
+	dmcOp1           = ( 0, 1) 
+;
+
+define token dmcInstr32 (16)
+	dmcH01           = (15,15) 
+	dmcH11           = (14,14) 
+	dmcW0            = (13,13) 
+	dmcOp0           = (11,12) 
+	dmcH00           = (10,10) 
+	dmcH10           = ( 9, 9) 
+	dmcDstDReg       = ( 6, 8) 
+	dmcDstDRegPair   = ( 6, 8) 
+	dmcDstA0DRegL    = ( 6, 8) 
+	dmcDstA0DRegE    = ( 6, 8) 
+	dmcDstA1DRegH    = ( 6, 8) 
+	dmcDstA1DRegO    = ( 6, 8) 
+	dmcSrc0DReg      = ( 3, 5) 
+	dmcSrc0A0DRegL   = ( 3, 5) 
+	dmcSrc0A0DRegH   = ( 3, 5) 
+	dmcSrc0A1DRegL   = ( 3, 5) 
+	dmcSrc0A1DRegH   = ( 3, 5) 
+	dmcSrc1DReg      = ( 0, 2) 
+	dmcSrc1A0DRegL   = ( 0, 2) 
+	dmcSrc1A0DRegH   = ( 0, 2) 
+	dmcSrc1A1DRegL   = ( 0, 2) 
+	dmcSrc1A1DRegH   = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables dmcDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dmcSrc0DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dmcSrc1DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dmcSrc0A1DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dmcSrc1A1DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dmcSrc0A0DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dmcSrc1A0DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dmcDstA0DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dmcSrc1A1DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmcDstA1DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmcSrc0A1DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmcSrc0A0DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmcSrc1A0DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmcDstA0DRegE [R0 _ R2 _ R4 _ R6 _];
+attach variables dmcDstA1DRegO [R1 _ R3 _ R5 _ R7 _];
+attach variables dmcDstDRegPair [R10 R10 R32 R32 R54 R54 R76 R76];
+
+
+@include "Dsp32Mac/dmc-Cplx.sinc"
+@include "Dsp32Mac/dmc-TradM0Default.sinc"
+@include "Dsp32Mac/dmc-TradM0FU.sinc"
+@include "Dsp32Mac/dmc-TradM0IS.sinc"
+@include "Dsp32Mac/dmc-TradM0W32.sinc"
+@include "Dsp32Mac/dmc-TradM1Default.sinc"
+@include "Dsp32Mac/dmc-TradM1FU.sinc"
+@include "Dsp32Mac/dmc-TradM1IH.sinc"
+@include "Dsp32Mac/dmc-TradM1IS.sinc"
+@include "Dsp32Mac/dmc-TradM1ISS2.sinc"
+@include "Dsp32Mac/dmc-TradM1IU.sinc"
+@include "Dsp32Mac/dmc-TradM1S2RND.sinc"
+@include "Dsp32Mac/dmc-TradM1T.sinc"
+@include "Dsp32Mac/dmc-TradM1TFU.sinc"
+@include "Dsp32Mac/dmc-TradMEDefault.sinc"
+@include "Dsp32Mac/dmc-TradMEFU.sinc"
+@include "Dsp32Mac/dmc-TradMEIS.sinc"
+@include "Dsp32Mac/dmc-TradMEISS2.sinc"
+@include "Dsp32Mac/dmc-TradMEIU.sinc"
+@include "Dsp32Mac/dmc-TradMES2RND.sinc"

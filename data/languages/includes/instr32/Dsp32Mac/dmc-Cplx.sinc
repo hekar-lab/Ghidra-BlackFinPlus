@@ -1,0 +1,3936 @@
+### Instructions for Dsp32Mac: Cplx ###
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg")"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x0 & dmcOp0=0x0 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x0 & dmcOp0=0x0 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x0 & dmcOp0=0x0 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg")"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x0 & dmcOp0=0x1 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x0 & dmcOp0=0x1 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x0 & dmcOp0=0x1 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg")"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x0 & dmcOp0=0x2 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x0 & dmcOp0=0x2 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x0 & dmcOp0=0x2 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg") (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x0 & dmcOp0=0x0 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x0 & dmcOp0=0x0 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x0 & dmcOp0=0x0 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg") (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x0 & dmcOp0=0x1 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x0 & dmcOp0=0x1 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x0 & dmcOp0=0x1 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg") (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x0 & dmcOp0=0x2 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x0 & dmcOp0=0x2 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32Cmplx" "A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x0 & dmcOp0=0x2 & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg", "dmcSrc1DReg")"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	local rem_var_dst_im:2 = res_im:2;
+	tmp_trunc_dst_im = res_im(2);
+	if (tmp_trunc_dst_im == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_im>;
+	if (RND_MOD) goto <biased_rnd_dst_im>;
+	if (rem_var_dst_im > 0x8000 || (rem_var_dst_im == 0x8000 && (tmp_trunc_dst_im & 0x1) == 0x1)) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<biased_rnd_dst_im>
+	if (rem_var_dst_im >= 0x8000) goto <rounding_dst_im>;
+	goto <end_rnd_dst_im>;
+<rounding_dst_im>
+	tmp_trunc_dst_im = tmp_trunc_dst_im + 0x1;
+<end_rnd_dst_im>
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	local rem_var_dst_re:2 = res_re:2;
+	tmp_trunc_dst_re = res_re(2);
+	if (tmp_trunc_dst_re == ((0x1 << 0x17) - 0x1)) goto <end_rnd_dst_re>;
+	if (RND_MOD) goto <biased_rnd_dst_re>;
+	if (rem_var_dst_re > 0x8000 || (rem_var_dst_re == 0x8000 && (tmp_trunc_dst_re & 0x1) == 0x1)) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<biased_rnd_dst_re>
+	if (rem_var_dst_re >= 0x8000) goto <rounding_dst_re>;
+	goto <end_rnd_dst_re>;
+<rounding_dst_re>
+	tmp_trunc_dst_re = tmp_trunc_dst_re + 0x1;
+<end_rnd_dst_re>
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg", "dmcSrc1DReg") (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*) (T)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xe & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	tmp_trunc_dst_im = res_im(2);
+	half_tmp = tmp_trunc_dst_im:2;
+	if (sext(half_tmp) == tmp_trunc_dst_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	tmp_trunc_dst_re = res_re(2);
+	half_tmp = tmp_trunc_dst_re:2;
+	if (sext(half_tmp) == tmp_trunc_dst_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (tmp_trunc_dst_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = (A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg", "dmcSrc1DReg") (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMvN" dmcDstDReg" = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x0 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDReg & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:2;
+	local half_re_addr:2 = &dmcDstDReg;
+	local half_im_addr:2 = &dmcDstDReg + 0x2;
+	local tmp_trunc_dst_im:3;
+	half_tmp = res_im:2;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0xf);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_im>
+	*[register]:2 half_im_addr = half_tmp;
+	local tmp_trunc_dst_re:3;
+	half_tmp = res_re:2;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0xf);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0xf) - 0x1);
+<end_strunc_dst_re>
+	*[register]:2 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*))"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = CMUL("dmcSrc0DReg", "dmcSrc1DReg")"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xd & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_arbi = tmp_arbi << 0x1;
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_aibr = tmp_aibr << 0x1;
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_arbr = tmp_arbr << 0x1;
+	tmp_aibi = sext(a_im) * sext(b_im);
+	tmp_aibi = tmp_aibi << 0x1;
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x0 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	A1 = res_im;
+	A0 = res_re;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 += CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 += CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x1 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 + res_im;
+	if (!scarry(sadd_src0_cpy_A1, res_im)) goto <end_sadd_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s< 0x0) goto <end_sadd_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 + res_re;
+	if (!scarry(sadd_src0_cpy_A0, res_re)) goto <end_sadd_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s< 0x0) goto <end_sadd_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg")) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 -= CMUL("dmcSrc0DReg", "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = (A1:0 -= CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*)) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x2 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local sadd_src0_cpy_A1:5 = A1;
+	A1 = A1 - res_im;
+	if (!sborrow(sadd_src0_cpy_A1, res_im)) goto <end_ssub_sat_A1>;
+	A1 = (0x1 << 0x27);
+	if (res_im s> 0x0) goto <end_ssub_sat_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A1>
+	local sadd_src0_cpy_A0:5 = A0;
+	A0 = A0 - res_re;
+	if (!sborrow(sadd_src0_cpy_A0, res_re)) goto <end_ssub_sat_A0>;
+	A0 = (0x1 << 0x27);
+	if (res_re s> 0x0) goto <end_ssub_sat_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_A0>
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = CMUL("dmcSrc0DReg", "dmcSrc1DReg") (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x0 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_arbi + tmp_aibr;
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = CMUL("dmcSrc0DReg", "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x1 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = tmp_aibr - tmp_arbi;
+	res_re = tmp_arbr + tmp_aibi;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+Dsp32MacCplx:^"Mac32CmplxWithMv" dmcDstDRegPair" = CMUL("dmcSrc0DReg"*, "dmcSrc1DReg"*) (IS)"
+	is dmcSigDsp=0xc & dmcSig=0x0 & dmcMmod=0xf & dmcP=0x1 & dmcOp1=0x2 
+	 ; dmcW0=0x1 & dmcOp0=0x3 & dmcDstDRegPair & dmcSrc0DReg & dmcSrc1DReg 
+{
+	local a_im:2 = dmcSrc0DReg(2);
+	local a_re:2 = dmcSrc0DReg:2;
+	local b_im:2 = dmcSrc1DReg(2);
+	local b_re:2 = dmcSrc1DReg:2;
+	local tmp_aibi:5;
+	local tmp_arbi:5;
+	local tmp_aibr:5;
+	local tmp_arbr:5;
+	local res_im:5;
+	local res_re:5;
+	tmp_arbi = sext(a_re) * sext(b_im);
+	tmp_aibr = sext(a_im) * sext(b_re);
+	tmp_arbr = sext(a_re) * sext(b_re);
+	tmp_aibi = sext(a_im) * sext(b_im);
+	res_im = -(tmp_arbi + tmp_aibr);
+	res_re = tmp_arbr - tmp_aibi;
+	local half_tmp:4;
+	local half_re_addr:2 = &dmcDstDRegPair;
+	local half_im_addr:2 = &dmcDstDRegPair + 0x4;
+	half_tmp = res_im:4;
+	if (sext(half_tmp) == res_im) goto <end_strunc_dst_im>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_im s< 0x0) goto <end_strunc_dst_im>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_im>
+	*[register]:4 half_im_addr = half_tmp;
+	half_tmp = res_re:4;
+	if (sext(half_tmp) == res_re) goto <end_strunc_dst_re>;
+	half_tmp = (0x1 << 0x1f);
+	if (res_re s< 0x0) goto <end_strunc_dst_re>;
+	half_tmp = ((0x1 << 0x1f) - 0x1);
+<end_strunc_dst_re>
+	*[register]:4 half_re_addr = half_tmp;
+}
+
+
+
+:^Dsp32MacCplx is dmcM=0x0 ... & Dsp32MacCplx { build Dsp32MacCplx; }
+:^Dsp32MacCplx is dmcM=0x1 ... & Dsp32MacCplx { build Dsp32MacCplx; delayslot(4); }

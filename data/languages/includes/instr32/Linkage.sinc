@@ -1,0 +1,51 @@
+## Save/restore registers and link/unlink frame, multiple cycles (Linkage)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |.r.|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..............................frm..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lnkInstr16 (16)
+	lnkSig           = ( 1,15) 
+	lnkR             = ( 0, 0) 
+;
+
+define token lnkInstr32 (16)
+	lnkFrmUImm       = ( 0,15) 
+;
+
+
+### Instructions ###
+
+Linkage:^"Linkage" "LINK "imm
+	is lnkSig=0x7400 & lnkR=0x0 
+	 ; lnkFrmUImm 
+[
+	imm = lnkFrmUImm * 0x4;
+] {
+	SP = SP - 0x4;
+	*[ram]:4 SP = RETS;
+	SP = SP - 0x4;
+	*[ram]:4 SP = FP;
+	FP = SP;
+	SP = SP - imm;
+}
+
+LinkageDesc01: "UNLINK" is epsilon {}
+Linkage:^"Linkage" LinkageDesc01
+	is LinkageDesc01 & lnkSig=0x7400 & lnkR=0x1 
+	 
+{
+	SP = FP;
+	SP = SP - 0x4;
+	*[ram]:4 SP = FP;
+	SP = SP - 0x4;
+	*[ram]:4 SP = RETS;
+}
+
+
+
+:^Linkage is Linkage { build Linkage; }

@@ -9,7 +9,7 @@
 define token dmmInstr16 (16)
 	dmmSig           = ( 8,15) 
 	dmmBr            = ( 7, 7) 
-	dmmX3            = ( 5, 6) 
+	dmmMask2         = ( 5, 6) 
 	dmmOp            = ( 4, 4) 
 	dmmMMReg         = ( 2, 3) 
 	dmmIIReg         = ( 0, 1) 
@@ -25,19 +25,19 @@ attach variables dmmMMReg [M0 M1 M2 M3];
 ### Instructions ###
 
 DAGModIm:^"DagAdd32" dmmIIReg" += "dmmMMReg
-	is dmmSig=0x9e & dmmBr=0x0 & dmmX3=0x3 & dmmOp=0x0 & dmmMMReg & dmmIIReg 
+	is dmmSig=0x9e & dmmBr=0x0 & dmmMask2=0x3 & dmmOp=0x0 & dmmMMReg & dmmIIReg 
 {
 	dmmIIReg = dmmIIReg + dmmMMReg;
 }
 
 DAGModIm:^"DagAdd32" dmmIIReg" += "dmmMMReg" (BREV)"
-	is dmmSig=0x9e & dmmBr=0x1 & dmmX3=0x3 & dmmOp=0x0 & dmmMMReg & dmmIIReg 
+	is dmmSig=0x9e & dmmBr=0x1 & dmmMask2=0x3 & dmmOp=0x0 & dmmMMReg & dmmIIReg 
 {
 	dmmIIReg = dmmIIReg + dmmMMReg;
 }
 
 DAGModIm:^"DagAdd32" dmmIIReg" -= "dmmMMReg
-	is dmmSig=0x9e & dmmBr=0x0 & dmmX3=0x3 & dmmOp=0x1 & dmmMMReg & dmmIIReg 
+	is dmmSig=0x9e & dmmBr=0x0 & dmmMask2=0x3 & dmmOp=0x1 & dmmMMReg & dmmIIReg 
 {
 	dmmIIReg = dmmIIReg - dmmMMReg;
 }

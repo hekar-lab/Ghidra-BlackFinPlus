@@ -1,0 +1,196 @@
+## Load/Store 32-bit Absolute Address (LdStAbs)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................immH..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................immL..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 |..sz...|.w.| 0 | 0 |.z.| 0 | 0 | 0 |....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lsaInstr16 (16)
+	lsaSig           = ( 0,15) 
+;
+
+define token lsaInstr32 (16)
+	lsaImmHUImm      = ( 0,15) 
+;
+
+define token lsaInstr48 (16)
+	lsaImmLUImm      = ( 0,15) 
+;
+
+define token lsaInstr64 (16)
+	lsaMask4z        = (12,15) 
+	lsaSz            = (10,11) 
+	lsaW             = ( 9, 9) 
+	lsaMask2z        = ( 7, 8) 
+	lsaZ             = ( 6, 6) 
+	lsaMask3z        = ( 3, 5) 
+	lsaRegDReg       = ( 0, 2) 
+	lsaRegDRegL      = ( 0, 2) 
+	lsaRegDRegH      = ( 0, 2) 
+	lsaRegPReg       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables lsaRegDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lsaRegDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables lsaRegDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables lsaRegPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+LdStAbs:^"LdM32bitToDreg" lsaRegDReg" = ["imm32"]"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x0 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDReg = *[ram]:4 (imm32:4);
+}
+
+LdStAbs:^"LdM32bitToPreg" lsaRegPReg" = ["imm32"]"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x0 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x1 & lsaMask3z=0x0 & lsaRegPReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegPReg = *[ram]:4 (imm32:4);
+}
+
+LdStAbs:^"LdM16bitToDreg" lsaRegDReg" = W["imm32"] (Z)"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x1 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDReg = zext(*[ram]:2 (imm32:4));
+}
+
+LdStAbs:^"LdM16bitToDreg" lsaRegDReg" = W["imm32"] (X)"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x1 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x1 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDReg = sext(*[ram]:2 (imm32:4));
+}
+
+LdStAbs:^"LdM08bitToDreg" lsaRegDReg" = B["imm32"] (Z)"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x2 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDReg = zext(*[ram]:1 (imm32:4));
+}
+
+LdStAbs:^"LdM08bitToDreg" lsaRegDReg" = B["imm32"] (X)"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x2 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x1 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDReg = sext(*[ram]:1 (imm32:4));
+}
+
+LdStAbs:^"LdM16bitToDregL" lsaRegDRegL" = W["imm32"]"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x3 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDRegL 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDRegL = *[ram]:2 (imm32:4);
+}
+
+LdStAbs:^"LdM16bitToDregH" lsaRegDRegH" = W["imm32"]"
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x3 & lsaW=0x0 & lsaMask2z=0x0 & lsaZ=0x1 & lsaMask3z=0x0 & lsaRegDRegH 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	lsaRegDRegH = *[ram]:2 (imm32:4);
+}
+
+LdStAbs:^"StDregToM32bit" "["imm32"] = "lsaRegDReg
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x0 & lsaW=0x1 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	*[ram]:4 (imm32:4) = lsaRegDReg:4;
+}
+
+LdStAbs:^"StPregToM32bit" "["imm32"] = "lsaRegPReg
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x0 & lsaW=0x1 & lsaMask2z=0x0 & lsaZ=0x1 & lsaMask3z=0x0 & lsaRegPReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	*[ram]:4 (imm32:4) = lsaRegPReg:4;
+}
+
+LdStAbs:^"StDregLToM16bit" "W["imm32"] = "lsaRegDReg
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x1 & lsaW=0x1 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	*[ram]:2 (imm32:4) = lsaRegDReg:2;
+}
+
+LdStAbs:^"StDregToM08bit" "B["imm32"] = "lsaRegDReg
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x2 & lsaW=0x1 & lsaMask2z=0x0 & lsaZ=0x0 & lsaMask3z=0x0 & lsaRegDReg 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	*[ram]:1 (imm32:4) = lsaRegDReg:1;
+}
+
+LdStAbs:^"StDregHLToM16bit" "W["imm32"] = "lsaRegDRegH
+	is lsaSig=0xd800 
+	 ; lsaImmHUImm 
+	 ; lsaImmLUImm 
+	 ; lsaMask4z=0x0 & lsaSz=0x3 & lsaW=0x1 & lsaMask2z=0x0 & lsaZ=0x1 & lsaMask3z=0x0 & lsaRegDRegH 
+[
+	imm32 = (lsaImmHUImm << 0x10) | lsaImmLUImm;
+] {
+	*[ram]:2 (imm32:4) = lsaRegDRegH:2;
+}
+
+
+
+:^LdStAbs is LdStAbs { build LdStAbs; }

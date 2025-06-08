@@ -1,0 +1,3429 @@
+## ALU Operations (Dsp32Alu)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 1 | 0 |...dead....|hl.|.......aopc........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..aop..|.s.|.x.|...dst0....|...dst1....|...src0....|...src1....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dauInstr16 (16)
+	dauSigDsp        = (12,15) 
+	dauM             = (11,11) 
+	dauSig           = ( 9,10) 
+	dauHl            = ( 5, 5) 
+	dauAopc          = ( 0, 4) 
+;
+
+define token dauInstr32 (16)
+	dauAop           = (14,15) 
+	dauS             = (13,13) 
+	dauX             = (12,12) 
+	dauDst0DReg      = ( 9,11) 
+	dauDst0DRegL     = ( 9,11) 
+	dauDst0DRegH     = ( 9,11) 
+	dauDst0HDRegH    = ( 9,11) 
+	dauDst0LDRegL    = ( 9,11) 
+	dauDst1DReg      = ( 6, 8) 
+	dauSrc0DReg      = ( 3, 5) 
+	dauSrc0DRegL     = ( 3, 5) 
+	dauSrc0DRegH     = ( 3, 5) 
+	dauSrc0DRegPair  = ( 3, 5) 
+	dauSrc0CpyDReg   = ( 3, 5) 
+	dauSrc0HDRegH    = ( 3, 5) 
+	dauSrc0LDRegL    = ( 3, 5) 
+	dauSrc1DReg      = ( 0, 2) 
+	dauSrc1DRegL     = ( 0, 2) 
+	dauSrc1DRegH     = ( 0, 2) 
+	dauSrc1DRegPair  = ( 0, 2) 
+	dauSrc1CpyDReg   = ( 0, 2) 
+	dauSrc1HDRegH    = ( 0, 2) 
+	dauSrc1LDRegL    = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables dauSrc1DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dauSrc0DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dauDst0DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dauSrc0CpyDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dauDst1DReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dauSrc1CpyDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dauSrc1DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dauSrc0DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dauSrc1LDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dauDst0DRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dauDst0LDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dauSrc0LDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dauSrc1DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dauSrc0DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dauDst0DRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dauDst0HDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dauSrc0HDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dauSrc1HDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dauSrc1DRegPair [R10 R10 R32 R32 R54 R54 R76 R76];
+attach variables dauSrc0DRegPair [R10 R10 R32 R32 R54 R54 R76 R76];
+
+
+### Operations ###
+
+define pcodeop disalignexcpt;
+
+
+### Instructions ###
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg" (CO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvL, src1L)) goto <end_sadd_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvH, src1H)) goto <end_sadd_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvH>
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg" (SCO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvL, src1L)) goto <end_sadd_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvH, src1H)) goto <end_sadd_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvH>
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg" (CO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvL, src1L)) goto <end_sadd_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvH, src1H)) goto <end_ssub_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvH>
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg" (SCO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvL, src1L)) goto <end_sadd_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvH, src1H)) goto <end_ssub_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvH>
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|+ "dauSrc1DReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|+ "dauSrc1DReg" (CO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|+ "dauSrc1DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvL, src1L)) goto <end_ssub_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvH, src1H)) goto <end_sadd_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvH>
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|+ "dauSrc1DReg" (SCO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvL, src1L)) goto <end_ssub_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvH, src1H)) goto <end_sadd_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvH>
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|- "dauSrc1DReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|- "dauSrc1DReg" (CO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|- "dauSrc1DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvL, src1L)) goto <end_ssub_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvH, src1H)) goto <end_ssub_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvH>
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" -|- "dauSrc1DReg" (SCO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauAopc=0x00 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvL:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvL, src1L)) goto <end_ssub_sat_asvL>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvL>
+	local sadd_src0_cpy_asvH:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvH, src1H)) goto <end_ssub_sat_asvH>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvH>
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (CO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst0, src1H)) goto <end_sadd_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst0>
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst1, src1H)) goto <end_ssub_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst1>
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (SCO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst0, src1H)) goto <end_sadd_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst0>
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst1, src1H)) goto <end_ssub_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst1>
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (CO, ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (S, ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst0, src1H)) goto <end_sadd_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst0>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst1, src1H)) goto <end_ssub_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst1>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (SCO, ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst0, src1H)) goto <end_sadd_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst0>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst1, src1H)) goto <end_ssub_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst1>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (CO, ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H + src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	resL = src0L - src1L;
+	resH = src0H - src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (S, ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst0, src1H)) goto <end_sadd_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst0>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst1, src1H)) goto <end_ssub_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst1>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|+ "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|- "dauSrc1CpyDReg" (SCO, ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst0, src1H)) goto <end_sadd_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst0>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst1, src1H)) goto <end_ssub_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst1>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (CO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst0, src1H)) goto <end_ssub_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst0>
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst1, src1H)) goto <end_sadd_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst1>
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (SCO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst0, src1H)) goto <end_ssub_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst0>
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst1, src1H)) goto <end_sadd_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst1>
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (CO, ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (S, ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst0, src1H)) goto <end_ssub_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst0>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst1, src1H)) goto <end_sadd_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst1>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (SCO, ASR)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst0, src1H)) goto <end_ssub_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst0>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst1, src1H)) goto <end_sadd_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst1>
+	resL = resL s>> 0x1;
+	resH = resH s>> 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (CO, ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L + src1L;
+	resH = src0H - src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	resL = src0L - src1L;
+	resH = src0H + src1H;
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (S, ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst0, src1H)) goto <end_ssub_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst0>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resH << 0x10)) | zext(resL);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst1, src1H)) goto <end_sadd_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst1>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resH << 0x10)) | zext(resL);
+}
+
+Dsp32Alu:^"AddSubVec16" dauDst0DReg" = "dauSrc0DReg" +|- "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" -|+ "dauSrc1CpyDReg" (SCO, ASL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x01 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x1 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	local resL:2;
+	local resH:2;
+	local sadd_src0_cpy_asvLdst0:2 = src0L;
+	resL = src0L + src1L;
+	if (!scarry(sadd_src0_cpy_asvLdst0, src1L)) goto <end_sadd_sat_asvLdst0>;
+	resL = (0x1 << 0xf);
+	if (src1L s< 0x0) goto <end_sadd_sat_asvLdst0>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvLdst0>
+	local sadd_src0_cpy_asvHdst0:2 = src0H;
+	resH = src0H - src1H;
+	if (!sborrow(sadd_src0_cpy_asvHdst0, src1H)) goto <end_ssub_sat_asvHdst0>;
+	resH = (0x1 << 0xf);
+	if (src1H s> 0x0) goto <end_ssub_sat_asvHdst0>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvHdst0>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst0DReg = zext((resL << 0x10)) | zext(resH);
+	local sadd_src0_cpy_asvLdst1:2 = src0L;
+	resL = src0L - src1L;
+	if (!sborrow(sadd_src0_cpy_asvLdst1, src1L)) goto <end_ssub_sat_asvLdst1>;
+	resL = (0x1 << 0xf);
+	if (src1L s> 0x0) goto <end_ssub_sat_asvLdst1>;
+	resL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_asvLdst1>
+	local sadd_src0_cpy_asvHdst1:2 = src0H;
+	resH = src0H + src1H;
+	if (!scarry(sadd_src0_cpy_asvHdst1, src1H)) goto <end_sadd_sat_asvHdst1>;
+	resH = (0x1 << 0xf);
+	if (src1H s< 0x0) goto <end_sadd_sat_asvHdst1>;
+	resH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_asvHdst1>
+	resL = resL << 0x1;
+	resH = resH << 0x1;
+	dauDst1DReg = zext((resL << 0x10)) | zext(resH);
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" + "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegL 
+{
+	dauDst0DRegL = dauSrc0DRegL + dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" + "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegL = dauSrc0DRegL + dauSrc1DRegL;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegL s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" + "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegL 
+{
+	dauDst0DRegH = dauSrc0DRegL + dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" + "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegH = dauSrc0DRegL + dauSrc1DRegL;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegL s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" + "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegH 
+{
+	dauDst0DRegL = dauSrc0DRegL + dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" + "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegL = dauSrc0DRegL + dauSrc1DRegH;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegH s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" + "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegH 
+{
+	dauDst0DRegH = dauSrc0DRegL + dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" + "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegH = dauSrc0DRegL + dauSrc1DRegH;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegH s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" + "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegL 
+{
+	dauDst0DRegL = dauSrc0DRegH + dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" + "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegL = dauSrc0DRegH + dauSrc1DRegL;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegL s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" + "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegL 
+{
+	dauDst0DRegH = dauSrc0DRegH + dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" + "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegH = dauSrc0DRegH + dauSrc1DRegL;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegL s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" + "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegH 
+{
+	dauDst0DRegL = dauSrc0DRegH + dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" + "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x02 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegL = dauSrc0DRegH + dauSrc1DRegH;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegH s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" + "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegH 
+{
+	dauDst0DRegH = dauSrc0DRegH + dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" + "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x02 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegH = dauSrc0DRegH + dauSrc1DRegH;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegH s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" - "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegL 
+{
+	dauDst0DRegL = dauSrc0DRegL - dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" - "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegL = dauSrc0DRegL - dauSrc1DRegL;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegL s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" - "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegL 
+{
+	dauDst0DRegH = dauSrc0DRegL - dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" - "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegH = dauSrc0DRegL - dauSrc1DRegL;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegL s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" - "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegH 
+{
+	dauDst0DRegL = dauSrc0DRegL - dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegL" - "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegL & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegL = dauSrc0DRegL - dauSrc1DRegH;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegH s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" - "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegH 
+{
+	dauDst0DRegH = dauSrc0DRegL - dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegL" - "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegL & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegL;
+	dauDst0DRegH = dauSrc0DRegL - dauSrc1DRegH;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegH s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" - "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegL 
+{
+	dauDst0DRegL = dauSrc0DRegH - dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" - "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegL = dauSrc0DRegH - dauSrc1DRegL;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegL s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" - "dauSrc1DRegL" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegL 
+{
+	dauDst0DRegH = dauSrc0DRegH - dauSrc1DRegL;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" - "dauSrc1DRegL" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegL 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegH = dauSrc0DRegH - dauSrc1DRegL;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegL)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegL s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" - "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegH 
+{
+	dauDst0DRegL = dauSrc0DRegH - dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegL" = "dauSrc0DRegH" - "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x03 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DRegL & dauSrc0DRegH & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegL = dauSrc0DRegH - dauSrc1DRegH;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (dauSrc1DRegH s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" - "dauSrc1DRegH" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegH 
+{
+	dauDst0DRegH = dauSrc0DRegH - dauSrc1DRegH;
+}
+
+Dsp32Alu:^"AddSub16" dauDst0DRegH" = "dauSrc0DRegH" - "dauSrc1DRegH" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x03 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DRegH & dauSrc0DRegH & dauSrc1DRegH 
+{
+	local sadd_src0_cpy_dst0:2 = dauSrc0DRegH;
+	dauDst0DRegH = dauSrc0DRegH - dauSrc1DRegH;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DRegH)) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (dauSrc1DRegH s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub32" dauDst0DReg" = "dauSrc0DReg" + "dauSrc1DReg" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x04 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	dauDst0DReg = dauSrc0DReg + dauSrc1DReg;
+}
+
+Dsp32Alu:^"AddSub32" dauDst0DReg" = "dauSrc0DReg" + "dauSrc1DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x04 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local sadd_src0_cpy_dst0:4 = dauSrc0DReg;
+	dauDst0DReg = dauSrc0DReg + dauSrc1DReg;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DReg)) goto <end_sadd_sat_dst0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (dauSrc1DReg s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_sadd_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub32" dauDst0DReg" = "dauSrc0DReg" - "dauSrc1DReg" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x04 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	dauDst0DReg = dauSrc0DReg - dauSrc1DReg;
+}
+
+Dsp32Alu:^"AddSub32" dauDst0DReg" = "dauSrc0DReg" - "dauSrc1DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x04 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local sadd_src0_cpy_dst0:4 = dauSrc0DReg;
+	dauDst0DReg = dauSrc0DReg - dauSrc1DReg;
+	if (!sborrow(sadd_src0_cpy_dst0, dauSrc1DReg)) goto <end_ssub_sat_dst0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (dauSrc1DReg s> 0x0) goto <end_ssub_sat_dst0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_ssub_sat_dst0>
+}
+
+Dsp32Alu:^"AddSub32Dual" dauDst0DReg" = "dauSrc0DReg" + "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" - "dauSrc1CpyDReg" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x04 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	dauDst0DReg = dauSrc0DReg + dauSrc1DReg;
+	dauDst1DReg = dauSrc0DReg - dauSrc1DReg;
+}
+
+Dsp32Alu:^"AddSub32Dual" dauDst0DReg" = "dauSrc0DReg" + "dauSrc1DReg", "dauDst1DReg" = "dauSrc0CpyDReg" - "dauSrc1CpyDReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x04 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg & dauSrc0CpyDReg & dauSrc1DReg & dauSrc1CpyDReg 
+{
+	local sadd_src0_cpy_dst0:4 = dauSrc0DReg;
+	dauDst0DReg = dauSrc0DReg + dauSrc1DReg;
+	if (!scarry(sadd_src0_cpy_dst0, dauSrc1DReg)) goto <end_sadd_sat_dst0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (dauSrc1DReg s< 0x0) goto <end_sadd_sat_dst0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_sadd_sat_dst0>
+	local sadd_src0_cpy_dst1:4 = dauSrc0DReg;
+	dauDst1DReg = dauSrc0DReg - dauSrc1DReg;
+	if (!sborrow(sadd_src0_cpy_dst1, dauSrc1DReg)) goto <end_ssub_sat_dst1>;
+	dauDst1DReg = (0x1 << 0x1f);
+	if (dauSrc1DReg s> 0x0) goto <end_ssub_sat_dst1>;
+	dauDst1DReg = ((0x1 << 0x1f) - 0x1);
+<end_ssub_sat_dst1>
+}
+
+Dsp32Alu:^"AddSubRnd12" dauDst0DRegL" = "dauSrc0DReg" + "dauSrc1DReg" (RND12)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x05 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg << 0x4) + sext(dauSrc1DReg << 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegL = asr_res_rnd:2;
+	if (sext(dauDst0DRegL) == asr_res_rnd) goto <end_strunc_asr>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (asr_res_rnd s< 0x0) goto <end_strunc_asr>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_strunc_asr>
+}
+
+Dsp32Alu:^"AddSubRnd12" dauDst0DRegH" = "dauSrc0DReg" + "dauSrc1DReg" (RND12)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x05 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg << 0x4) + sext(dauSrc1DReg << 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegH = asr_res_rnd:2;
+	if (sext(dauDst0DRegH) == asr_res_rnd) goto <end_strunc_asr>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (asr_res_rnd s< 0x0) goto <end_strunc_asr>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_strunc_asr>
+}
+
+Dsp32Alu:^"AddSubRnd12" dauDst0DRegL" = "dauSrc0DReg" - "dauSrc1DReg" (RND12)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x05 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg << 0x4) - sext(dauSrc1DReg << 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegL = asr_res_rnd:2;
+	if (sext(dauDst0DRegL) == asr_res_rnd) goto <end_strunc_asr>;
+	dauDst0DRegL = (0x1 << 0xf);
+	if (asr_res_rnd s< 0x0) goto <end_strunc_asr>;
+	dauDst0DRegL = ((0x1 << 0xf) - 0x1);
+<end_strunc_asr>
+}
+
+Dsp32Alu:^"AddSubRnd12" dauDst0DRegH" = "dauSrc0DReg" - "dauSrc1DReg" (RND12)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x05 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg << 0x4) - sext(dauSrc1DReg << 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegH = asr_res_rnd:2;
+	if (sext(dauDst0DRegH) == asr_res_rnd) goto <end_strunc_asr>;
+	dauDst0DRegH = (0x1 << 0xf);
+	if (asr_res_rnd s< 0x0) goto <end_strunc_asr>;
+	dauDst0DRegH = ((0x1 << 0xf) - 0x1);
+<end_strunc_asr>
+}
+
+Dsp32Alu:^"AddSubRnd20" dauDst0DRegL" = "dauSrc0DReg" + "dauSrc1DReg" (RND20)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x05 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x1 & dauDst0DRegL & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg s>> 0x4) + sext(dauSrc1DReg s>> 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegL = asr_res_rnd:2;
+}
+
+Dsp32Alu:^"AddSubRnd20" dauDst0DRegH" = "dauSrc0DReg" + "dauSrc1DReg" (RND20)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x05 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x1 & dauDst0DRegH & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg s>> 0x4) + sext(dauSrc1DReg s>> 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegH = asr_res_rnd:2;
+}
+
+Dsp32Alu:^"AddSubRnd20" dauDst0DRegL" = "dauSrc0DReg" - "dauSrc1DReg" (RND20)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x05 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x1 & dauDst0DRegL & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg s>> 0x4) - sext(dauSrc1DReg s>> 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegL = asr_res_rnd:2;
+}
+
+Dsp32Alu:^"AddSubRnd20" dauDst0DRegH" = "dauSrc0DReg" - "dauSrc1DReg" (RND20)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x05 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x1 & dauDst0DRegH & dauSrc0DReg & dauSrc1DReg 
+{
+	local asr_res:5 = sext(dauSrc0DReg s>> 0x4) - sext(dauSrc1DReg s>> 0x4);
+	local asr_res_rnd:3;
+	local rem_var_asr:2 = asr_res:2;
+	asr_res_rnd = asr_res(2);
+	if (asr_res_rnd == ((0x1 << 0x17) - 0x1)) goto <end_rnd_asr>;
+	if (rem_var_asr < 0x8000) goto <end_rnd_asr>;
+	asr_res_rnd = asr_res_rnd + 0x1;
+<end_rnd_asr>
+	dauDst0DRegH = asr_res_rnd:2;
+}
+
+Dsp32Alu:^"Max16Vec" dauDst0DReg" = MAX("dauSrc0DReg", "dauSrc1DReg") (V)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x06 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local resL:2;
+	local resH:2;
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	resL = src0L;
+	if (resL s>= src1L) goto <max_end_vecL>;
+	resL = src1L;
+<max_end_vecL>
+	resH = src0H;
+	if (resH s>= src1H) goto <max_end_vecH>;
+	resH = src1H;
+<max_end_vecH>
+	dauDst0DReg = (zext(resH) << 0x10) | zext(resL);
+}
+
+Dsp32Alu:^"Min16Vec" dauDst0DReg" = MIN("dauSrc0DReg", "dauSrc1DReg") (V)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x06 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local resL:2;
+	local resH:2;
+	local src1L:2 = dauSrc1DReg:2;
+	local src1H:2 = dauSrc1DReg(2);
+	resL = src0L;
+	if (resL s<= src1L) goto <min_end_vecL>;
+	resL = src1L;
+<min_end_vecL>
+	resH = src0H;
+	if (resH s<= src1H) goto <min_end_vecH>;
+	resH = src1H;
+<min_end_vecH>
+	dauDst0DReg = (zext(resH) << 0x10) | zext(resL);
+}
+
+Dsp32Alu:^"Abs16Vec" dauDst0DReg" = ABS "dauSrc0DReg" (V)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x06 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = src0L;
+	if (resL s>= 0x0) goto <abs_end_vecL>;
+	resL = -src0L;
+	if (src0L != (0x1 << 0xf)) goto <abs_end_vecL>;
+	resL = ((0x1 << 0xf) - 0x1);
+<abs_end_vecL>
+	resH = src0H;
+	if (resH s>= 0x0) goto <abs_end_vecH>;
+	resH = -src0H;
+	if (src0H != (0x1 << 0xf)) goto <abs_end_vecH>;
+	resH = ((0x1 << 0xf) - 0x1);
+<abs_end_vecH>
+	dauDst0DReg = (zext(resH) << 0x10) | zext(resL);
+}
+
+Dsp32Alu:^"Neg16Vec" dauDst0DReg" = -"dauSrc0DReg" (NS) (V)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0f 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg 
+{
+	local src0L:2 = dauSrc0DReg:2;
+	local src0H:2 = dauSrc0DReg(2);
+	local resL:2;
+	local resH:2;
+	resL = -src0L;
+	resH = -src0H;
+	dauDst0DReg = (zext(resH) << 0x10) | zext(resL);
+}
+
+Dsp32Alu:^"Max32" dauDst0DReg" = MAX("dauSrc0DReg", "dauSrc1DReg")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x07 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	dauDst0DReg = dauSrc0DReg;
+	if (dauDst0DReg s>= dauSrc1DReg) goto <max_end_32>;
+	dauDst0DReg = dauSrc1DReg;
+<max_end_32>
+}
+
+Dsp32Alu:^"Min32" dauDst0DReg" = MIN("dauSrc0DReg", "dauSrc1DReg")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x07 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	dauDst0DReg = dauSrc0DReg;
+	if (dauDst0DReg s<= dauSrc1DReg) goto <min_end_32>;
+	dauDst0DReg = dauSrc1DReg;
+<min_end_32>
+}
+
+Dsp32Alu:^"Abs32" dauDst0DReg" = ABS "dauSrc0DReg
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x07 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg 
+{
+	dauDst0DReg = dauSrc0DReg;
+	if (dauDst0DReg s>= 0x0) goto <abs_end_32>;
+	dauDst0DReg = -dauSrc0DReg;
+	if (dauSrc0DReg != (0x1 << 0x1f)) goto <abs_end_32>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<abs_end_32>
+}
+
+Dsp32Alu:^"Neg32" dauDst0DReg" = -"dauSrc0DReg" (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x07 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg 
+{
+	dauDst0DReg = -dauSrc0DReg;
+}
+
+Dsp32Alu:^"Neg32" dauDst0DReg" = -"dauSrc0DReg" (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x07 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg 
+{
+	dauDst0DReg = -dauSrc0DReg;
+	if (dauSrc0DReg != (0x1 << 0x1f)) goto <neg_end_32>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<neg_end_32>
+}
+
+Dsp32AluDesc5F: "A0 = 0" is epsilon {}
+Dsp32Alu:^"LdImmToAx" Dsp32AluDesc5F
+	is Dsp32AluDesc5F & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 
+{
+	A0 = 0x0;
+}
+
+Dsp32AluDesc60: "A0 = A0 (S)" is epsilon {}
+Dsp32Alu:^"SatAccA0" Dsp32AluDesc60
+	is Dsp32AluDesc60 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 
+{
+	if (A0 < 0xff80000000) goto <sat_neg_A0>;
+	if (A0 > 0x7fffffff) goto <sat_pos_A0>;
+	A0.W = A0:4;
+	goto <sat_end_A0>;
+<sat_neg_A0>
+	A0.W = 0x80000000;
+	goto <sat_end_A0>;
+<sat_pos_A0>
+	A0.W = 0x7fffffff;
+<sat_end_A0>
+}
+
+Dsp32AluDesc61: "A1 = 0" is epsilon {}
+Dsp32Alu:^"LdImmToAx" Dsp32AluDesc61
+	is Dsp32AluDesc61 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 
+{
+	A1 = 0x0;
+}
+
+Dsp32AluDesc62: "A1 = A1 (S)" is epsilon {}
+Dsp32Alu:^"SatAccA1" Dsp32AluDesc62
+	is Dsp32AluDesc62 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 
+{
+	if (A1 < 0xff80000000) goto <sat_neg_A1>;
+	if (A1 > 0x7fffffff) goto <sat_pos_A1>;
+	A1.W = A1:4;
+	goto <sat_end_A1>;
+<sat_neg_A1>
+	A1.W = 0x80000000;
+	goto <sat_end_A1>;
+<sat_pos_A1>
+	A1.W = 0x7fffffff;
+<sat_end_A1>
+}
+
+Dsp32AluDesc63: "A0 = A1 = 0" is epsilon {}
+Dsp32Alu:^"LdImmToAxDul" Dsp32AluDesc63
+	is Dsp32AluDesc63 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 
+{
+	A0 = 0x0;
+	A1 = 0x0;
+}
+
+Dsp32AluDesc64: "A0 = A0 (S), A1 = A1 (S)" is epsilon {}
+Dsp32Alu:^"SatAccDual" Dsp32AluDesc64
+	is Dsp32AluDesc64 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 
+{
+	if (A0 < 0xff80000000) goto <sat_neg_A0>;
+	if (A0 > 0x7fffffff) goto <sat_pos_A0>;
+	A0.W = A0:4;
+	goto <sat_end_A0>;
+<sat_neg_A0>
+	A0.W = 0x80000000;
+	goto <sat_end_A0>;
+<sat_pos_A0>
+	A0.W = 0x7fffffff;
+<sat_end_A0>
+	if (A1 < 0xff80000000) goto <sat_neg_A1>;
+	if (A1 > 0x7fffffff) goto <sat_pos_A1>;
+	A1.W = A1:4;
+	goto <sat_end_A1>;
+<sat_neg_A1>
+	A1.W = 0x80000000;
+	goto <sat_end_A1>;
+<sat_pos_A1>
+	A1.W = 0x7fffffff;
+<sat_end_A1>
+}
+
+Dsp32AluDesc65: "A0 = A1" is epsilon {}
+Dsp32Alu:^"MvAxToAx" Dsp32AluDesc65
+	is Dsp32AluDesc65 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 
+{
+	A0 = A1;
+}
+
+Dsp32AluDesc66: "A1 = A0" is epsilon {}
+Dsp32Alu:^"MvAxToAx" Dsp32AluDesc66
+	is Dsp32AluDesc66 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x08 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 
+{
+	A1 = A0;
+}
+
+Dsp32Alu:^"MvDregHLToAxHL" "A0.L = "dauSrc0DRegL
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauSrc0DRegL 
+{
+	A0.L = dauSrc0DRegL;
+}
+
+Dsp32Alu:^"MvDregHLToAxHL" "A0.H = "dauSrc0DRegH
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x09 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauSrc0DRegH 
+{
+	A0.H = dauSrc0DRegH;
+}
+
+Dsp32Alu:^"MvDregToAx" "A0 = "dauSrc0DReg" (X)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauSrc0DReg 
+{
+	A0 = sext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregToAx" "A0 = "dauSrc0DReg" (Z)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x1 & dauSrc0DReg 
+{
+	A0 = zext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregLToAxX" "A0.X = "dauSrc0DRegL
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauSrc0DRegL 
+{
+	A0.X = dauSrc0DRegL:1;
+}
+
+Dsp32Alu:^"MvDregHLToAxHL" "A1.L = "dauSrc0DRegL
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauSrc0DRegL 
+{
+	A1.L = dauSrc0DRegL;
+}
+
+Dsp32Alu:^"MvDregHLToAxHL" "A1.H = "dauSrc0DRegH
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x09 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauSrc0DRegH 
+{
+	A1.H = dauSrc0DRegH;
+}
+
+Dsp32Alu:^"MvDregToAx" "A1 = "dauSrc0DReg" (X)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 & dauSrc0DReg 
+{
+	A1 = sext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregToAx" "A1 = "dauSrc0DReg" (Z)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x1 & dauSrc0DReg 
+{
+	A1 = zext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregLToAxX" "A1.X = "dauSrc0DRegL
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x09 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauSrc0DRegL 
+{
+	A1.X = dauSrc0DRegL:1;
+}
+
+Dsp32Alu:^"MvAxXToDregL" dauDst0DRegL" = A0.X"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0a 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DRegL 
+{
+	dauDst0DRegL = sext(A0.X);
+}
+
+Dsp32Alu:^"MvAxXToDregL" dauDst0DRegL" = A1.X"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0a 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegL 
+{
+	dauDst0DRegL = sext(A1.X);
+}
+
+Dsp32Alu:^"AddAccExt" dauDst0DReg" = (A0 += A1)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0b 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg 
+{
+	local sadd_src0_cpy_aae:5 = A0;
+	A0 = A0 + A1;
+	if (!scarry(sadd_src0_cpy_aae, A1)) goto <end_sadd_sat_aae>;
+	A0 = (0x1 << 0x27);
+	if (A1 s< 0x0) goto <end_sadd_sat_aae>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_aae>
+	dauDst0DReg = A0:4;
+	if (sext(dauDst0DReg) == A0) goto <end_strunc_aae>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (A0 s< 0x0) goto <end_strunc_aae>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_aae>
+}
+
+Dsp32Alu:^"AddAccExt" dauDst0DRegL" = (A0 += A1)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0b 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegL 
+{
+	local sadd_src0_cpy_aae:5 = A0;
+	A0 = A0 + A1;
+	if (!scarry(sadd_src0_cpy_aae, A1)) goto <end_sadd_sat_aae>;
+	A0 = (0x1 << 0x27);
+	if (A1 s< 0x0) goto <end_sadd_sat_aae>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_aae>
+	local A0_trunc:4;
+	A0_trunc = A0:4;
+	if (sext(A0_trunc) == A0) goto <end_strunc_aae>;
+	A0_trunc = (0x1 << 0x1f);
+	if (A0 s< 0x0) goto <end_strunc_aae>;
+	A0_trunc = ((0x1 << 0x1f) - 0x1);
+<end_strunc_aae>
+	local rem_var_aae:2 = A0_trunc:2;
+	dauDst0DRegL = A0_trunc(2);
+	if (dauDst0DRegL == ((0x1 << 0xf) - 0x1)) goto <end_rnd_aae>;
+	if (RND_MOD) goto <biased_rnd_aae>;
+	if (rem_var_aae > 0x8000 || (rem_var_aae == 0x8000 && (dauDst0DRegL & 0x1) == 0x1)) goto <rounding_aae>;
+	goto <end_rnd_aae>;
+<biased_rnd_aae>
+	if (rem_var_aae >= 0x8000) goto <rounding_aae>;
+	goto <end_rnd_aae>;
+<rounding_aae>
+	dauDst0DRegL = dauDst0DRegL + 0x1;
+<end_rnd_aae>
+}
+
+Dsp32Alu:^"AddAccExt" dauDst0DRegH" = (A0 += A1)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x0b 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DRegH 
+{
+	local sadd_src0_cpy_aae:5 = A0;
+	A0 = A0 + A1;
+	if (!scarry(sadd_src0_cpy_aae, A1)) goto <end_sadd_sat_aae>;
+	A0 = (0x1 << 0x27);
+	if (A1 s< 0x0) goto <end_sadd_sat_aae>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_aae>
+	local A0_trunc:4;
+	A0_trunc = A0:4;
+	if (sext(A0_trunc) == A0) goto <end_strunc_aae>;
+	A0_trunc = (0x1 << 0x1f);
+	if (A0 s< 0x0) goto <end_strunc_aae>;
+	A0_trunc = ((0x1 << 0x1f) - 0x1);
+<end_strunc_aae>
+	local rem_var_aae:2 = A0_trunc:2;
+	dauDst0DRegH = A0_trunc(2);
+	if (dauDst0DRegH == ((0x1 << 0xf) - 0x1)) goto <end_rnd_aae>;
+	if (RND_MOD) goto <biased_rnd_aae>;
+	if (rem_var_aae > 0x8000 || (rem_var_aae == 0x8000 && (dauDst0DRegH & 0x1) == 0x1)) goto <rounding_aae>;
+	goto <end_rnd_aae>;
+<biased_rnd_aae>
+	if (rem_var_aae >= 0x8000) goto <rounding_aae>;
+	goto <end_rnd_aae>;
+<rounding_aae>
+	dauDst0DRegH = dauDst0DRegH + 0x1;
+<end_rnd_aae>
+}
+
+Dsp32AluDesc76: "(A0 += A1)" is epsilon {}
+Dsp32Alu:^"AddSubAcc" Dsp32AluDesc76
+	is Dsp32AluDesc76 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0b 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 
+{
+	local sadd_src0_cpy_asa:5 = A0;
+	A0 = A0 + A1;
+	if (!scarry(sadd_src0_cpy_asa, A1)) goto <end_sadd_sat_asa>;
+	A0 = (0x1 << 0x27);
+	if (A1 s< 0x0) goto <end_sadd_sat_asa>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_asa>
+}
+
+Dsp32AluDesc77: "(A0 += A1) (W32)" is epsilon {}
+Dsp32Alu:^"AddSubAcc" Dsp32AluDesc77
+	is Dsp32AluDesc77 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0b 
+	 ; dauAop=0x2 & dauS=0x1 & dauX=0x0 
+{
+	local sadd_src0_cpy_asa:5 = A0;
+	A0 = A0 + A1;
+	if (!scarry(sadd_src0_cpy_asa, A1)) goto <end_sadd_sat_asa>;
+	A0 = (0x1 << 0x27);
+	if (A1 s< 0x0) goto <end_sadd_sat_asa>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_asa>
+	local A0_trunc:4;
+	A0_trunc = A0:4;
+	if (sext(A0_trunc) == A0) goto <end_strunc_asa>;
+	A0_trunc = (0x1 << 0x1f);
+	if (A0 s< 0x0) goto <end_strunc_asa>;
+	A0_trunc = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asa>
+	A0 = sext(A0_trunc);
+}
+
+Dsp32AluDesc78: "(A0 -= A1)" is epsilon {}
+Dsp32Alu:^"AddSubAcc" Dsp32AluDesc78
+	is Dsp32AluDesc78 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0b 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 
+{
+	local sadd_src0_cpy_asa:5 = A0;
+	A0 = A0 - A1;
+	if (!sborrow(sadd_src0_cpy_asa, A1)) goto <end_ssub_sat_asa>;
+	A0 = (0x1 << 0x27);
+	if (A1 s> 0x0) goto <end_ssub_sat_asa>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_asa>
+}
+
+Dsp32AluDesc79: "(A0 -= A1) (W32)" is epsilon {}
+Dsp32Alu:^"AddSubAcc" Dsp32AluDesc79
+	is Dsp32AluDesc79 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0b 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 
+{
+	local sadd_src0_cpy_asa:5 = A0;
+	A0 = A0 - A1;
+	if (!sborrow(sadd_src0_cpy_asa, A1)) goto <end_ssub_sat_asa>;
+	A0 = (0x1 << 0x27);
+	if (A1 s> 0x0) goto <end_ssub_sat_asa>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_asa>
+	local A0_trunc:4;
+	A0_trunc = A0:4;
+	if (sext(A0_trunc) == A0) goto <end_strunc_asa>;
+	A0_trunc = (0x1 << 0x1f);
+	if (A0 s< 0x0) goto <end_strunc_asa>;
+	A0_trunc = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asa>
+	A0 = sext(A0_trunc);
+}
+
+Dsp32Alu:^"AddSubAccExt" dauDst0DReg" = A1 + A0, "dauDst1DReg" = A1 - A0 (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x11 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg 
+{
+	local res_dst0:5;
+	res_dst0 = A1 + A0;
+	dauDst0DReg = res_dst0:4;
+	local res_dst1:5;
+	res_dst1 = A1 - A0;
+	dauDst1DReg = res_dst1:4;
+}
+
+Dsp32Alu:^"AddSubAccExt" dauDst0DReg" = A1 + A0, "dauDst1DReg" = A1 - A0 (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x11 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg 
+{
+	local res_dst0:5;
+	local sadd_src0_cpy_asae_dst0:5 = A1;
+	res_dst0 = A1 + A0;
+	if (!scarry(sadd_src0_cpy_asae_dst0, A0)) goto <end_sadd_sat_asae_dst0>;
+	res_dst0 = (0x1 << 0x27);
+	if (A0 s< 0x0) goto <end_sadd_sat_asae_dst0>;
+	res_dst0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_asae_dst0>
+	dauDst0DReg = res_dst0:4;
+	if (sext(dauDst0DReg) == res_dst0) goto <end_strunc_asae_dst0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (res_dst0 s< 0x0) goto <end_strunc_asae_dst0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asae_dst0>
+	local res_dst1:5;
+	local sadd_src0_cpy_asae_dst1:5 = A1;
+	res_dst1 = A1 - A0;
+	if (!sborrow(sadd_src0_cpy_asae_dst1, A0)) goto <end_ssub_sat_asae_dst1>;
+	res_dst1 = (0x1 << 0x27);
+	if (A0 s> 0x0) goto <end_ssub_sat_asae_dst1>;
+	res_dst1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_asae_dst1>
+	dauDst1DReg = res_dst1:4;
+	if (sext(dauDst1DReg) == res_dst1) goto <end_strunc_asae_dst1>;
+	dauDst1DReg = (0x1 << 0x1f);
+	if (res_dst1 s< 0x0) goto <end_strunc_asae_dst1>;
+	dauDst1DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asae_dst1>
+}
+
+Dsp32Alu:^"AddSubAccExt" dauDst0DReg" = A0 + A1, "dauDst1DReg" = A0 - A1 (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x11 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg 
+{
+	local res_dst0:5;
+	res_dst0 = A0 + A1;
+	dauDst0DReg = res_dst0:4;
+	local res_dst1:5;
+	res_dst1 = A0 - A1;
+	dauDst1DReg = res_dst1:4;
+}
+
+Dsp32Alu:^"AddSubAccExt" dauDst0DReg" = A0 + A1, "dauDst1DReg" = A0 - A1 (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x11 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg 
+{
+	local res_dst0:5;
+	local sadd_src0_cpy_asae_dst0:5 = A0;
+	res_dst0 = A0 + A1;
+	if (!scarry(sadd_src0_cpy_asae_dst0, A1)) goto <end_sadd_sat_asae_dst0>;
+	res_dst0 = (0x1 << 0x27);
+	if (A1 s< 0x0) goto <end_sadd_sat_asae_dst0>;
+	res_dst0 = ((0x1 << 0x27) - 0x1);
+<end_sadd_sat_asae_dst0>
+	dauDst0DReg = res_dst0:4;
+	if (sext(dauDst0DReg) == res_dst0) goto <end_strunc_asae_dst0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (res_dst0 s< 0x0) goto <end_strunc_asae_dst0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asae_dst0>
+	local res_dst1:5;
+	local sadd_src0_cpy_asae_dst1:5 = A0;
+	res_dst1 = A0 - A1;
+	if (!sborrow(sadd_src0_cpy_asae_dst1, A1)) goto <end_ssub_sat_asae_dst1>;
+	res_dst1 = (0x1 << 0x27);
+	if (A1 s> 0x0) goto <end_ssub_sat_asae_dst1>;
+	res_dst1 = ((0x1 << 0x27) - 0x1);
+<end_ssub_sat_asae_dst1>
+	dauDst1DReg = res_dst1:4;
+	if (sext(dauDst1DReg) == res_dst1) goto <end_strunc_asae_dst1>;
+	dauDst1DReg = (0x1 << 0x1f);
+	if (res_dst1 s< 0x0) goto <end_strunc_asae_dst1>;
+	dauDst1DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asae_dst1>
+}
+
+Dsp32Alu:^"AddOnSign" dauDst0LDRegL" = "dauDst0HDRegH" = SIGN("dauSrc0LDRegL") * "dauSrc1LDRegL" + SIGN("dauSrc0HDRegH") * "dauSrc1HDRegH
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0c 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0LDRegL & dauDst0HDRegH & dauSrc0LDRegL & dauSrc0HDRegH & dauSrc1LDRegL & dauSrc1HDRegH 
+{
+	local signL:2 = dauSrc0LDRegL s>> 0xe | 0x1;
+	local magL:2 = dauSrc1LDRegL;
+	local signH:2 = dauSrc0HDRegH s>> 0xe | 0x1;
+	local magH:2 = dauSrc1HDRegH;
+	local res_aos:2 = signL * magL + signH * magH;
+	dauDst0LDRegL = res_aos;
+	dauDst0HDRegH = res_aos;
+}
+
+Dsp32Alu:^"AddAccHalf" dauDst0DReg" = A1.L + A1.H, "dauDst1DReg" = A0.L + A0.H"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0c 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg 
+{
+	dauDst0DReg = sext(A1.L) + sext(A1.H);
+	dauDst1DReg = sext(A0.L) + sext(A0.H);
+}
+
+Dsp32Alu:^"Pass32Rnd16" dauDst0DRegL" = "dauSrc0DReg" (RND)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0c 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DRegL & dauSrc0DReg 
+{
+	local rem_var_prnd:2 = dauSrc0DReg:2;
+	dauDst0DRegL = dauSrc0DReg(2);
+	if (dauDst0DRegL == ((0x1 << 0xf) - 0x1)) goto <end_rnd_prnd>;
+	if (rem_var_prnd < 0x8000) goto <end_rnd_prnd>;
+	dauDst0DRegL = dauDst0DRegL + 0x1;
+<end_rnd_prnd>
+}
+
+Dsp32Alu:^"Pass32Rnd16" dauDst0DRegH" = "dauSrc0DReg" (RND)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x0c 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DRegH & dauSrc0DReg 
+{
+	local rem_var_prnd:2 = dauSrc0DReg:2;
+	dauDst0DRegH = dauSrc0DReg(2);
+	if (dauDst0DRegH == ((0x1 << 0xf) - 0x1)) goto <end_rnd_prnd>;
+	if (rem_var_prnd < 0x8000) goto <end_rnd_prnd>;
+	dauDst0DRegH = dauDst0DRegH + 0x1;
+<end_rnd_prnd>
+}
+
+Dsp32Alu:^"Search" "("dauDst1DReg", "dauDst0DReg") = SEARCH "dauSrc0DReg" (GT)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0d 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg 
+{
+	local comp_var:2;
+	comp_var = dauSrc0DReg:2;
+	if (!(comp_var s> A0:2)) goto <search_end_A0>;
+	A0 = sext(comp_var);
+	dauDst0DReg = P0;
+<search_end_A0>
+	comp_var = dauSrc0DReg(2);
+	if (!(comp_var s> A1:2)) goto <search_end_A1>;
+	A1 = sext(comp_var);
+	dauDst1DReg = P0;
+<search_end_A1>
+}
+
+Dsp32Alu:^"Search" "("dauDst1DReg", "dauDst0DReg") = SEARCH "dauSrc0DReg" (GE)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0d 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg 
+{
+	local comp_var:2;
+	comp_var = dauSrc0DReg:2;
+	if (!(comp_var s>= A0:2)) goto <search_end_A0>;
+	A0 = sext(comp_var);
+	dauDst0DReg = P0;
+<search_end_A0>
+	comp_var = dauSrc0DReg(2);
+	if (!(comp_var s>= A1:2)) goto <search_end_A1>;
+	A1 = sext(comp_var);
+	dauDst1DReg = P0;
+<search_end_A1>
+}
+
+Dsp32Alu:^"Search" "("dauDst1DReg", "dauDst0DReg") = SEARCH "dauSrc0DReg" (LT)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0d 
+	 ; dauAop=0x2 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg 
+{
+	local comp_var:2;
+	comp_var = dauSrc0DReg:2;
+	if (!(comp_var s< A0:2)) goto <search_end_A0>;
+	A0 = sext(comp_var);
+	dauDst0DReg = P0;
+<search_end_A0>
+	comp_var = dauSrc0DReg(2);
+	if (!(comp_var s< A1:2)) goto <search_end_A1>;
+	A1 = sext(comp_var);
+	dauDst1DReg = P0;
+<search_end_A1>
+}
+
+Dsp32Alu:^"Search" "("dauDst1DReg", "dauDst0DReg") = SEARCH "dauSrc0DReg" (LE)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0d 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DReg 
+{
+	local comp_var:2;
+	comp_var = dauSrc0DReg:2;
+	if (!(comp_var s<= A0:2)) goto <search_end_A0>;
+	A0 = sext(comp_var);
+	dauDst0DReg = P0;
+<search_end_A0>
+	comp_var = dauSrc0DReg(2);
+	if (!(comp_var s<= A1:2)) goto <search_end_A1>;
+	A1 = sext(comp_var);
+	dauDst1DReg = P0;
+<search_end_A1>
+}
+
+Dsp32AluDesc86: "A0 = -A0" is epsilon {}
+Dsp32Alu:^"NegAcc0" Dsp32AluDesc86
+	is Dsp32AluDesc86 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0e 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 
+{
+	A0 = -A0;
+	if (A0 != (0x1 << 0x27)) goto <neg_end_A0A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<neg_end_A0A0>
+}
+
+Dsp32AluDesc87: "A1 = -A0" is epsilon {}
+Dsp32Alu:^"NegAcc0" Dsp32AluDesc87
+	is Dsp32AluDesc87 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x0e 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 
+{
+	A1 = -A0;
+	if (A0 != (0x1 << 0x27)) goto <neg_end_A1A0>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<neg_end_A1A0>
+}
+
+Dsp32AluDesc88: "A0 = -A1" is epsilon {}
+Dsp32Alu:^"NegAcc1" Dsp32AluDesc88
+	is Dsp32AluDesc88 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0e 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 
+{
+	A0 = -A1;
+	if (A1 != (0x1 << 0x27)) goto <neg_end_A0A1>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<neg_end_A0A1>
+}
+
+Dsp32AluDesc89: "A1 = -A1" is epsilon {}
+Dsp32Alu:^"NegAcc1" Dsp32AluDesc89
+	is Dsp32AluDesc89 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x0e 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 
+{
+	A1 = -A1;
+	if (A1 != (0x1 << 0x27)) goto <neg_end_A1A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<neg_end_A1A1>
+}
+
+Dsp32AluDesc8A: "A1 = -A1, A0 = -A0" is epsilon {}
+Dsp32Alu:^"NegAccDual" Dsp32AluDesc8A
+	is Dsp32AluDesc8A & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x0e 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 
+{
+	A1 = -A1;
+	if (A1 != (0x1 << 0x27)) goto <neg_end_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<neg_end_A1>
+	A0 = -A0;
+	if (A0 != (0x1 << 0x27)) goto <neg_end_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<neg_end_A0>
+}
+
+Dsp32AluDesc8B: "A0 = ABS A0" is epsilon {}
+Dsp32Alu:^"AbsAcc0" Dsp32AluDesc8B
+	is Dsp32AluDesc8B & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x10 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 
+{
+	A0 = A0;
+	if (A0 s>= 0x0) goto <abs_end_A0A0>;
+	A0 = -A0;
+	if (A0 != (0x1 << 0x27)) goto <abs_end_A0A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<abs_end_A0A0>
+}
+
+Dsp32AluDesc8C: "A1 = ABS A0" is epsilon {}
+Dsp32Alu:^"AbsAcc0" Dsp32AluDesc8C
+	is Dsp32AluDesc8C & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x10 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 
+{
+	A1 = A0;
+	if (A1 s>= 0x0) goto <abs_end_A1A0>;
+	A1 = -A0;
+	if (A0 != (0x1 << 0x27)) goto <abs_end_A1A0>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<abs_end_A1A0>
+}
+
+Dsp32AluDesc8D: "A0 = ABS A1" is epsilon {}
+Dsp32Alu:^"AbsAcc1" Dsp32AluDesc8D
+	is Dsp32AluDesc8D & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x10 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 
+{
+	A0 = A1;
+	if (A0 s>= 0x0) goto <abs_end_A0A1>;
+	A0 = -A1;
+	if (A1 != (0x1 << 0x27)) goto <abs_end_A0A1>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<abs_end_A0A1>
+}
+
+Dsp32AluDesc8E: "A1 = ABS A1" is epsilon {}
+Dsp32Alu:^"AbsAcc1" Dsp32AluDesc8E
+	is Dsp32AluDesc8E & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x10 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 
+{
+	A1 = A1;
+	if (A1 s>= 0x0) goto <abs_end_A1A1>;
+	A1 = -A1;
+	if (A1 != (0x1 << 0x27)) goto <abs_end_A1A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<abs_end_A1A1>
+}
+
+Dsp32AluDesc8F: "A1 = ABS A1, A0 = ABS A0" is epsilon {}
+Dsp32Alu:^"AbsAccDual" Dsp32AluDesc8F
+	is Dsp32AluDesc8F & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x10 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 
+{
+	A1 = A1;
+	if (A1 s>= 0x0) goto <abs_end_A1>;
+	A1 = -A1;
+	if (A1 != (0x1 << 0x27)) goto <abs_end_A1>;
+	A1 = ((0x1 << 0x27) - 0x1);
+<abs_end_A1>
+	A0 = A0;
+	if (A0 s>= 0x0) goto <abs_end_A0>;
+	A0 = -A0;
+	if (A0 != (0x1 << 0x27)) goto <abs_end_A0>;
+	A0 = ((0x1 << 0x27) - 0x1);
+<abs_end_A0>
+}
+
+Dsp32Alu:^"MvDregToAxDual" "A1 = "dauSrc1DReg" (X), A0 = "dauSrc0DReg" (X)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x10 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 & dauSrc0DReg & dauSrc1DReg 
+{
+	A1 = sext(dauSrc1DReg);
+	A0 = sext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregToAxDual" "A1 = "dauSrc1DReg" (X), A0 = "dauSrc0DReg" (Z)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x10 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x1 & dauSrc0DReg & dauSrc1DReg 
+{
+	A1 = sext(dauSrc1DReg);
+	A0 = zext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregToAxDual" "A1 = "dauSrc1DReg" (Z), A0 = "dauSrc0DReg" (X)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x10 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x0 & dauSrc0DReg & dauSrc1DReg 
+{
+	A1 = zext(dauSrc1DReg);
+	A0 = sext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"MvDregToAxDual" "A1 = "dauSrc1DReg" (Z), A0 = "dauSrc0DReg" (Z)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x10 
+	 ; dauAop=0x3 & dauS=0x1 & dauX=0x1 & dauSrc0DReg & dauSrc1DReg 
+{
+	A1 = zext(dauSrc1DReg);
+	A0 = zext(dauSrc0DReg);
+}
+
+Dsp32Alu:^"SAD8Vec" "SAA ("dauSrc0DRegPair", "dauSrc1DRegPair")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x12 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local tmp_shft:8;
+	local res_byte0:1;
+	local res_byte1:1;
+	local res_abs_diff:2;
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x0) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b0>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b0>
+	A0.L = ((0x1 << 0x10) - 0x1);
+	if (carry(A0.L, res_abs_diff)) goto <end_add_sat_sad_b0>;
+	A0.L = A0.L + res_abs_diff;
+<end_add_sat_sad_b0>
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x1) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b1>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b1>
+	A0.H = ((0x1 << 0x10) - 0x1);
+	if (carry(A0.H, res_abs_diff)) goto <end_add_sat_sad_b1>;
+	A0.H = A0.H + res_abs_diff;
+<end_add_sat_sad_b1>
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x2) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b2>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b2>
+	A1.L = ((0x1 << 0x10) - 0x1);
+	if (carry(A1.L, res_abs_diff)) goto <end_add_sat_sad_b2>;
+	A1.L = A1.L + res_abs_diff;
+<end_add_sat_sad_b2>
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x3) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b3>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b3>
+	A1.H = ((0x1 << 0x10) - 0x1);
+	if (carry(A1.H, res_abs_diff)) goto <end_add_sat_sad_b3>;
+	A1.H = A1.H + res_abs_diff;
+<end_add_sat_sad_b3>
+}
+
+Dsp32Alu:^"SAD8Vec" "SAA ("dauSrc0DRegPair", "dauSrc1DRegPair") (R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x12 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local tmp_shft:8;
+	local res_byte0:1;
+	local res_byte1:1;
+	local res_abs_diff:2;
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b0>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b0>
+	A0.L = ((0x1 << 0x10) - 0x1);
+	if (carry(A0.L, res_abs_diff)) goto <end_add_sat_sad_b0>;
+	A0.L = A0.L + res_abs_diff;
+<end_add_sat_sad_b0>
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x5) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b1>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b1>
+	A0.H = ((0x1 << 0x10) - 0x1);
+	if (carry(A0.H, res_abs_diff)) goto <end_add_sat_sad_b1>;
+	A0.H = A0.H + res_abs_diff;
+<end_add_sat_sad_b1>
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x6) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b2>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b2>
+	A1.L = ((0x1 << 0x10) - 0x1);
+	if (carry(A1.L, res_abs_diff)) goto <end_add_sat_sad_b2>;
+	A1.L = A1.L + res_abs_diff;
+<end_add_sat_sad_b2>
+	tmp_shft = dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	res_byte0 = tmp_shft:1;
+	tmp_shft = dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_byte1 = tmp_shft:1;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+	if (res_byte0 >= res_byte1) goto <end_sad_b3>;
+	res_abs_diff = zext(res_byte1 - res_byte0);
+<end_sad_b3>
+	A1.H = ((0x1 << 0x10) - 0x1);
+	if (carry(A1.H, res_abs_diff)) goto <end_add_sat_sad_b3>;
+	A1.H = A1.H + res_abs_diff;
+<end_add_sat_sad_b3>
+}
+
+Dsp32AluDesc96: "DISALIGNEXCPT" is epsilon {}
+Dsp32Alu:^"DisAlignExcept" Dsp32AluDesc96
+	is Dsp32AluDesc96 & dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x12 
+	 ; dauAop=0x3 & dauS=0x0 & dauX=0x0 
+{
+	disalignexcpt();
+}
+
+Dsp32Alu:^"Avg8Vec" dauDst0DReg" = BYTEOP1P ("dauSrc0DRegPair", "dauSrc1DRegPair")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x14 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x3) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x2) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x1) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg8Vec" dauDst0DReg" = BYTEOP1P ("dauSrc0DRegPair", "dauSrc1DRegPair") (R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x14 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x6) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x5) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x1;
+	res_vidop = res_vidop >> 0x1;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg8Vec" dauDst0DReg" = BYTEOP1P ("dauSrc0DRegPair", "dauSrc1DRegPair") (T)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x14 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x3) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x2) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x1) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg8Vec" dauDst0DReg" = BYTEOP1P ("dauSrc0DRegPair", "dauSrc1DRegPair") (T, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x14 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x6) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x5) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x1;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"AddSub4x8" "("dauDst1DReg", "dauDst0DReg") = BYTEOP16P ("dauSrc0DRegPair", "dauSrc1DRegPair")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x15 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x3) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x2) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x1) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x0) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"AddSub4x8" "("dauDst1DReg", "dauDst0DReg") = BYTEOP16P ("dauSrc0DRegPair", "dauSrc1DRegPair") (R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x15 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x6) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x5) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_vidop = 0xffff & bytes_src0 + bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"AddSub4x8" "("dauDst1DReg", "dauDst0DReg") = BYTEOP16M ("dauSrc0DRegPair", "dauSrc1DRegPair")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x15 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x3) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x2) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x1) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x0) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"AddSub4x8" "("dauDst1DReg", "dauDst0DReg") = BYTEOP16M ("dauSrc0DRegPair", "dauSrc1DRegPair") (R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x15 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x6) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x5) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_vidop = 0xffff & bytes_src0 - bytes_src1;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (RNDL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x16 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (RNDL, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x16 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (RNDH)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x16 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (RNDH, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x16 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	tmp_vidop = res_vidop & 0x2 >> 0x1;
+	res_vidop = res_vidop >> 0x2;
+	res_vidop = res_vidop + tmp_vidop;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (TL)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x16 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (TL, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x16 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (TH)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x16 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+}
+
+Dsp32Alu:^"Avg4x8Vec" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (TH, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x16 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	res_vidop = res_vidop + bytes_src0 + bytes_src1;
+	res_vidop = res_vidop >> 0x2;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+}
+
+Dsp32Alu:^"AddClip" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (LO)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x17 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x3) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"AddClip" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (LO, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x17 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0xa) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0xb) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0xb) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x7) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+}
+
+Dsp32Alu:^"AddClip" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (HI)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x17 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x0) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+}
+
+Dsp32Alu:^"AddClip" dauDst0DReg" = BYTEOP2P ("dauSrc0DRegPair", "dauSrc1DRegPair") (HI, R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x1 & dauAopc=0x17 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DRegPair & dauSrc1DRegPair 
+{
+	local bytes_src0:8;
+	local bytes_src1:8;
+	local res_vidop:8;
+	local tmp_vidop:8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x8) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x9) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x8) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	bytes_src0 = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8));
+	tmp_vidop = 0xff & dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8));
+	bytes_src0 = bytes_src0 | tmp_vidop << 0x8;
+	bytes_src0 = bytes_src0 << 0x6;
+	bytes_src0 = bytes_src0 s>> 0x6;
+	bytes_src1 = 0xff & dauSrc1DRegPair >> (0x8 * (((I1 & 0x3) + 0x4) % 0x8));
+	res_vidop = bytes_src0 + bytes_src1 & 0xff;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | res_vidop:4;
+	dauDst0DReg = dauDst0DReg << 0x8;
+}
+
+Dsp32Alu:^"BytePack" dauDst0DReg" = BYTEPACK ("dauSrc0DReg", "dauSrc1DReg")"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x18 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local tmp4_vidop:4;
+	local tmp8_vidop:8;
+	tmp4_vidop = 0xff & dauSrc1DReg >> 0x10;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | tmp4_vidop;
+	tmp4_vidop = 0xff & dauSrc1DReg >> 0x0;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | tmp4_vidop;
+	tmp4_vidop = 0xff & dauSrc0DReg >> 0x10;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | tmp4_vidop;
+	tmp4_vidop = 0xff & dauSrc0DReg >> 0x0;
+	dauDst0DReg = dauDst0DReg << 0x8;
+	dauDst0DReg = dauDst0DReg | tmp4_vidop;
+}
+
+Dsp32Alu:^"UnBytePack" "("dauDst1DReg", "dauDst0DReg") = UNBYTEPACK "dauSrc0DRegPair
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x18 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DRegPair 
+{
+	local tmp4_vidop:4;
+	local tmp8_vidop:8;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x3) % 0x8)));
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | tmp8_vidop:4;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x2) % 0x8)));
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | tmp8_vidop:4;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x1) % 0x8)));
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | tmp8_vidop:4;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x0) % 0x8)));
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | tmp8_vidop:4;
+}
+
+Dsp32Alu:^"UnBytePack" "("dauDst1DReg", "dauDst0DReg") = UNBYTEPACK "dauSrc0DRegPair" (R)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x18 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauDst1DReg & dauSrc0DRegPair 
+{
+	local tmp4_vidop:4;
+	local tmp8_vidop:8;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x7) % 0x8)));
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | tmp8_vidop:4;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x6) % 0x8)));
+	dauDst1DReg = dauDst1DReg << 0x10;
+	dauDst1DReg = dauDst1DReg | tmp8_vidop:4;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x5) % 0x8)));
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | tmp8_vidop:4;
+	tmp8_vidop = 0xff & (dauSrc0DRegPair >> (0x8 * (((I0 & 0x3) + 0x4) % 0x8)));
+	dauDst0DReg = dauDst0DReg << 0x10;
+	dauDst0DReg = dauDst0DReg | tmp8_vidop:4;
+}
+
+Dsp32Alu:^"AddSubAC0" dauDst0DReg" = "dauSrc0DReg" + "dauSrc1DReg" + AC0 (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x19 
+	 ; dauAop=0x0 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local result:5 = sext(dauSrc0DReg) + sext(dauSrc1DReg);
+	result = result + zext(AC0);
+	dauDst0DReg = result:4;
+}
+
+Dsp32Alu:^"AddSubAC0" dauDst0DReg" = "dauSrc0DReg" + "dauSrc1DReg" + AC0 (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x19 
+	 ; dauAop=0x0 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local result:5 = sext(dauSrc0DReg) + sext(dauSrc1DReg);
+	result = result + zext(AC0);
+	dauDst0DReg = result:4;
+	if (sext(dauDst0DReg) == result) goto <end_strunc_asac0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (result s< 0x0) goto <end_strunc_asac0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asac0>
+}
+
+Dsp32Alu:^"AddSubAC0" dauDst0DReg" = "dauSrc0DReg" - "dauSrc1DReg" + AC0 - 1 (NS)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x19 
+	 ; dauAop=0x1 & dauS=0x0 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local result:5 = sext(dauSrc0DReg) - sext(dauSrc1DReg);
+	result = result - zext(!AC0);
+	dauDst0DReg = result:4;
+}
+
+Dsp32Alu:^"AddSubAC0" dauDst0DReg" = "dauSrc0DReg" - "dauSrc1DReg" + AC0 - 1 (S)"
+	is dauSigDsp=0xc & dauSig=0x2 & dauHl=0x0 & dauAopc=0x19 
+	 ; dauAop=0x1 & dauS=0x1 & dauX=0x0 & dauDst0DReg & dauSrc0DReg & dauSrc1DReg 
+{
+	local result:5 = sext(dauSrc0DReg) - sext(dauSrc1DReg);
+	result = result - zext(!AC0);
+	dauDst0DReg = result:4;
+	if (sext(dauDst0DReg) == result) goto <end_strunc_asac0>;
+	dauDst0DReg = (0x1 << 0x1f);
+	if (result s< 0x0) goto <end_strunc_asac0>;
+	dauDst0DReg = ((0x1 << 0x1f) - 0x1);
+<end_strunc_asac0>
+}
+
+
+
+:^Dsp32Alu is dauM=0x0 ... & Dsp32Alu { build Dsp32Alu; }
+:^Dsp32Alu is dauM=0x1 ... & Dsp32Alu { build Dsp32Alu; delayslot(4); }

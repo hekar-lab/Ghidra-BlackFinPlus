@@ -1,0 +1,266 @@
+## Virtually Zero Overhead Loop Mechanism (LoopSetup)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |..rop..|.c.|.....soff......|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |imm|....reg....|..lop..|.................eoff..................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lpsInstr16 (16)
+	lpsSig           = ( 7,15) 
+	lpsRop           = ( 5, 6) 
+	lpsCMsk          = ( 4, 4) 
+	lpsCRegLC        = ( 4, 4) 
+	lpsSoffUImm      = ( 0, 3) 
+;
+
+define token lpsInstr32 (16)
+	lpsRegPReg       = (12,14) 
+	lpsLop           = (10,11) 
+	lpsEoffUImm      = ( 0, 9) 
+;
+
+
+### Variables ###
+
+attach variables lpsRegPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lpsCRegLC [LC0 LC1];
+
+
+### Instructions ###
+
+LoopSetup:^"LoopSetup" "LSETUP ("startImm", "endImm") "lpsCRegLC
+	is lpsSig=0x1c1 & lpsRop=0x0 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsLop=0x0 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	startImm = lpsSoffUImm * 0x2 + inst_start;
+] {
+	LT0 = startImm;
+	LB0 = endImm;
+}
+
+LoopSetup:^"LoopSetup" "LSETUP ("startImm", "endImm") "lpsCRegLC
+	is lpsSig=0x1c1 & lpsRop=0x0 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsLop=0x0 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	startImm = lpsSoffUImm * 0x2 + inst_start;
+] {
+	LT1 = startImm;
+	LB1 = endImm;
+}
+
+LoopSetup:^"LoopSetup" "LSETUP ("startImm", "endImm") "lpsCRegLC" = "lpsRegPReg
+	is lpsSig=0x1c1 & lpsRop=0x1 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x0 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	startImm = lpsSoffUImm * 0x2 + inst_start;
+] {
+	LT0 = startImm;
+	LB0 = endImm;
+	LC0 = lpsRegPReg;
+}
+
+LoopSetup:^"LoopSetup" "LSETUP ("startImm", "endImm") "lpsCRegLC" = "lpsRegPReg
+	is lpsSig=0x1c1 & lpsRop=0x1 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x0 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	startImm = lpsSoffUImm * 0x2 + inst_start;
+] {
+	LT1 = startImm;
+	LB1 = endImm;
+	LC1 = lpsRegPReg;
+}
+
+LoopSetup:^"LoopSetup" "LSETUP ("startImm", "endImm") "lpsCRegLC" = "lpsRegPReg" >> 1"
+	is lpsSig=0x1c1 & lpsRop=0x3 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x0 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	startImm = lpsSoffUImm * 0x2 + inst_start;
+] {
+	LT0 = startImm;
+	LB0 = endImm;
+	LC0 = lpsRegPReg >> 0x1;
+}
+
+LoopSetup:^"LoopSetup" "LSETUP ("startImm", "endImm") "lpsCRegLC" = "lpsRegPReg" >> 1"
+	is lpsSig=0x1c1 & lpsRop=0x3 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x0 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	startImm = lpsSoffUImm * 0x2 + inst_start;
+] {
+	LT1 = startImm;
+	LB1 = endImm;
+	LC1 = lpsRegPReg >> 0x1;
+}
+
+LoopSetup:^"LoopSetup" "LSETUPZ ("endImm") "lpsCRegLC" = "lpsRegPReg
+	is lpsSig=0x1c1 & lpsRop=0x1 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x1 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT0 = inst_next;
+	LB0 = endImm;
+	LC0 = lpsRegPReg;
+	if (LC0 != 0x0) goto <end_setup>;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPZ ("endImm") "lpsCRegLC" = "lpsRegPReg
+	is lpsSig=0x1c1 & lpsRop=0x1 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x1 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT1 = inst_next;
+	LB1 = endImm;
+	LC1 = lpsRegPReg;
+	if (LC1 != 0x0) goto <end_setup>;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPZ ("endImm") "lpsCRegLC" = "lpsRegPReg" >> 1"
+	is lpsSig=0x1c1 & lpsRop=0x3 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x1 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT0 = inst_next;
+	LB0 = endImm;
+	LC0 = lpsRegPReg >> 0x1;
+	if (LC0 != 0x0) goto <end_setup>;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPZ ("endImm") "lpsCRegLC" = "lpsRegPReg" >> 1"
+	is lpsSig=0x1c1 & lpsRop=0x3 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x1 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT1 = inst_next;
+	LB1 = endImm;
+	LC1 = lpsRegPReg >> 0x1;
+	if (LC1 != 0x0) goto <end_setup>;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPLEZ ("endImm") "lpsCRegLC" = "lpsRegPReg
+	is lpsSig=0x1c1 & lpsRop=0x1 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x2 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT0 = inst_next;
+	LB0 = endImm;
+	LC0 = lpsRegPReg;
+	if (LC0 s> 0x0) goto <end_setup>;
+	LC0 = 0x0;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPLEZ ("endImm") "lpsCRegLC" = "lpsRegPReg
+	is lpsSig=0x1c1 & lpsRop=0x1 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x2 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT1 = inst_next;
+	LB1 = endImm;
+	LC1 = lpsRegPReg;
+	if (LC1 s> 0x0) goto <end_setup>;
+	LC1 = 0x0;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPLEZ ("endImm") "lpsCRegLC" = "lpsRegPReg" >> 1"
+	is lpsSig=0x1c1 & lpsRop=0x3 & lpsCRegLC & lpsCMsk=0x0 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x2 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop0active = 0x1;
+	globalset(endImm, loop0active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT0 = inst_next;
+	LB0 = endImm;
+	LC0 = lpsRegPReg >> 0x1;
+	if (LC0 s> 0x0) goto <end_setup>;
+	LC0 = 0x0;
+	goto [endImm:4];
+<end_setup>
+}
+
+LoopSetup:^"LoopSetup" "LSETUPLEZ ("endImm") "lpsCRegLC" = "lpsRegPReg" >> 1"
+	is lpsSig=0x1c1 & lpsRop=0x3 & lpsCRegLC & lpsCMsk=0x1 & lpsSoffUImm 
+	 ; lpsRegPReg & lpsLop=0x2 & lpsEoffUImm 
+[
+	endImm = lpsEoffUImm * 0x2 + inst_start;
+	loop1active = 0x1;
+	globalset(endImm, loop1active);
+	zloop = 0x1;
+	globalset(endImm, zloop);
+] {
+	LT1 = inst_next;
+	LB1 = endImm;
+	LC1 = lpsRegPReg >> 0x1;
+	if (LC1 s> 0x0) goto <end_setup>;
+	LC1 = 0x0;
+	goto [endImm:4];
+<end_setup>
+}
+
+
+
+:^LoopSetup is LoopSetup { build LoopSetup; }

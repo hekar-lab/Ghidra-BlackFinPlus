@@ -13,21 +13,17 @@ define token a2oInstr16 (16)
 	a2oSrcDRegL      = ( 3, 5) 
 	a2oSrcDRegB      = ( 3, 5) 
 	a2oDstDReg       = ( 0, 2) 
+	a2oDstCpyDReg    = ( 0, 2) 
 ;
 
 
 ### Variables ###
 
 attach variables a2oSrcDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables a2oDstCpyDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables a2oDstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
 attach variables a2oSrcDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
 attach variables a2oSrcDRegB [R0.B R1.B R2.B R3.B R4.B R5.B R6.B R7.B];
-
-
-### Operations ###
-
-define pcodeop divs;
-define pcodeop divq;
 
 
 ### Instructions ###
@@ -56,14 +52,14 @@ ALU2op:^"MultInt" a2oDstDReg" *= "a2oSrcDReg
 	a2oDstDReg = a2oDstDReg * a2oSrcDReg;
 }
 
-ALU2op:^"AddSubShift" a2oDstDReg" +<<1= "a2oSrcDReg
-	is a2oSig=0x10 & a2oOpc=0x4 & a2oSrcDReg & a2oDstDReg 
+ALU2op:^"AddSubShift" a2oDstDReg" += ("a2oDstCpyDReg" + "a2oSrcDReg") << 1"
+	is a2oSig=0x10 & a2oOpc=0x4 & a2oSrcDReg & a2oDstDReg & a2oDstCpyDReg 
 {
 	a2oDstDReg = (a2oDstDReg + a2oSrcDReg) << 0x1;
 }
 
-ALU2op:^"AddSubShift" a2oDstDReg" +<<2= "a2oSrcDReg
-	is a2oSig=0x10 & a2oOpc=0x5 & a2oSrcDReg & a2oDstDReg 
+ALU2op:^"AddSubShift" a2oDstDReg" += ("a2oDstCpyDReg" + "a2oSrcDReg") << 2"
+	is a2oSig=0x10 & a2oOpc=0x5 & a2oSrcDReg & a2oDstDReg & a2oDstCpyDReg 
 {
 	a2oDstDReg = (a2oDstDReg + a2oSrcDReg) << 0x2;
 }
@@ -71,13 +67,21 @@ ALU2op:^"AddSubShift" a2oDstDReg" +<<2= "a2oSrcDReg
 ALU2op:^"Divide" "DIVQ ("a2oDstDReg", "a2oSrcDReg")"
 	is a2oSig=0x10 & a2oOpc=0x8 & a2oSrcDReg & a2oDstDReg 
 {
-	divq(a2oDstDReg, a2oSrcDReg);
+	if (AQ) goto <add_div>;
+	a2oDstDReg = a2oDstDReg - (a2oSrcDReg << 0x10);
+	goto <end_div>;
+<add_div>
+	a2oDstDReg = a2oDstDReg + (a2oSrcDReg << 0x10);
+<end_div>
+	AQ = (a2oDstDReg >= 0x80000000) ^^ ((a2oSrcDReg & 0xffff) >= 0x8000);
+	a2oDstDReg = (a2oDstDReg << 0x1) + zext(!AQ);
 }
 
 ALU2op:^"Divide" "DIVS ("a2oDstDReg", "a2oSrcDReg")"
 	is a2oSig=0x10 & a2oOpc=0x9 & a2oSrcDReg & a2oDstDReg 
 {
-	divs(a2oDstDReg, a2oSrcDReg);
+	AQ = (a2oDstDReg >= 0x80000000) ^^ ((a2oSrcDReg & 0xffff) >= 0x8000);
+	a2oDstDReg = (a2oDstDReg << 0x1) + zext(AQ);
 }
 
 ALU2op:^"MvDregLToDreg" a2oDstDReg" = "a2oSrcDRegL" (X)"
