@@ -2,10 +2,10 @@
 
 <language_definitions>
 
-  <language processor="ADSP-BF7xx"
+  <language processor="Blackfin+"
             endian="little"
             size="32"
-            variant="Blackfin+"
+            variant="default"
             version="1.0"
             slafile="blackfinplus.sla"
             processorspec="blackfinplus.pspec"
