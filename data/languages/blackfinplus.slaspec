@@ -8,26 +8,8 @@ define space register type=register_space size=2;
 
 @include "includes/registers.sinc"
 
-@include "includes/tokens.sinc"
+@include "includes/macros.sinc"
 
-@include "includes/variables.sinc"
-
-macro push(reg) {
-    SP = SP - 4;
-    *SP = reg;
-}
-
-macro pop(reg) {
-    reg = *SP;
-    SP = SP + 4;
-}
-
-macro getAstat(off, outVal) {
-    local astat:4 = ASTAT >> off;
-    local astatFlag:1 = astat:1;
-    astatFlag = astatFlag & 0x01;
-    outVal = astatFlag;
-}
 
 # Hardware loops
 
@@ -73,7 +55,5 @@ HwLoop: is loop0active=1 & loop1active=1 {
 }
 
 with : phase=1 {
-@include "includes/instructions-16_bits.sinc"
-@include "includes/instructions-32_bits.sinc"
-@include "includes/instructions-64_bits.sinc"
+@include "includes/instructions.sinc"
 }

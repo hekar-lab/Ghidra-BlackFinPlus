@@ -1,0 +1,68 @@
+## Copy CC conditional bit, from status (CC2Stat)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |.d.|..op...|.......cbit........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token ccsInstr16 (16)
+	ccsSig           = ( 8,15) 
+	ccsD             = ( 7, 7) 
+	ccsOp            = ( 5, 6) 
+	ccsCBIT          = ( 0, 4) 
+;
+
+
+### Variables ###
+
+attach names ccsCBIT [
+	"AZ"      "AN"    "AC0COPY" "VCOPY" "_0x04" "CC"    "AQ"    "_0x07"
+	"RND_MOD" "_0x09" "_0x0a"   "_0x0b" "AC0"   "AC1"   "_0x0e" "_0x0f"
+	"AV0"     "AV0S"  "AV1"     "AV1S"  "_0x14" "_0x15" "_0x16" "_0x17"
+	"V"       "VS"    "_0x1a"   "_0x1b" "_0x1c" "_0x1d" "_0x1e" "_0x1f"
+];
+
+
+### Instructions ###
+
+with CC2Stat: ccsSig=0x03 {
+:^"MvToCC_STAT" "CC =" ccsCBIT  is ccsD=0x0 & ccsOp=0x0 & ccsCBIT { 
+    local bitVal:4 = (ASTAT >> ccsCBIT) & 0x01; 
+    CC = bitVal:1; 
+}
+:^"MvToCC_STAT" "CC |=" ccsCBIT is ccsD=0x0 & ccsOp=0x1 & ccsCBIT { 
+    local bitVal:4 = (ASTAT >> ccsCBIT) & 0x01; 
+    CC = CC || bitVal:1; 
+}
+:^"MvToCC_STAT" "CC &=" ccsCBIT is ccsD=0x0 & ccsOp=0x2 & ccsCBIT { 
+    local bitVal:4 = (ASTAT >> ccsCBIT) & 0x01; 
+    CC = CC && bitVal:1; 
+}
+:^"MvToCC_STAT" "CC ^=" ccsCBIT is ccsD=0x0 & ccsOp=0x3 & ccsCBIT { 
+    local bitVal:4 = (ASTAT >> ccsCBIT) & 0x01; 
+    CC = CC ^^ bitVal:1; 
+}
+
+:^"CCToStat16"  ccsCBIT "= CC"  is ccsD=0x1 & ccsOp=0x0 & ccsCBIT { 
+    local flag:4 = zext(CC) << ccsCBIT;
+    local mask:4 = 0x00000001 << ccsCBIT;
+    ASTAT = ASTAT & ~mask;
+    ASTAT = ASTAT | flag;
+}
+:^"CCToStat16"  ccsCBIT "|= CC" is ccsD=0x1 & ccsOp=0x1 & ccsCBIT { 
+    local flag:4 = zext(CC) << ccsCBIT;
+    ASTAT = ASTAT | flag;
+}
+:^"CCToStat16"  ccsCBIT "&= CC" is ccsD=0x1 & ccsOp=0x2 & ccsCBIT { 
+    local flag:4 = zext(CC == 0x00) << ccsCBIT;
+    ASTAT = ASTAT & ~flag;
+}
+:^"CCToStat16"  ccsCBIT "^= CC" is ccsD=0x1 & ccsOp=0x3 & ccsCBIT { 
+    local flag:4 = zext(CC) << ccsCBIT;
+    ASTAT = ASTAT ^ flag;
+}
+}
+
+
+:^CC2Stat is CC2Stat { build CC2Stat; }

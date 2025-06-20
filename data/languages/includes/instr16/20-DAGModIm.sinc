@@ -1,0 +1,42 @@
+## DAG Arithmetic (DAGModIm)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 0 |br.| 1 | 1 |op.|...m...|...i...|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dmmInstr16 (16)
+	dmmSig           = ( 8,15) 
+	dmmBr            = ( 7, 7) 
+	dmmMask2         = ( 5, 6) 
+	dmmOp            = ( 4, 4) 
+	dmmM             = ( 2, 3) 
+	dmmI             = ( 0, 1) 
+;
+
+
+### Variables ###
+
+attach variables dmmI [I0 I1 I2 I3];
+attach variables dmmM [M0 M1 M2 M3];
+
+
+### Instructions ###
+
+with DAGModIm: dmmSig=0x9e & dmmMask2=0x3 {
+:^"DagAdd32" dmmI += dmmM          is dmmBr=0x0 & dmmOp=0x0 & dmmM & dmmI { 
+    dmmI = dmmI + dmmM;
+}
+:^"DagAdd32" dmmI += dmmM "(BREV)" is dmmBr=0x1 & dmmOp=0x0 & dmmM & dmmI { 
+    # TODO implement the reverse carry addition part
+    dmmI = dmmI + dmmM;
+}
+:^"DagAdd32" dmmI -= dmmM          is dmmBr=0x0 & dmmOp=0x1 & dmmM & dmmI { 
+    dmmI = dmmI - dmmM;
+}
+}
+
+
+
+:^DAGModIm is DAGModIm { build DAGModIm; }

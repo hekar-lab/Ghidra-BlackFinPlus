@@ -1,0 +1,93 @@
+## Register to register transfer operation (RegMv)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 1 | 1 |....gd.....|....gs.....|....dst....|....src....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token rmvInstr16 (16)
+	rmvSig           = (12,15) 
+	rmvGd            = ( 9,11) 
+	rmvGs            = ( 6, 8) 
+
+	rmvDst           = ( 3, 5) 
+	rmvDstDReg       = ( 3, 5) 
+	rmvDstPReg       = ( 3, 5) 
+	rmvDstSyRg2      = ( 3, 5) 
+	rmvDstSyRg3      = ( 3, 5) 
+	rmvDstH          = ( 5, 5) 
+	rmvDstIReg       = ( 3, 4) 
+	rmvDstMReg       = ( 3, 4) 
+	rmvDstBReg       = ( 3, 4) 
+	rmvDstLReg       = ( 3, 4) 
+
+	rmvSrc           = ( 0, 2) 
+	rmvSrcDReg       = ( 0, 2) 
+	rmvSrcPReg       = ( 0, 2) 
+	rmvSrcSyRg2      = ( 0, 2) 
+	rmvSrcSyRg3      = ( 0, 2) 
+	rmvSrcH          = ( 2, 2) 
+	rmvSrcIReg       = ( 0, 1) 
+	rmvSrcMReg       = ( 0, 1) 
+	rmvSrcBReg       = ( 0, 1) 
+	rmvSrcLReg       = ( 0, 1) 
+;
+
+
+### Variables ###
+
+attach variables [rmvDstDReg rmvSrcDReg] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [rmvDstPReg rmvSrcPReg] [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables [rmvDstIReg rmvSrcIReg] [I0 I1 I2 I3];
+attach variables [rmvDstMReg rmvSrcMReg] [M0 M1 M2 M3];
+attach variables [rmvDstBReg rmvSrcBReg] [B0 B1 B2 B3];
+attach variables [rmvDstLReg rmvSrcLReg] [L0 L1 L2 L3];
+attach variables [rmvDstSyRg2 rmvSrcSyRg2] [LC0 LT0 LB0 LC1 LT1 LB1 CYCLES CYCLES2];
+attach variables [rmvDstSyRg3 rmvSrcSyRg3] [USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT];
+
+
+### Instructions ###
+
+rmvGDST4: rmvDstDReg  is rmvGd=0x0 & rmvDstDReg { export rmvDstDReg; } 
+rmvGDST4: rmvDstPReg  is rmvGd=0x1 & rmvDstPReg { export rmvDstPReg; } 
+rmvGDST4: rmvDstIReg  is rmvGd=0x2 & rmvDstH=0x0 & rmvDstIReg { export rmvDstIReg; } 
+rmvGDST4: rmvDstMReg  is rmvGd=0x2 & rmvDstH=0x1 & rmvDstMReg { export rmvDstMReg; } 
+rmvGDST4: rmvDstBReg  is rmvGd=0x3 & rmvDstH=0x0 & rmvDstBReg { export rmvDstBReg; } 
+rmvGDST4: rmvDstLReg  is rmvGd=0x3 & rmvDstH=0x1 & rmvDstLReg { export rmvDstLReg; } 
+rmvGDST4: "A0.W"      is rmvGd=0x4 & rmvDst=0x1 { export A0.W; } 
+rmvGDST4: "A1.W"      is rmvGd=0x4 & rmvDst=0x3 { export A0.W; } 
+rmvGDST4: "ASTAT"     is rmvGd=0x4 & rmvDst=0x6 { export ASTAT; } 
+rmvGDST4: "RETS"      is rmvGd=0x4 & rmvDst=0x7 { export RETS; } 
+rmvGDST4: rmvDstSyRg2 is rmvGd=0x6 & rmvDstSyRg2 { export rmvDstSyRg2; } 
+rmvGDST4: rmvDstSyRg3 is rmvGd=0x7 & rmvDstSyRg3 { export rmvDstSyRg3; } 
+
+rmvGDST1: "A0.X"      is rmvGd=0x4 & rmvDst=0x0 { export A0.X; } 
+rmvGDST1: "A1.X"      is rmvGd=0x4 & rmvDst=0x2 { export A1.X; } 
+
+rmvGSRC4: rmvSrcPReg  is rmvGs=0x1 & rmvSrcPReg { export rmvSrcPReg; }
+rmvGSRC4: rmvSrcDReg  is rmvGs=0x0 & rmvSrcDReg { export rmvSrcDReg; }
+rmvGSRC4: rmvSrcIReg  is rmvGs=0x2 & rmvSrcH=0x0 & rmvSrcIReg { export rmvSrcIReg; } 
+rmvGSRC4: rmvSrcMReg  is rmvGs=0x2 & rmvSrcH=0x1 & rmvSrcMReg { export rmvSrcMReg; } 
+rmvGSRC4: rmvSrcBReg  is rmvGs=0x3 & rmvSrcH=0x0 & rmvSrcBReg { export rmvSrcBReg; } 
+rmvGSRC4: rmvSrcLReg  is rmvGs=0x3 & rmvSrcH=0x1 & rmvSrcLReg { export rmvSrcLReg; } 
+rmvGSRC4: "A0.W"      is rmvGs=0x4 & rmvSrc=0x1 { export A0.W; } 
+rmvGSRC4: "A1.W"      is rmvGs=0x4 & rmvSrc=0x3 { export A1.W; } 
+rmvGSRC4: "ASTAT"     is rmvGs=0x4 & rmvSrc=0x6 { export ASTAT; } 
+rmvGSRC4: "RETS"      is rmvGs=0x4 & rmvSrc=0x7 { export RETS; } 
+rmvGSRC4: rmvSrcSyRg2 is rmvGs=0x6 & rmvSrcSyRg2 { export rmvSrcSyRg2; } 
+rmvGSRC4: rmvSrcSyRg3 is rmvGs=0x7 & rmvSrcSyRg3 { export rmvSrcSyRg3; } 
+
+rmvGSRC1: "A0.X"      is rmvGs=0x4 & rmvSrc=0x0 { export A0.X; } 
+rmvGSRC1: "A1.X"      is rmvGs=0x4 & rmvSrc=0x2 { export A1.X; } 
+
+with RegMv: rmvSig=0x3 {
+:^"MvRegToReg" rmvGDST4 = rmvGSRC4 is rmvGDST4 & rmvGSRC4 { rmvGDST4 = rmvGSRC4; }
+:^"MvRegToReg" rmvGDST1 = rmvGSRC4 is rmvGDST1 & rmvGSRC4 { rmvGDST1 = rmvGSRC4:1; }
+
+:^"MvRegToReg" rmvGDST4 = rmvGSRC1 is rmvGDST4 & rmvGSRC1 { rmvGDST4 = sext(rmvGSRC1); }
+:^"MvRegToReg" rmvGDST1 = rmvGSRC1 is rmvGDST1 & rmvGSRC1 { rmvGDST1 = rmvGSRC1; }
+}
+
+
+:^RegMv is RegMv { build RegMv; }

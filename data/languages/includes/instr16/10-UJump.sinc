@@ -1,0 +1,22 @@
+## Unconditional Branch PC relative with 12bit offset (UJump)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 1 | 0 |......................off......................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token ujpInstr16 (16)
+	ujpSig           = (12,15) 
+	ujpOff           = ( 0,11) signed
+;
+
+
+### Instructions ###
+
+ujpImm: addr is ujpOff [addr = inst_start + ujpOff * 2;]{ export *[ram]:4 addr; }
+
+UJump:^"JumpAbs" "JUMP.S" ujpImm is ujpSig=0x2 & ujpImm { goto ujpImm; }
+
+
+:^UJump is UJump { build UJump; }

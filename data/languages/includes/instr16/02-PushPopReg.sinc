@@ -1,0 +1,64 @@
+## Push or Pop register, to and from the stack pointed to by SP (PushPopReg)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |.w.|....grp....|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token pprInstr16 (16)
+	pprSig           = ( 7,15) 
+	pprW             = ( 6, 6) 
+	pprGrp           = ( 3, 5) 
+	pprReg           = ( 0, 2) 
+	pprDReg          = ( 0, 2) 
+	pprPReg          = ( 0, 2) 
+	pprSysReg2       = ( 0, 2) 
+	pprSysReg3       = ( 0, 2) 
+	pprRegH          = ( 2, 2) 
+	pprIReg          = ( 0, 1) 
+	pprMReg          = ( 0, 1) 
+	pprBReg          = ( 0, 1) 
+	pprLReg          = ( 0, 1) 
+;
+
+
+### Variables ###
+
+attach variables pprDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables pprPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables pprIReg [I0 I1 I2 I3];
+attach variables pprMReg [M0 M1 M2 M3];
+attach variables pprBReg [B0 B1 B2 B3];
+attach variables pprLReg [L0 L1 L2 L3];
+attach variables pprSysReg2 [LC0 LT0 LB0 LC1 LT1 LB1 CYCLES CYCLES2];
+attach variables pprSysReg3 [USP SEQSTAT SYSCFG RETI RETX RETN RETE EMUDAT];
+
+
+### Instructions ###
+
+PPREG4: pprDReg    is pprGrp=0x0 & pprDReg { export pprDReg; } 
+PPREG4: pprPReg    is pprGrp=0x1 & pprPReg { export pprPReg; } 
+PPREG4: pprIReg    is pprGrp=0x2 & pprRegH=0x0 & pprIReg { export pprIReg; } 
+PPREG4: pprMReg    is pprGrp=0x2 & pprRegH=0x1 & pprMReg { export pprMReg; } 
+PPREG4: pprBReg    is pprGrp=0x3 & pprRegH=0x0 & pprBReg { export pprBReg; } 
+PPREG4: pprLReg    is pprGrp=0x3 & pprRegH=0x1 & pprLReg { export pprLReg; } 
+PPREG4: "A0.W"     is pprGrp=0x4 & pprReg=0x1 { export A0.W; } 
+PPREG4: "A1.W"     is pprGrp=0x4 & pprReg=0x3 { export A1.W; } 
+PPREG4: "ASTAT"    is pprGrp=0x4 & pprReg=0x6 { export ASTAT; } 
+PPREG4: "RETS"     is pprGrp=0x4 & pprReg=0x7 { export RETS; } 
+PPREG4: pprSysReg2 is pprGrp=0x6 & pprSysReg2 { export pprSysReg2; } 
+PPREG4: pprSysReg3 is pprGrp=0x7 & pprSysReg3 { export pprSysReg3; } 
+
+PPREG1: "A0.X"     is pprGrp=0x4 & pprReg=0x0 { export A0.X; } 
+PPREG1: "A1.X"     is pprGrp=0x4 & pprReg=0x2 { export A1.X; } 
+
+with PushPopReg: pprSig=0x002 {
+:^"Pop"  PPREG4 = "[SP++]" is pprW=0x0 & PPREG4 { pop(PPREG4); }
+:^"Pop"  PPREG1 = "[SP++]" is pprW=0x0 & PPREG1 { popb(PPREG1); }
+:^"Push" "[--SP]" = PPREG4 is pprW=0x1 & PPREG4 { push(PPREG4); }
+:^"Push" "[--SP]" = PPREG1 is pprW=0x1 & PPREG1 { pushb(PPREG1); }
+}
+
+
+:^PushPopReg is PushPopReg { build PushPopReg; }

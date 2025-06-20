@@ -1,0 +1,19 @@
+macro push(reg) {
+    SP = SP - 4;
+    *[ram]:4 SP = reg;
+}
+
+macro pop(reg) {
+    reg = *[ram]:4 SP;
+    SP = SP + 4;
+}
+
+macro pushb(reg) {
+    SP = SP - 4;
+    *[ram]:4 SP = sext(reg);
+}
+
+macro popb(reg) {
+    reg = *[ram]:1 SP;
+    SP = SP + 4;
+}

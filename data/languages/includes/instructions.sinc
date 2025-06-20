@@ -1,0 +1,48 @@
+## 16-bits instructions ##
+
+@include "instr16/00-NOP16.sinc"
+@include "instr16/01-ProgCtrl.sinc"
+@include "instr16/02-PushPopReg.sinc"
+@include "instr16/03-CC2Dreg.sinc"
+@include "instr16/04-CacheCtrl.sinc"
+@include "instr16/05-CC2Stat.sinc"
+@include "instr16/06-PushPopMult.sinc"
+@include "instr16/07-CCMV.sinc"
+@include "instr16/08-CCFlag.sinc"
+@include "instr16/09-BrCC.sinc"
+@include "instr16/10-UJump.sinc"
+@include "instr16/11-RegMv.sinc"
+@include "instr16/12-ALU2op.sinc"
+@include "instr16/13-Ptr2op.sinc"
+@include "instr16/14-Logi2Op.sinc"
+@include "instr16/15-Comp3op.sinc"
+@include "instr16/16-CompI2op.sinc"
+@include "instr16/17-LdStPmod.sinc"
+@include "instr16/18-LdSt.sinc"
+@include "instr16/19-DspLdSt.sinc"
+@include "instr16/20-DAGModIm.sinc"
+@include "instr16/21-DAGModIk.sinc"
+@include "instr16/22-LdStII.sinc"
+@include "instr16/23-LdStIIFP.sinc"
+
+## 32-bits instructions ##
+
+# @include "instr32/24-NOP32.sinc"
+# @include "instr32/25-Dsp32Mac.sinc"
+# @include "instr32/26-Dsp32Mult.sinc"
+# @include "instr32/27-Dsp32Alu.sinc"
+# @include "instr32/28-Dsp32Shf.sinc"
+# @include "instr32/29-Dsp32ShfImm.sinc"
+# @include "instr32/30-LoopSetupImm.sinc"
+# @include "instr32/31-LoopSetup.sinc"
+# @include "instr32/32-LdImmHalf.sinc"
+# @include "instr32/33-CallA.sinc"
+# @include "instr32/34-LdStIdxI.sinc"
+# @include "instr32/35-Linkage.sinc"
+# @include "instr32/36-LdStExcl.sinc"
+
+## 64-bits instructions ##
+
+# @include "instr64/37-LdStAbs.sinc"
+# @include "instr64/38-LdImm.sinc"
+# @include "instr64/39-Jump32.sinc"

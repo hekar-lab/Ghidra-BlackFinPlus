@@ -1,0 +1,74 @@
+## Push or Pop Multiple contiguous registers (PushPopMult)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 | 0 | 1 | 0 |.d.|.p.|.w.|....dr.....|....pr.....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token ppmInstr16 (16)
+	ppmSig           = ( 9,15) 
+	ppmD             = ( 8, 8) 
+	ppmP             = ( 7, 7) 
+	ppmW             = ( 6, 6) 
+	ppmDr            = ( 3, 5) 
+	ppmPr            = ( 0, 2) 
+;
+
+
+### Instructions ###
+
+PregRngPush: "P5:0" is ppmPr=0x0 { push(P0); push(P1); push(P2); push(P3); push(P4); push(P5); }
+PregRngPush: "P5:1" is ppmPr=0x1 {           push(P1); push(P2); push(P3); push(P4); push(P5); }
+PregRngPush: "P5:2" is ppmPr=0x2 {                     push(P2); push(P3); push(P4); push(P5); }
+PregRngPush: "P5:3" is ppmPr=0x3 {                               push(P3); push(P4); push(P5); }
+PregRngPush: "P5:4" is ppmPr=0x4 {                                         push(P4); push(P5); }
+PregRngPush: "P5:5" is ppmPr=0x5 {                                                   push(P5); }
+
+DregRngPush: "R7:0" is ppmDr=0x0 { push(R0); push(R1); push(R2); push(R3); push(R4); push(R5); push(R6); push(R7); }
+DregRngPush: "R7:1" is ppmDr=0x1 {           push(R1); push(R2); push(R3); push(R4); push(R5); push(R6); push(R7); }
+DregRngPush: "R7:2" is ppmDr=0x2 {                     push(R2); push(R3); push(R4); push(R5); push(R6); push(R7); }
+DregRngPush: "R7:3" is ppmDr=0x3 {                               push(R3); push(R4); push(R5); push(R6); push(R7); }
+DregRngPush: "R7:4" is ppmDr=0x4 {                                         push(R4); push(R5); push(R6); push(R7); }
+DregRngPush: "R7:5" is ppmDr=0x5 {                                                   push(R5); push(R6); push(R7); }
+DregRngPush: "R7:6" is ppmDr=0x6 {                                                             push(R6); push(R7); }
+DregRngPush: "R7:7" is ppmDr=0x7 {                                                                       push(R7); }
+
+PregRngPop: "P5:0" is ppmPr=0x0 { pop(P5); pop(P4); pop(P3); pop(P2); pop(P1); pop(P0); }
+PregRngPop: "P5:1" is ppmPr=0x1 { pop(P5); pop(P4); pop(P3); pop(P2); pop(P1);          }
+PregRngPop: "P5:2" is ppmPr=0x2 { pop(P5); pop(P4); pop(P3); pop(P2);                   }
+PregRngPop: "P5:3" is ppmPr=0x3 { pop(P5); pop(P4); pop(P3);                            }
+PregRngPop: "P5:4" is ppmPr=0x4 { pop(P5); pop(P4);                                     }
+PregRngPop: "P5:5" is ppmPr=0x5 { pop(P5);                                              }
+
+DregRngPop: "R7:0" is ppmDr=0x0 { pop(R7); pop(R6); pop(R5); pop(R4); pop(R3); pop(R2); pop(R1); pop(R0); }
+DregRngPop: "R7:1" is ppmDr=0x1 { pop(R7); pop(R6); pop(R5); pop(R4); pop(R3); pop(R2); pop(R1);          }
+DregRngPop: "R7:2" is ppmDr=0x2 { pop(R7); pop(R6); pop(R5); pop(R4); pop(R3); pop(R2);                   }
+DregRngPop: "R7:3" is ppmDr=0x3 { pop(R7); pop(R6); pop(R5); pop(R4); pop(R3);                            }
+DregRngPop: "R7:4" is ppmDr=0x4 { pop(R7); pop(R6); pop(R5); pop(R4);                                     }
+DregRngPop: "R7:5" is ppmDr=0x5 { pop(R7); pop(R6); pop(R5);                                              }
+DregRngPop: "R7:6" is ppmDr=0x6 { pop(R7); pop(R6);                                                       }
+DregRngPop: "R7:7" is ppmDr=0x7 { pop(R7);                                                                }
+
+with PushPopMult: ppmSig=0x02 {
+with : ppmW=0x0 {
+:^"PushPopMul16" (PregRngPop) = "[SP++]"             is ppmD=0x0 & ppmP=0x1 & PregRngPop { build PregRngPop; }
+:^"PushPopMul16" (DregRngPop) = "[SP++]"             is ppmD=0x1 & ppmP=0x0 & DregRngPop { build DregRngPop; }
+:^"PushPopMul16" (DregRngPop, PregRngPop) = "[SP++]" is ppmD=0x1 & ppmP=0x1 & DregRngPop & PregRngPop {
+    build PregRngPop;
+    build DregRngPop;
+}
+}
+
+with : ppmW=0x1 {
+:^"PushPopMul16" "[--SP]" = (PregRngPush)              is ppmD=0x0 & ppmP=0x1 & PregRngPush { build PregRngPush; }
+:^"PushPopMul16" "[--SP]" = (DregRngPush)              is ppmD=0x1 & ppmP=0x0 & DregRngPush { build DregRngPush; }
+:^"PushPopMul16" "[--SP]" = (DregRngPush, PregRngPush) is ppmD=0x1 & ppmP=0x1 & DregRngPush & PregRngPush {
+    build DregRngPush;
+    build PregRngPush;
+}
+}
+}
+
+
+:^PushPopMult is PushPopMult { build PushPopMult; }

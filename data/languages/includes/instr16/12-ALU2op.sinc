@@ -1,0 +1,90 @@
+## ALU Binary Operations (ALU2op)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 1 | 0 | 0 | 0 | 0 |......opc......|....src....|....dst....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token a2oInstr16 (16)
+	a2oSig           = (10,15) 
+	a2oOpc           = ( 6, 9) 
+	a2oSrc           = ( 3, 5) 
+	a2oSrcL          = ( 3, 5) 
+	a2oSrcB          = ( 3, 5) 
+	a2oDst           = ( 0, 2) 
+	a2oDstCp         = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables [a2oSrc a2oDst a2oDstCp] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables a2oSrcL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables a2oSrcB [R0.B R1.B R2.B R3.B R4.B R5.B R6.B R7.B];
+
+
+### Instructions ###
+
+with ALU2op: a2oSig=0x10 {
+# Shift
+:^"AShift32"    a2oDst ">>>=" a2oSrc                  is a2oOpc=0x0 & a2oSrc & a2oDst {
+    a2oDst = a2oDst s>> a2oSrc;
+}
+:^"LShift"      a2oDst ">>=" a2oSrc                   is a2oOpc=0x1 & a2oSrc & a2oDst {
+    a2oDst = a2oDst >> a2oSrc;
+}
+:^"LShift"      a2oDst "<<=" a2oSrc                   is a2oOpc=0x2 & a2oSrc & a2oDst {
+    a2oDst = a2oDst << a2oSrc;
+}
+:^"MultInt"     a2oDst *= a2oSrc                      is a2oOpc=0x3 & a2oSrc & a2oDst {
+    a2oDst = a2oDst * a2oSrc;
+}
+:^"AddSubShift" a2oDst = (a2oDstCp + a2oSrc) "<< 0x1" is a2oOpc=0x4 & a2oSrc & a2oDst & a2oDstCp {
+    a2oDst = (a2oDst + a2oSrc) << 1;
+}
+:^"AddSubShift" a2oDst = (a2oDstCp + a2oSrc) "<< 0x2" is a2oOpc=0x5 & a2oSrc & a2oDst & a2oDstCp {
+    a2oDst = (a2oDst + a2oSrc) << 2;
+}
+
+#Divide
+:^"Divide" "DIVQ" (a2oDst, a2oSrc) is a2oOpc=0x8 & a2oSrc & a2oDst { 
+    if (AQ) goto <add_div>;
+	a2oDst = a2oDst - (a2oSrc << 0x10);
+	goto <end_div>;
+<add_div>
+	a2oDst = a2oDst + (a2oSrc << 0x10);
+<end_div>
+	AQ = (a2oDst >= 0x80000000) ^^ ((a2oSrc & 0xffff) >= 0x8000);
+	a2oDst = (a2oDst << 0x1) | zext(!AQ);
+}
+:^"Divide" "DIVS" (a2oDst, a2oSrc) is a2oOpc=0x9 & a2oSrc & a2oDst { 
+    AQ = (a2oDst >= 0x80000000) ^^ ((a2oSrc & 0xffff) >= 0x8000);
+	a2oDst = (a2oDst << 0x1) | zext(AQ);
+}
+
+# Move
+:^"MvDregLToDreg" a2oDst = a2oSrcL "(X)" is a2oOpc=0xa & a2oSrcL & a2oDst { 
+    a2oDst = sext(a2oSrcL);
+}
+:^"MvDregLToDreg" a2oDst = a2oSrcL "(Z)" is a2oOpc=0xb & a2oSrcL & a2oDst {
+    a2oDst = zext(a2oSrcL);
+}
+:^"MvDregBToDreg" a2oDst = a2oSrcB "(X)" is a2oOpc=0xc & a2oSrcB & a2oDst {
+    a2oDst = sext(a2oSrcB);
+}
+:^"MvDregBToDreg" a2oDst = a2oSrcB "(Z)" is a2oOpc=0xd & a2oSrcB & a2oDst {
+    a2oDst = zext(a2oSrcB);
+}
+
+# Negate
+:^"Neg32" a2oDst = -a2oSrc   is a2oOpc=0xe & a2oSrc & a2oDst {
+    a2oDst = -a2oSrc;
+}
+:^"Not32" a2oDst = "~"a2oSrc is a2oOpc=0xf & a2oSrc & a2oDst {
+    a2oDst = ~a2oSrc;
+}
+}
+
+
+:^ALU2op is ALU2op { build ALU2op; }

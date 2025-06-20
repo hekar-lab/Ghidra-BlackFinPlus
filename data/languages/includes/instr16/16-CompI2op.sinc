@@ -1,0 +1,38 @@
+## Destructive Binary Operations, dreg/preg with 7bit immediate (CompI2op)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 1 | 1 | 0 |.r.|opc|............src............|....dst....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token ci2Instr16 (16)
+	ci2Sig           = (12,15) 
+	ci2R             = (11,11) 
+	ci2Opc           = (10,10) 
+	ci2Src           = ( 3, 9) signed
+	ci2DstD          = ( 0, 2) 
+	ci2DstP          = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables ci2DstD [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables ci2DstP [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+ci2Dst: ci2DstD is ci2R=0x0 & ci2DstD { export ci2DstD; }
+ci2Dst: ci2DstP is ci2R=0x1 & ci2DstP { export ci2DstP; }
+
+with CompI2op: ci2Sig=0x6 {
+:^"LdImmToReg" ci2Dst = ci2Src "(X)" is ci2Opc=0x0 & ci2Src & ci2Dst { ci2Dst = sext(ci2Src:1); }
+:^"AddImm"     ci2Dst += ci2Src      is ci2Opc=0x1 & ci2Src & ci2Dst { 
+    ci2Dst = ci2Dst + ci2Src; 
+}
+}
+
+
+:^CompI2op is CompI2op { build CompI2op; }

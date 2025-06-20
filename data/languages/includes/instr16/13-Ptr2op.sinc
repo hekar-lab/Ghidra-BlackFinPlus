@@ -1,0 +1,44 @@
+## Pointer Arithmetic Operations (Ptr2op)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 1 | 0 | 0 | 0 | 1 | 0 |....opc....|....src....|....dst....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token p2oInstr16 (16)
+	p2oSig           = ( 9,15) 
+	p2oOpc           = ( 6, 8) 
+	p2oSrc           = ( 3, 5) 
+	p2oDst           = ( 0, 2) 
+	p2oDstCp         = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables [p2oSrc p2oDst p2oDstCp] [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+with Ptr2op: p2oSig=0x22 {
+:^"DagAdd32"       p2oDst -= p2oSrc                      is p2oOpc=0x0 & p2oSrc & p2oDst { p2oDst = p2oDst - p2oSrc; }
+:^"LShiftPtr"      p2oDst = p2oSrc "<< 0x2"              is p2oOpc=0x1 & p2oSrc & p2oDst { p2oDst = p2oSrc << 2; }
+:^"LShiftPtr"      p2oDst = p2oSrc "<< 0x1"              is p2oOpc=0x2 & p2oSrc & p2oDst { p2oDst = p2oSrc << 1; }
+:^"LShiftPtr"      p2oDst = p2oSrc ">> 0x2"              is p2oOpc=0x3 & p2oSrc & p2oDst { p2oDst = p2oSrc >> 2; }
+:^"LShiftPtr"      p2oDst = p2oSrc ">> 0x1"              is p2oOpc=0x4 & p2oSrc & p2oDst { p2oDst = p2oSrc >> 1; }
+:^"DagAdd32"       p2oDst += p2oSrc "(BREV)"             is p2oOpc=0x5 & p2oSrc & p2oDst {
+    # TODO implement the reverse carry addition part
+    p2oDst = p2oDst + p2oSrc;
+}
+:^"DagAddSubShift" p2oDst = (p2oDstCp + p2oSrc) "<< 0x1" is p2oOpc=0x6 & p2oSrc & p2oDst & p2oDstCp {
+    p2oDst = (p2oDst + p2oSrc) << 1;
+}
+:^"DagAddSubShift" p2oDst = (p2oDstCp + p2oSrc) "<< 0x2" is p2oOpc=0x7 & p2oSrc & p2oDst & p2oDstCp {
+    p2oDst = (p2oDst + p2oSrc) << 2;
+}
+}
+
+
+:^Ptr2op is Ptr2op { build Ptr2op; }

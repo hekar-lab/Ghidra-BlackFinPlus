@@ -1,0 +1,37 @@
+## Load/Store indexed with small immediate offset FP (LdStIIFP)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 0 | 1 | 1 | 1 | 0 |.w.|........off........|.g.|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lsfpInstr16 (16)
+	lsfpSig          = (10,15) 
+	lsfpW            = ( 9, 9) 
+	lsfpOff          = ( 4, 8) 
+	lsfpG            = ( 3, 3) 
+	lsfpDReg         = ( 0, 2) 
+	lsfpPReg         = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables lsfpDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lsfpPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+lsfpImm: ["FP" - imm] is lsfpOff [imm = 0x80 - (lsfpOff << 2);]{ local ptr = FP - imm; export ptr; }
+
+with LdStIIFP: lsfpSig=0x2e {
+:^"LdM32bitToDreg" lsfpDReg = lsfpImm is lsfpW=0x0 & lsfpImm & lsfpG=0x0 & lsfpDReg { lsfpDReg = *[ram]:4 lsfpImm; }
+:^"LdM32bitToPreg" lsfpPReg = lsfpImm is lsfpW=0x0 & lsfpImm & lsfpG=0x1 & lsfpPReg { lsfpPReg = *[ram]:4 lsfpImm; }
+:^"StDregToM32bit" lsfpImm = lsfpDReg is lsfpW=0x1 & lsfpImm & lsfpG=0x0 & lsfpDReg { *[ram]:4 lsfpImm = lsfpDReg; }
+:^"StDregToM32bit" lsfpImm = lsfpPReg is lsfpW=0x1 & lsfpImm & lsfpG=0x1 & lsfpPReg { *[ram]:4 lsfpImm = lsfpPReg; }
+}
+
+
+:^LdStIIFP is LdStIIFP { build LdStIIFP; }

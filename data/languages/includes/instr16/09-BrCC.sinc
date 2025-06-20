@@ -1,0 +1,29 @@
+## Conditional Branch PC relative on CC (BrCC)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 1 |.t.|.b.|..................off..................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token brcInstr16 (16)
+	brcSig           = (12,15) 
+	brcT             = (11,11) 
+	brcB             = (10,10) 
+	brcOff           = ( 0, 9) signed
+;
+
+
+### Instructions ###
+
+brcAddr: addr is brcOff [addr = inst_start + brcOff * 2;]{ export *[ram]:4 addr; }
+
+with BrCC: brcSig=0x1 {
+:^"BrCC" "if !CC JUMP" brcAddr        is brcT=0x0 & brcB=0x0 & brcAddr { if (!CC) goto brcAddr; }
+:^"BrCC" "if !CC JUMP" brcAddr "(BP)" is brcT=0x0 & brcB=0x1 & brcAddr { if (!CC) goto brcAddr; }
+:^"BrCC" "if CC JUMP" brcAddr         is brcT=0x1 & brcB=0x0 & brcAddr { if (CC) goto brcAddr; }
+:^"BrCC" "if CC JUMP" brcAddr "(BP)"  is brcT=0x1 & brcB=0x1 & brcAddr { if (CC) goto brcAddr; }
+}
+
+
+:^BrCC is BrCC { build BrCC; }

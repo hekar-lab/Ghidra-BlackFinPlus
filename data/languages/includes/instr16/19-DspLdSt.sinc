@@ -1,0 +1,63 @@
+## Load/Store (DspLdSt)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 0 | 0 | 1 | 1 | 1 |.w.|..aop..|...i...|...m...|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dlsInstr16 (16)
+	dlsSig           = (10,15) 
+	dlsW             = ( 9, 9) 
+	dlsAop           = ( 7, 8) 
+	dlsI             = ( 5, 6) 
+	dlsM             = ( 3, 4) 
+	dlsReg           = ( 0, 2) 
+	dlsRegL          = ( 0, 2) 
+	dlsRegH          = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables dlsReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables dlsRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables dlsRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dlsI [I0 I1 I2 I3];
+attach variables dlsM [M0 M1 M2 M3];
+
+
+### Instructions ###
+
+dlsIOp: [dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; ptr = ptr + 4; export ptr; }
+dlsIOp: [dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; ptr = ptr - 4; export ptr; }
+dlsIOp: [dlsI]   is dlsAop=0x2 & dlsI { export dlsI; }
+
+dlsIOp: [dlsI++dlsM] is dlsAop=0x3 & dlsM & dlsI { local ptr = dlsI; ptr = ptr + dlsM; export ptr; }
+
+dlsIOpW: "W"[dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; ptr = ptr + 2; export ptr; }
+dlsIOpW: "W"[dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; ptr = ptr - 2; export ptr; }
+dlsIOpW: "W"[dlsI]   is dlsAop=0x2 & dlsI { export dlsI; }
+
+with DspLdSt: dlsSig=0x27 {
+with : dlsW=0x0 {
+:^"LdM32bitToDreg"  dlsReg = dlsIOp   is dlsM=0x0 & dlsIOp & dlsReg { dlsReg =  *[ram]:4 dlsIOp; }
+
+:^"LdM16bitToDregL" dlsRegL = dlsIOpW is dlsM=0x1 & dlsIOpW & dlsRegL { dlsRegL =  *[ram]:2 dlsIOpW; }
+:^"LdM16bitToDregH" dlsRegH = dlsIOpW is dlsM=0x2 & dlsIOpW & dlsRegH { dlsRegH =  *[ram]:2 dlsIOpW; }
+
+:^"LdM32bitToDreg"  dlsReg = dlsIOp   is dlsIOp & dlsReg { dlsReg =  *[ram]:4 dlsIOp; }
+}
+
+with : dlsW=0x1 {
+:^"StDregToM32bit"  dlsIOp = dlsReg   is dlsM=0x0 & dlsIOp & dlsReg { *[ram]:4 dlsIOp = dlsReg; }
+
+:^"StDregLToM16bit" dlsIOpW = dlsRegL is dlsM=0x1 & dlsIOpW & dlsRegL { *[ram]:2 dlsIOpW = dlsRegL; }
+:^"StDregHToM16bit" dlsIOpW = dlsRegH is dlsM=0x2 & dlsIOpW & dlsRegH { *[ram]:2 dlsIOpW = dlsRegH; }
+
+:^"StDregToM32bit"  dlsIOp = dlsReg   is dlsIOp & dlsReg { *[ram]:4 dlsIOp = dlsReg; }
+}
+}
+
+
+:^DspLdSt is DspLdSt { build DspLdSt; }
