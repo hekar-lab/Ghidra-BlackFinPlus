@@ -32,17 +32,17 @@ lspAddr: [lspPtr++lspIdx] is lspPtr & lspIdx { local ptr = lspPtr; ptr = ptr + l
 
 with LdStPmod: lspSig=0x8 {
 with : lspW=0x0 {
-:^"LdM32bitToDreg"  lspReg = lspAddr          is lspAop=0x0 & lspReg & lspAddr { lspReg = *[ram]:4 lspAddr; }
-:^"LdM16bitToDregL" lspRegL = "W"lspAddr      is lspAop=0x1 & lspRegL & lspAddr { lspRegL = *[ram]:2 lspAddr; }
-:^"LdM16bitToDregH" lspRegH = "W"lspAddr      is lspAop=0x2 & lspRegH & lspAddr { lspRegH = *[ram]:2 lspAddr; }
-:^"LdM16bitToDreg"  lspReg = "W"lspAddr "(Z)" is lspAop=0x3 & lspReg & lspAddr { lspReg = zext(*[ram]:2 lspAddr); }
+: "LdM32bitToDreg"  lspReg = lspAddr          is lspAop=0x0 & lspReg & lspAddr { lspReg = *[ram]:4 lspAddr; }
+: "LdM16bitToDregL" lspRegL = "W"lspAddr      is lspAop=0x1 & lspRegL & lspAddr { lspRegL = *[ram]:2 lspAddr; }
+: "LdM16bitToDregH" lspRegH = "W"lspAddr      is lspAop=0x2 & lspRegH & lspAddr { lspRegH = *[ram]:2 lspAddr; }
+: "LdM16bitToDreg"  lspReg = "W"lspAddr "(Z)" is lspAop=0x3 & lspReg & lspAddr { lspReg = zext(*[ram]:2 lspAddr); }
 }
 
 with : lspW=0x1 {
-:^"StDregToM32bit"  lspAddr = lspReg          is lspAop=0x0 & lspReg & lspAddr { *[ram]:4 lspAddr = lspReg; }
-:^"StDregLToM16bit" "W"lspAddr = lspRegL      is lspAop=0x1 & lspRegL & lspAddr { *[ram]:2 lspAddr = lspRegL; }
-:^"StDregHToM16bit" "W"lspAddr = lspRegH      is lspAop=0x2 & lspRegH & lspAddr { *[ram]:2 lspAddr = lspRegH; }
-:^"LdM16bitToDreg"  lspReg = "W"lspAddr "(X)" is lspAop=0x3 & lspReg & lspAddr { lspReg = sext(*[ram]:2 lspAddr); }
+: "StDregToM32bit"  lspAddr = lspReg          is lspAop=0x0 & lspReg & lspAddr { *[ram]:4 lspAddr = lspReg; }
+: "StDregLToM16bit" "W"lspAddr = lspRegL      is lspAop=0x1 & lspRegL & lspAddr { *[ram]:2 lspAddr = lspRegL; }
+: "StDregHToM16bit" "W"lspAddr = lspRegH      is lspAop=0x2 & lspRegH & lspAddr { *[ram]:2 lspAddr = lspRegH; }
+: "LdM16bitToDreg"  lspReg = "W"lspAddr "(X)" is lspAop=0x3 & lspReg & lspAddr { lspReg = sext(*[ram]:2 lspAddr); }
 }
 }
 

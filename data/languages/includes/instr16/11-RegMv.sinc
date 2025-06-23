@@ -82,12 +82,12 @@ rmvGSRC1: "A0.X"      is rmvGs=0x4 & rmvSrc=0x0 { export A0.X; }
 rmvGSRC1: "A1.X"      is rmvGs=0x4 & rmvSrc=0x2 { export A1.X; } 
 
 with RegMv: rmvSig=0x3 {
-:^"MvRegToReg" rmvGDST4 = rmvGSRC4 is rmvGDST4 & rmvGSRC4 { rmvGDST4 = rmvGSRC4; }
-:^"MvRegToReg" rmvGDST1 = rmvGSRC4 is rmvGDST1 & rmvGSRC4 { rmvGDST1 = rmvGSRC4:1; }
+: rmvGDST4 = rmvGSRC4 is rmvGDST4 & rmvGSRC4 { rmvGDST4 = rmvGSRC4; }
+: rmvGDST1 = rmvGSRC4 is rmvGDST1 & rmvGSRC4 { rmvGDST1 = rmvGSRC4:1; }
 
-:^"MvRegToReg" rmvGDST4 = rmvGSRC1 is rmvGDST4 & rmvGSRC1 { rmvGDST4 = sext(rmvGSRC1); }
-:^"MvRegToReg" rmvGDST1 = rmvGSRC1 is rmvGDST1 & rmvGSRC1 { rmvGDST1 = rmvGSRC1; }
+: rmvGDST4 = rmvGSRC1 is rmvGDST4 & rmvGSRC1 { rmvGDST4 = sext(rmvGSRC1); }
+: rmvGDST1 = rmvGSRC1 is rmvGDST1 & rmvGSRC1 { rmvGDST1 = rmvGSRC1; }
 }
 
 
-:^RegMv is RegMv { build RegMv; }
+: "MvRegToReg" RegMv is RegMv { build RegMv; }

@@ -13,7 +13,7 @@ define token nopInstr16 (16)
 
 ### Instructions ###
 
-NOP16:^"NOP" is nopSig=0x0000 {}
+NOP16: "NOP" is nopSig=0x0000 {}
 
 
 :^NOP16 is NOP16 { build NOP16; }

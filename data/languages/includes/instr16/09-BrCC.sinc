@@ -19,11 +19,11 @@ define token brcInstr16 (16)
 brcAddr: addr is brcOff [addr = inst_start + brcOff * 2;]{ export *[ram]:4 addr; }
 
 with BrCC: brcSig=0x1 {
-:^"BrCC" "if !CC JUMP" brcAddr        is brcT=0x0 & brcB=0x0 & brcAddr { if (!CC) goto brcAddr; }
-:^"BrCC" "if !CC JUMP" brcAddr "(BP)" is brcT=0x0 & brcB=0x1 & brcAddr { if (!CC) goto brcAddr; }
-:^"BrCC" "if CC JUMP" brcAddr         is brcT=0x1 & brcB=0x0 & brcAddr { if (CC) goto brcAddr; }
-:^"BrCC" "if CC JUMP" brcAddr "(BP)"  is brcT=0x1 & brcB=0x1 & brcAddr { if (CC) goto brcAddr; }
+: "if !CC JUMP" brcAddr        is brcT=0x0 & brcB=0x0 & brcAddr { if (!CC) goto brcAddr; }
+: "if !CC JUMP" brcAddr "(BP)" is brcT=0x0 & brcB=0x1 & brcAddr { if (!CC) goto brcAddr; }
+: "if CC JUMP" brcAddr         is brcT=0x1 & brcB=0x0 & brcAddr { if (CC) goto brcAddr; }
+: "if CC JUMP" brcAddr "(BP)"  is brcT=0x1 & brcB=0x1 & brcAddr { if (CC) goto brcAddr; }
 }
 
 
-:^BrCC is BrCC { build BrCC; }
+:"BrCC" BrCC is BrCC { build BrCC; }

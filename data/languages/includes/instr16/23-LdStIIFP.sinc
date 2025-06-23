@@ -27,10 +27,10 @@ attach variables lsfpPReg [P0 P1 P2 P3 P4 P5 SP FP];
 lsfpImm: ["FP" - imm] is lsfpOff [imm = 0x80 - (lsfpOff << 2);]{ local ptr = FP - imm; export ptr; }
 
 with LdStIIFP: lsfpSig=0x2e {
-:^"LdM32bitToDreg" lsfpDReg = lsfpImm is lsfpW=0x0 & lsfpImm & lsfpG=0x0 & lsfpDReg { lsfpDReg = *[ram]:4 lsfpImm; }
-:^"LdM32bitToPreg" lsfpPReg = lsfpImm is lsfpW=0x0 & lsfpImm & lsfpG=0x1 & lsfpPReg { lsfpPReg = *[ram]:4 lsfpImm; }
-:^"StDregToM32bit" lsfpImm = lsfpDReg is lsfpW=0x1 & lsfpImm & lsfpG=0x0 & lsfpDReg { *[ram]:4 lsfpImm = lsfpDReg; }
-:^"StDregToM32bit" lsfpImm = lsfpPReg is lsfpW=0x1 & lsfpImm & lsfpG=0x1 & lsfpPReg { *[ram]:4 lsfpImm = lsfpPReg; }
+: "LdM32bitToDreg" lsfpDReg = lsfpImm is lsfpW=0x0 & lsfpImm & lsfpG=0x0 & lsfpDReg { lsfpDReg = *[ram]:4 lsfpImm; }
+: "LdM32bitToPreg" lsfpPReg = lsfpImm is lsfpW=0x0 & lsfpImm & lsfpG=0x1 & lsfpPReg { lsfpPReg = *[ram]:4 lsfpImm; }
+: "StDregToM32bit" lsfpImm = lsfpDReg is lsfpW=0x1 & lsfpImm & lsfpG=0x0 & lsfpDReg { *[ram]:4 lsfpImm = lsfpDReg; }
+: "StDregToM32bit" lsfpImm = lsfpPReg is lsfpW=0x1 & lsfpImm & lsfpG=0x1 & lsfpPReg { *[ram]:4 lsfpImm = lsfpPReg; }
 }
 
 

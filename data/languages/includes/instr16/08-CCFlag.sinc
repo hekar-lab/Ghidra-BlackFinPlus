@@ -28,8 +28,8 @@ attach variables [cfgXPReg cfgYPReg] [P0 P1 P2 P3 P4 P5 SP FP];
 
 ### Instructions ###
 
-cfgName:^"CompRegisters" is cfgG=0x0 { }
-cfgName:^"CCFlagP"       is cfgG=0x1 { }
+cfgName: "CompRegisters" is cfgG=0x0 { }
+cfgName: "CCFlagP"       is cfgG=0x1 { }
 
 cfgXval: cfgXDReg is cfgG=0x0 & cfgXDReg { export cfgXDReg; }
 cfgXval: cfgXPReg is cfgG=0x1 & cfgXPReg { export cfgXPReg; }
@@ -60,7 +60,7 @@ CompAccAux: "CC = A0 == A1" is cfgOpc=0x5 { CC = (A0 == A1); }
 CompAccAux: "CC = A0 < A1"  is cfgOpc=0x6 { CC = (A0 s< A1); }
 CompAccAux: "CC = A0 <= A1" is cfgOpc=0x7 { CC = (A0 s<= A1); }
 
-:^"CompAccumulators" CompAccAux is CompAccAux { build CompAccAux; }
+: "CompAccumulators" CompAccAux is CompAccAux { build CompAccAux; }
 }
 
 

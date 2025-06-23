@@ -51,27 +51,27 @@ with syncDesc : pgcOpc=0x2{
 modeDesc: "EMUEXCPT" is pgcOpc=0x2 & pgcReg=0x5 { emuexcpt(); }
 
 with ProgCtrl: pgcSig=0x00 {
-:^"Return" returnDesc is returnDesc { build returnDesc; }
-:^"Sync"   syncDesc   is syncDesc { build syncDesc; }
-:^"Mode"   modeDesc   is modeDesc { build modeDesc; }
+: "Return" returnDesc is returnDesc { build returnDesc; }
+: "Sync"   syncDesc   is syncDesc { build syncDesc; }
+: "Mode"   modeDesc   is modeDesc { build modeDesc; }
 
 with : pgcRegH=0x0 {
-:^"IMaskMv" "CLI" pgcDReg           is pgcOpc=0x3 & pgcDReg {
+:"IMaskMv" "CLI" pgcDReg           is pgcOpc=0x3 & pgcDReg {
     local imaskAddr:4 = $(IMASK);
     pgcDReg = *[ram]:4 imaskAddr;
     *[ram]:4 imaskAddr = 0;
 }
-:^"IMaskMv" "STI" pgcDReg           is pgcOpc=0x4 & pgcDReg {
+: "IMaskMv" "STI" pgcDReg           is pgcOpc=0x4 & pgcDReg {
     local imaskAddr:4 = $(IMASK);
     *[ram]:4 imaskAddr = pgcDReg;
 }
 
-:^"Jump"    "JUMP" (pgcPReg)        is pgcOpc=0x5 & pgcPReg { goto [pgcPReg]; }
-:^"Call"    "CALL" (pgcPReg)        is pgcOpc=0x6 & pgcPReg { RETS = inst_next; call [pgcPReg]; }
-:^"Call"    "CALL" ("PC" + pgcPReg) is pgcOpc=0x7 & pgcPReg { RETS = inst_next; call [PC + pgcPReg]; }
-:^"Jump"    "JUMP" ("PC" + pgcPReg) is pgcOpc=0x8 & pgcPReg { goto [PC + pgcPReg]; }
+: "Jump"    "JUMP" (pgcPReg)        is pgcOpc=0x5 & pgcPReg { goto [pgcPReg]; }
+: "Call"    "CALL" (pgcPReg)        is pgcOpc=0x6 & pgcPReg { RETS = inst_next; call [pgcPReg]; }
+: "Call"    "CALL" ("PC" + pgcPReg) is pgcOpc=0x7 & pgcPReg { RETS = inst_next; call [PC + pgcPReg]; }
+: "Jump"    "JUMP" ("PC" + pgcPReg) is pgcOpc=0x8 & pgcPReg { goto [PC + pgcPReg]; }
 
-:^"TestSet" "TESTSET" (pgcPReg)     is pgcOpc=0xb & pgcPReg {
+: "TestSet" "TESTSET" (pgcPReg)     is pgcOpc=0xb & pgcPReg {
     local testVal = *[ram]:1 pgcPReg;
     CC = 0x0;
     if (testVal != 0x00) goto <is_set>;
@@ -79,15 +79,15 @@ with : pgcRegH=0x0 {
     <is_set>
     *[ram]:1 pgcPReg = testVal | 0x80;
 }
-:^"Sync"    "STI IDLE" pgcDReg      is pgcOpc=0xc & pgcDReg {
+: "Sync"    "STI IDLE" pgcDReg      is pgcOpc=0xc & pgcDReg {
     local imaskAddr:4 = $(IMASK);
     *[ram]:4 imaskAddr = pgcDReg;
     idle();
 }
 }
 
-:^"Raise" "RAISE" pgcReg is pgcOpc=0x9 & pgcReg { raise(pgcReg:1); }
-:^"Raise" "EXCPT" pgcReg is pgcOpc=0xa & pgcReg { excpt(pgcReg:1); }
+: "Raise" "RAISE" pgcReg is pgcOpc=0x9 & pgcReg { raise(pgcReg:1); }
+: "Raise" "EXCPT" pgcReg is pgcOpc=0xa & pgcReg { excpt(pgcReg:1); }
 }
 
 

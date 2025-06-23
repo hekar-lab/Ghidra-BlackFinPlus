@@ -54,10 +54,10 @@ PPREG1: "A0.X"     is pprGrp=0x4 & pprReg=0x0 { export A0.X; }
 PPREG1: "A1.X"     is pprGrp=0x4 & pprReg=0x2 { export A1.X; } 
 
 with PushPopReg: pprSig=0x002 {
-:^"Pop"  PPREG4 = "[SP++]" is pprW=0x0 & PPREG4 { pop(PPREG4); }
-:^"Pop"  PPREG1 = "[SP++]" is pprW=0x0 & PPREG1 { popb(PPREG1); }
-:^"Push" "[--SP]" = PPREG4 is pprW=0x1 & PPREG4 { push(PPREG4); }
-:^"Push" "[--SP]" = PPREG1 is pprW=0x1 & PPREG1 { pushb(PPREG1); }
+: "Pop"  PPREG4 = "[SP++]" is pprW=0x0 & PPREG4 { pop(PPREG4); }
+: "Pop"  PPREG1 = "[SP++]" is pprW=0x0 & PPREG1 { popb(PPREG1); }
+: "Push" "[--SP]" = PPREG4 is pprW=0x1 & PPREG4 { push(PPREG4); }
+: "Push" "[--SP]" = PPREG1 is pprW=0x1 & PPREG1 { pushb(PPREG1); }
 }
 
 

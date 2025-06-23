@@ -33,12 +33,12 @@ GSRC: cmvSrcDReg is cmvS=0x0 & cmvSrcDReg { export cmvSrcDReg; }
 GSRC: cmvSrcPReg is cmvS=0x1 & cmvSrcPReg { export cmvSrcPReg; }
 
 with CCMV: cmvSig=0x03 {
-:^"MvRegToRegCond" "if !CC" GDST = GSRC is cmvT=0x0 & GDST & GSRC {
+: "if !CC" GDST = GSRC is cmvT=0x0 & GDST & GSRC {
     if (CC) goto <do_nothing>;
     GDST = GSRC;
 <do_nothing>
 }
-:^"MvRegToRegCond" "if CC" GDST = GSRC  is cmvT=0x1 & GDST & GSRC {
+: "if CC" GDST = GSRC  is cmvT=0x1 & GDST & GSRC {
     if (!CC) goto <do_nothing>;
     GDST = GSRC;
 <do_nothing>
@@ -46,4 +46,4 @@ with CCMV: cmvSig=0x03 {
 }
 
 
-:^CCMV is CCMV { build CCMV; }
+: "MvRegToRegCond" CCMV is CCMV { build CCMV; }

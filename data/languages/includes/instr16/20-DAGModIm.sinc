@@ -24,19 +24,12 @@ attach variables dmmM [M0 M1 M2 M3];
 
 ### Instructions ###
 
+# TODO implement the reverse carry addition part for (BREV)
 with DAGModIm: dmmSig=0x9e & dmmMask2=0x3 {
-:^"DagAdd32" dmmI += dmmM          is dmmBr=0x0 & dmmOp=0x0 & dmmM & dmmI { 
-    dmmI = dmmI + dmmM;
-}
-:^"DagAdd32" dmmI += dmmM "(BREV)" is dmmBr=0x1 & dmmOp=0x0 & dmmM & dmmI { 
-    # TODO implement the reverse carry addition part
-    dmmI = dmmI + dmmM;
-}
-:^"DagAdd32" dmmI -= dmmM          is dmmBr=0x0 & dmmOp=0x1 & dmmM & dmmI { 
-    dmmI = dmmI - dmmM;
-}
+: dmmI += dmmM          is dmmBr=0x0 & dmmOp=0x0 & dmmM & dmmI { dmmI = dmmI + dmmM; }
+: dmmI += dmmM "(BREV)" is dmmBr=0x1 & dmmOp=0x0 & dmmM & dmmI { dmmI = dmmI + dmmM; }
+: dmmI -= dmmM          is dmmBr=0x0 & dmmOp=0x1 & dmmM & dmmI { dmmI = dmmI - dmmM; }
 }
 
 
-
-:^DAGModIm is DAGModIm { build DAGModIm; }
+:"DagAdd32" DAGModIm is DAGModIm { build DAGModIm; }

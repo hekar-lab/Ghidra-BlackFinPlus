@@ -23,10 +23,10 @@ attach variables c2dReg [R0 R1 R2 R3 R4 R5 R6 R7];
 MvToCCDesc: "CC = !CC" is epsilon {}
 
 with CC2Dreg: c2dSig=0x010 {
-:^"CCToDreg" c2dReg = "CC"     is c2dOpc=0x0 & c2dReg { c2dReg = zext(CC); }
-:^"MvToCC"   "CC" = c2dReg     is c2dOpc=0x1 & c2dReg { CC = (c2dReg != 0); }
-:^"CCToDreg" c2dReg = "!CC"    is c2dOpc=0x2 & c2dReg { c2dReg = zext(!CC); }
-:^"MvToCC"   MvToCCDesc        is c2dOpc=0x3 & MvToCCDesc { CC = !CC; }
+: "CCToDreg" c2dReg = "CC"     is c2dOpc=0x0 & c2dReg { c2dReg = zext(CC); }
+: "MvToCC"   "CC" = c2dReg     is c2dOpc=0x1 & c2dReg { CC = (c2dReg != 0); }
+: "CCToDreg" c2dReg = "!CC"    is c2dOpc=0x2 & c2dReg { c2dReg = zext(!CC); }
+: "MvToCC"   MvToCCDesc        is c2dOpc=0x3 & MvToCCDesc { CC = !CC; }
 }
 
 

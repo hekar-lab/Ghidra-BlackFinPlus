@@ -26,28 +26,28 @@ attach variables [c3oDstP c3oSrc0P c3oSrc1P] [P0 P1 P2 P3 P4 P5 SP FP];
 
 ### Instructions ###
 with Comp3op: c3oSig=0x5 {
-:^"AddSub32" c3oDstD = c3oSrc0D + c3oSrc1D            is c3oOpc=0x0 & c3oDstD & c3oSrc0D & c3oSrc1D {
+: "AddSub32" c3oDstD = c3oSrc0D + c3oSrc1D            is c3oOpc=0x0 & c3oDstD & c3oSrc0D & c3oSrc1D {
     c3oDstD = c3oSrc0D + c3oSrc1D;
 }
-:^"AddSub32" c3oDstD = c3oSrc0D - c3oSrc1D            is c3oOpc=0x1 & c3oDstD & c3oSrc0D & c3oSrc1D {
+: "AddSub32" c3oDstD = c3oSrc0D - c3oSrc1D            is c3oOpc=0x1 & c3oDstD & c3oSrc0D & c3oSrc1D {
     c3oDstD = c3oSrc0D - c3oSrc1D;
 }
-:^"Logic32"  c3oDstD = c3oSrc0D & c3oSrc1D            is c3oOpc=0x2 & c3oDstD & c3oSrc0D & c3oSrc1D {
+: "Logic32"  c3oDstD = c3oSrc0D & c3oSrc1D            is c3oOpc=0x2 & c3oDstD & c3oSrc0D & c3oSrc1D {
     c3oDstD = c3oSrc0D & c3oSrc1D;
 }
-:^"Logic32"  c3oDstD = c3oSrc0D | c3oSrc1D            is c3oOpc=0x3 & c3oDstD & c3oSrc0D & c3oSrc1D {
+: "Logic32"  c3oDstD = c3oSrc0D | c3oSrc1D            is c3oOpc=0x3 & c3oDstD & c3oSrc0D & c3oSrc1D {
     c3oDstD = c3oSrc0D | c3oSrc1D;
 }
-:^"Logic32"  c3oDstD = c3oSrc0D ^ c3oSrc1D            is c3oOpc=0x4 & c3oDstD & c3oSrc0D & c3oSrc1D {
+: "Logic32"  c3oDstD = c3oSrc0D ^ c3oSrc1D            is c3oOpc=0x4 & c3oDstD & c3oSrc0D & c3oSrc1D {
     c3oDstD = c3oSrc0D ^ c3oSrc1D;
 }
-:^"DagAdd32" c3oDstP = c3oSrc0P + c3oSrc1P            is c3oOpc=0x5 & c3oDstP & c3oSrc0P & c3oSrc1P {
+: "DagAdd32" c3oDstP = c3oSrc0P + c3oSrc1P            is c3oOpc=0x5 & c3oDstP & c3oSrc0P & c3oSrc1P {
     c3oDstP = c3oSrc0P + c3oSrc1P;
 }
-:^"PtrOp"    c3oDstP = c3oSrc0P + (c3oSrc1P "<< 0x1") is c3oOpc=0x6 & c3oDstP & c3oSrc0P & c3oSrc1P {
+: "PtrOp"    c3oDstP = c3oSrc0P + (c3oSrc1P "<< 0x1") is c3oOpc=0x6 & c3oDstP & c3oSrc0P & c3oSrc1P {
     c3oDstP = c3oSrc0P + (c3oSrc1P << 1);
 }
-:^"PtrOp"    c3oDstP = c3oSrc0P + (c3oSrc1P "<< 0x2") is c3oOpc=0x7 & c3oDstP & c3oSrc0P & c3oSrc1P {
+: "PtrOp"    c3oDstP = c3oSrc0P + (c3oSrc1P "<< 0x2") is c3oOpc=0x7 & c3oDstP & c3oSrc0P & c3oSrc1P {
     c3oDstP = c3oSrc0P + (c3oSrc1P << 2);
 }
 }

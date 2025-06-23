@@ -38,11 +38,11 @@ PREGA: cctReg++ is cctA=0x1 & cctReg {
 }
 
 with CacheCtrl: cctSig=0x009 {
-:^"CacheCtrl" "PREFETCH" [PREGA] is cctOpc=0x0 & PREGA { prefetch(PREGA); }
-:^"CacheCtrl" "FLUSHINV" [PREGA] is cctOpc=0x1 & PREGA { flushinv(PREGA); }
-:^"CacheCtrl" "FLUSH" [PREGA]    is cctOpc=0x2 & PREGA { flush(PREGA); }
-:^"CacheCtrl" "IFLUSH" [PREGA]   is cctOpc=0x3 & PREGA { iflush(PREGA); }
+: "PREFETCH" [PREGA] is cctOpc=0x0 & PREGA { prefetch(PREGA); }
+: "FLUSHINV" [PREGA] is cctOpc=0x1 & PREGA { flushinv(PREGA); }
+: "FLUSH" [PREGA]    is cctOpc=0x2 & PREGA { flush(PREGA); }
+: "IFLUSH" [PREGA]   is cctOpc=0x3 & PREGA { iflush(PREGA); }
 }
 
 
-:^CacheCtrl is CacheCtrl { build CacheCtrl; }
+: "CacheCtrl" CacheCtrl is CacheCtrl { build CacheCtrl; }

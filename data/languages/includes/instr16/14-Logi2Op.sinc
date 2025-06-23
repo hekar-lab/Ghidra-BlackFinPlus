@@ -22,18 +22,18 @@ attach variables l2oDst [R0 R1 R2 R3 R4 R5 R6 R7];
 ### Instructions ###
 
 with Logi2Op: l2oSig=0x09 {
-:^"ShiftBitTst"  "CC = !BITTST"(l2oDst, l2oSrc) is l2oOpc=0x0 & l2oSrc & l2oDst { 
+: "ShiftBitTst"  "CC = !BITTST"(l2oDst, l2oSrc) is l2oOpc=0x0 & l2oSrc & l2oDst { 
     CC = (0 == (l2oDst & (1 << l2oSrc))); 
 }
-:^"ShiftBitTst"  "CC = BITTST"(l2oDst, l2oSrc)  is l2oOpc=0x1 & l2oSrc & l2oDst { 
+: "ShiftBitTst"  "CC = BITTST"(l2oDst, l2oSrc)  is l2oOpc=0x1 & l2oSrc & l2oDst { 
     CC = (0 != (l2oDst & (1 << l2oSrc))); 
 }
-:^"Shift_BitMod" "BITSET"(l2oDst, l2oSrc)       is l2oOpc=0x2 & l2oSrc & l2oDst { l2oDst = l2oDst | (1 << l2oSrc); }
-:^"Shift_BitMod" "BITTGL"(l2oDst, l2oSrc)       is l2oOpc=0x3 & l2oSrc & l2oDst { l2oDst = l2oDst ^ (1 << l2oSrc); }
-:^"Shift_BitMod" "BITCLR"(l2oDst, l2oSrc)       is l2oOpc=0x4 & l2oSrc & l2oDst { l2oDst = l2oDst & ~(1 << l2oSrc); }
-:^"AShift32"     l2oDst ">>>=" l2oSrc           is l2oOpc=0x5 & l2oSrc & l2oDst { l2oDst = l2oDst s>> l2oSrc; }
-:^"LShift"       l2oDst ">>=" l2oSrc            is l2oOpc=0x6 & l2oSrc & l2oDst { l2oDst = l2oDst >> l2oSrc; }
-:^"LShift"       l2oDst "<<=" l2oSrc            is l2oOpc=0x7 & l2oSrc & l2oDst { l2oDst = l2oDst << l2oSrc; }
+: "Shift_BitMod" "BITSET"(l2oDst, l2oSrc)       is l2oOpc=0x2 & l2oSrc & l2oDst { l2oDst = l2oDst | (1 << l2oSrc); }
+: "Shift_BitMod" "BITTGL"(l2oDst, l2oSrc)       is l2oOpc=0x3 & l2oSrc & l2oDst { l2oDst = l2oDst ^ (1 << l2oSrc); }
+: "Shift_BitMod" "BITCLR"(l2oDst, l2oSrc)       is l2oOpc=0x4 & l2oSrc & l2oDst { l2oDst = l2oDst & ~(1 << l2oSrc); }
+: "AShift32"     l2oDst ">>>=" l2oSrc           is l2oOpc=0x5 & l2oSrc & l2oDst { l2oDst = l2oDst s>> l2oSrc; }
+: "LShift"       l2oDst ">>=" l2oSrc            is l2oOpc=0x6 & l2oSrc & l2oDst { l2oDst = l2oDst >> l2oSrc; }
+: "LShift"       l2oDst "<<=" l2oSrc            is l2oOpc=0x7 & l2oSrc & l2oDst { l2oDst = l2oDst << l2oSrc; }
 }
 
 

@@ -30,16 +30,16 @@ lsiImm4: [lsiPtr + imm] is lsiOff & lsiPtr [imm = lsiOff * 4;] { local ptr:4 = l
 
 with LdStII: lsiSig=0x5 {
 with : lsiW=0x0 {
-:^"LdM32bitToDreg" lsiDReg = lsiImm4          is lsiOp=0x0 & lsiImm4 & lsiDReg { lsiDReg = *[ram]:4 lsiImm4; }
-:^"LdM16bitToDreg" lsiDReg = "W"lsiImm2 "(Z)" is lsiOp=0x1 & lsiImm2 & lsiDReg { lsiDReg = zext(*[ram]:2 lsiImm2); }
-:^"LdM16bitToDreg" lsiDReg = "W"lsiImm2 "(X)" is lsiOp=0x2 & lsiImm2 & lsiDReg { lsiDReg = sext(*[ram]:2 lsiImm2); }
-:^"LdM32bitToPreg" lsiPReg = lsiImm4          is lsiOp=0x3 & lsiImm4 & lsiPReg { lsiPReg = *[ram]:4 lsiImm4; }
+: "LdM32bitToDreg" lsiDReg = lsiImm4          is lsiOp=0x0 & lsiImm4 & lsiDReg { lsiDReg = *[ram]:4 lsiImm4; }
+: "LdM16bitToDreg" lsiDReg = "W"lsiImm2 "(Z)" is lsiOp=0x1 & lsiImm2 & lsiDReg { lsiDReg = zext(*[ram]:2 lsiImm2); }
+: "LdM16bitToDreg" lsiDReg = "W"lsiImm2 "(X)" is lsiOp=0x2 & lsiImm2 & lsiDReg { lsiDReg = sext(*[ram]:2 lsiImm2); }
+: "LdM32bitToPreg" lsiPReg = lsiImm4          is lsiOp=0x3 & lsiImm4 & lsiPReg { lsiPReg = *[ram]:4 lsiImm4; }
 }
 
 with : lsiW=0x1 {
-:^"StDregToM32bit"  lsiImm4 = lsiDReg    is lsiOp=0x0 & lsiImm4 & lsiDReg { *[ram]:4 lsiImm4 = lsiDReg; }
-:^"StDregLToM16bit" "W"lsiImm2 = lsiDReg is lsiOp=0x1 & lsiImm2 & lsiDReg { *[ram]:2 lsiImm2 = lsiDReg:2; }
-:^"StPregToM32bit"  lsiImm4 = lsiPReg    is lsiOp=0x3 & lsiImm4 & lsiPReg { *[ram]:4 lsiImm4 = lsiPReg; }
+: "StDregToM32bit"  lsiImm4 = lsiDReg    is lsiOp=0x0 & lsiImm4 & lsiDReg { *[ram]:4 lsiImm4 = lsiDReg; }
+: "StDregLToM16bit" "W"lsiImm2 = lsiDReg is lsiOp=0x1 & lsiImm2 & lsiDReg { *[ram]:2 lsiImm2 = lsiDReg:2; }
+: "StPregToM32bit"  lsiImm4 = lsiPReg    is lsiOp=0x3 & lsiImm4 & lsiPReg { *[ram]:4 lsiImm4 = lsiPReg; }
 }
 }
 

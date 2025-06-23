@@ -21,11 +21,11 @@ attach variables dmkI [I0 I1 I2 I3];
 ### Instructions ###
 
 with DAGModIk: dmkSig=0x9f6 {
-:^"DagAddImm" dmkI += "0x2" is dmkOpc=0x0 & dmkI { dmkI = dmkI + 2; }
-:^"DagAddImm" dmkI -= "0x2" is dmkOpc=0x1 & dmkI { dmkI = dmkI - 2; }
-:^"DagAddImm" dmkI += "0x4" is dmkOpc=0x2 & dmkI { dmkI = dmkI + 4; }
-:^"DagAddImm" dmkI -= "0x4" is dmkOpc=0x3 & dmkI { dmkI = dmkI - 4; }
+: dmkI += "0x2" is dmkOpc=0x0 & dmkI { dmkI = dmkI + 2; }
+: dmkI -= "0x2" is dmkOpc=0x1 & dmkI { dmkI = dmkI - 2; }
+: dmkI += "0x4" is dmkOpc=0x2 & dmkI { dmkI = dmkI + 4; }
+: dmkI -= "0x4" is dmkOpc=0x3 & dmkI { dmkI = dmkI - 4; }
 }
 
 
-:^DAGModIk is DAGModIk { build DAGModIk; }
+:"DagAddImm" DAGModIk is DAGModIk { build DAGModIk; }
