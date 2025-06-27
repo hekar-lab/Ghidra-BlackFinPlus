@@ -9,7 +9,7 @@
 define token c2dInstr16 (16)
 	c2dSig           = ( 5,15) 
 	c2dOpc           = ( 3, 4) 
-	c2dReg          = ( 0, 2) 
+	c2dReg           = ( 0, 2) 
 ;
 
 

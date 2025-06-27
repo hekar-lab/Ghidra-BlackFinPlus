@@ -35,7 +35,7 @@ with LdSt: ldstSig=0x9 {
 with : ldstW=0x0 {
 with : ldstSz=0x0 {
 : "LdM32bitToDreg" ldstDReg = ldstOp is ldstZ=0x0 & ldstOp & ldstDReg { ldstDReg = *[ram]:4 ldstOp; }
-: "LdM32bitToPreg" ldstDReg = ldstOp is ldstZ=0x1 & ldstOp & ldstDReg { ldstDReg = *[ram]:4 ldstOp; }
+: "LdM32bitToPreg" ldstPReg = ldstOp is ldstZ=0x1 & ldstOp & ldstPReg { ldstPReg = *[ram]:4 ldstOp; }
 }
 
 with : ldstSz=0x1 {

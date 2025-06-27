@@ -1,3 +1,4 @@
+# Push/Pop macros
 macro push(reg) {
     SP = SP - 4;
     *[ram]:4 SP = reg;
@@ -16,4 +17,179 @@ macro pushb(reg) {
 macro popb(reg) {
     reg = *[ram]:1 SP;
     SP = SP + 4;
+}
+
+# Arithmetic macros
+## Saturated binary operations 
+### Unsigned
+macro add_sat(dst, src0, src1, size) {
+    if (carry(src0, src1)) goto <saturated>;
+    dst = src0 + src1;
+    goto <add_sat_end>;
+<saturated>
+    dst = (1 << size * 8) - 1;
+<add_sat_end>
+}
+
+macro sub_sat(dst, src0, src1, size) {
+    if (src0 < src1) goto <saturated>;
+    dst = src0 - src1;
+    goto <sub_sat_end>;
+<saturated>
+    dst = 0;
+<sub_sat_end>
+}
+
+macro trunc2_sat(dst, src) {
+    if (zext(src:2) != src) goto <saturated>;
+    dst = src:2;
+    goto <trunc_sat_end>;
+<saturated>
+    dst = 0xffff;
+<trunc_sat_end>
+}
+
+macro trunc4_sat(dst, src) {
+    if (zext(src:4) == src) goto <saturated>;
+    dst = src:4;
+    goto <trunc_sat_end>;
+<saturated>
+    dst = 0xffffffff;
+<trunc_sat_end>
+}
+
+### Signed
+macro sadd_sat(dst, src0, src1, size) {
+    if (scarry(src0, src1)) goto <saturated>;
+    dst = src0 + src1;
+    goto <sadd_sat_end>;
+<saturated>
+    if (src1 s< 0) goto <negative>;
+    dst = (1 << (size * 8 - 1)) - 1;
+    goto <sadd_sat_end>;
+<negative>
+    dst = 1 << (size * 8 - 1);
+<sadd_sat_end>
+}
+
+macro ssub_sat(dst, src0, src1, size) {
+    if (sborrow(src0, src1)) goto <saturated>;
+    dst = src0 - src1;
+    goto <ssub_sat_end>;
+<saturated>
+    if (src1 s> 0) goto <negative>;
+    dst = (1 << (size * 8 - 1)) - 1;
+    goto <ssub_sat_end>;
+<negative>
+    dst = 1 << (size * 8 - 1);
+<ssub_sat_end>
+}
+
+macro strunc2_sat(dst, src) {
+    if (sext(src:2) != src) goto <saturated>;
+    dst = src:2;
+    goto <strunc_sat_end>;
+<saturated>
+    if (src s< 0) goto <negative>;
+    dst = 0x7fff;
+    goto <strunc_sat_end>;
+<negative>
+    dst = 0x8000;
+<strunc_sat_end>
+}
+
+macro strunc4_sat(dst, src) {
+    if (sext(src:4) != src) goto <saturated>;
+    dst = src:4;
+    goto <strunc_sat_end>;
+<saturated>
+    if (src s< 0) goto <negative>;
+    dst = 0x7fffffff;
+    goto <strunc_sat_end>;
+<negative>
+    dst = 0x80000000;
+<strunc_sat_end>
+}
+
+## Saturated unary operations
+
+macro abs_sat(dst, src, size) {
+    if (src s< 0) goto <negative>;
+    dst = src;
+    goto <abs_end>;
+<negative> 
+    if (src == 1 << (size * 8 - 1)) goto <saturated>;
+    dst = -src;
+    goto <abs_end>;
+<saturated>
+    dst = (1 << (size * 8 - 1)) - 1;
+<abs_end>
+}
+
+macro neg_sat(dst, src, size) {
+    if (src == 1 << (size * 8 - 1)) goto <saturated>;
+    dst = -src;
+    goto <neg_end>;
+<saturated>
+    dst = (1 << (size * 8 - 1)) - 1;
+<neg_end>
+}
+
+
+## Rounding
+macro rounding(dst, src, rem_size) {
+    local rem = src & ((1 << rem_size * 8) - 1);
+    dst = src ^ rem;
+    if (scarry(dst, 1 << rem_size * 8)) goto <round_end>;
+    if (RND_MOD) goto <biased>;
+    if (
+        (rem > 1 << (rem_size * 8 - 1)) 
+        || (
+            (rem == 1 << (rem_size * 8 - 1)) 
+            && ((dst & 1 << rem_size * 8) != 0)
+        )
+    ) goto <round_up>;
+    goto <round_end>;
+<biased>
+    if (rem >= 1 << (rem_size * 8 - 1)) goto <round_up>;
+    goto <round_end>;
+<round_up>
+    dst = dst + 1 << rem_size * 8;
+<round_end>
+}
+
+macro round_biased(dst, src, rem_size) {
+    local rem = src & ((1 << rem_size * 8) - 1);
+    dst = src ^ rem;
+    if (scarry(dst, 1 << rem_size * 8)) goto <round_end>;
+    if (rem >= 1 << (rem_size * 8 - 1)) goto <round_up>;
+    goto <round_end>;
+<round_up>
+    dst = dst + 1 << rem_size * 8;
+<round_end>
+}
+
+macro round_trunc(dst, src, trunc_size) {
+    dst = src & ~((1 << 8 * trunc_size) - 1);
+}
+
+
+## Min/Max
+
+macro min(dst, src0, src1) {
+    if (src1 < src0) goto <src1_min>;
+    dst = src0;
+    goto <min_end>;
+<src1_min>
+    dst = src1;
+<min_end>
+}
+
+macro max(dst, src0, src1) {
+    if (src1 > src0) goto <src1_max>;
+    dst = src0;
+    goto <max_end>;
+<src1_max>
+    dst = src1;
+<max_end>
 }

@@ -28,7 +28,7 @@
 ## 32-bits instructions ##
 
 @include "instr32/24-NOP32.sinc"
-# @include "instr32/25-Dsp32Mac.sinc"
+@include "instr32/25-Dsp32Mac.sinc"
 # @include "instr32/26-Dsp32Mult.sinc"
 # @include "instr32/27-Dsp32Alu.sinc"
 # @include "instr32/28-Dsp32Shf.sinc"

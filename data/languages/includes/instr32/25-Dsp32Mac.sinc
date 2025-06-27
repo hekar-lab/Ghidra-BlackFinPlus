@@ -1,0 +1,159 @@
+## Multiply Accumulate (Dsp32Mac)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 0 | 0 |.....mmod......|mm.|.p.|w1.|..op1..|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |h01|h11|w0.|..op0..|h00|h10|....dst....|...src0....|...src1....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dmcInstr16 (16)
+	dmcSig           = (12,15) 
+	dmcM             = (11,11) 
+	dmcSigDsp        = ( 9,10) 
+	dmcMmod          = ( 5, 8) 
+	dmcMm            = ( 4, 4) 
+	dmcP             = ( 3, 3) 
+	dmcW1            = ( 2, 2) 
+	dmcOp1           = ( 0, 1) 
+;
+
+define token dmcInstr32 (16)
+	dmcH01           = (15,15) 
+	dmcH11           = (14,14) 
+	dmcW0            = (13,13) 
+	dmcOp0           = (11,12) 
+	dmcH00           = (10,10) 
+	dmcH10           = ( 9, 9) 
+	dmcDst           = ( 6, 8) 
+	dmcDstL          = ( 6, 8) 
+	dmcDstH          = ( 6, 8) 
+	dmcDstE          = ( 6, 8) 
+	dmcDstO          = ( 6, 8) 
+	dmcDstPairD      = ( 6, 8) 
+	dmcSrc0          = ( 3, 5) 
+	dmcSrc0L         = ( 3, 5) 
+	dmcSrc0H         = ( 3, 5) 
+	dmcSrc1          = ( 0, 2) 
+	dmcSrc1L         = ( 0, 2) 
+	dmcSrc1H         = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables [dmcDst dmcSrc0 dmcSrc1] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [dmcDstL dmcSrc0L dmcSrc1L] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables [dmcDstH dmcSrc0H dmcSrc1H] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmcDstE [R0 _ R2 _ R4 _ R6 _];
+attach variables dmcDstO [R1 _ R3 _ R5 _ R7 _];
+
+attach names dmcDstPairD ["R1:0" _ "R3:2" _ "R5:4" _ "R7:6" _];
+
+
+### Instructions ###
+
+dmcSrc0Val: is dmcCtxSrc0=0x0 & dmcSrc0L { local value:5 = sext(dmcSrc0L); export value; }
+dmcSrc0Val: is dmcCtxSrc0=0x1 & dmcSrc0H { local value:5 = sext(dmcSrc0H); export value; }
+dmcSrc1Val: is dmcCtxSrc1=0x0 & dmcSrc1L { local value:5 = sext(dmcSrc1L); export value; }
+dmcSrc1Val: is dmcCtxSrc1=0x1 & dmcSrc1H { local value:5 = sext(dmcSrc1H); export value; }
+
+dmcMult: is (dmcMmod=0xd | dmcMmod=0xe) ; dmcSrc0Val & dmcSrc1Val {
+	local res = (dmcSrc0Val * dmcSrc1Val) << 1; 
+	export res;
+}
+dmcMult: is dmcMmod=0xf ; dmcSrc0Val & dmcSrc1Val { 
+	local res = dmcSrc0Val * dmcSrc1Val; 
+	export res; 
+}
+
+dmcRexIm: is dmcMult [dmcCtxSrc0 = 0; dmcCtxSrc1 = 1;] { export dmcMult; } 
+dmcImxRe: is dmcMult [dmcCtxSrc0 = 1; dmcCtxSrc1 = 0;] { export dmcMult; } 
+dmcRexRe: is dmcMult [dmcCtxSrc0 = 0; dmcCtxSrc1 = 0;] { export dmcMult; } 
+dmcImxIm: is dmcMult [dmcCtxSrc0 = 1; dmcCtxSrc1 = 1;] { export dmcMult; } 
+
+dmcCmultIm: is dmcOp1=0x0 ... & dmcRexIm & dmcImxRe { local res = dmcRexIm + dmcImxRe; export res; }
+dmcCmultIm: is dmcOp1=0x1 ... & dmcRexIm & dmcImxRe { local res = dmcImxRe - dmcRexIm; export res; }
+dmcCmultIm: is dmcOp1=0x2 ... & dmcRexIm & dmcImxRe { local res = -(dmcRexIm + dmcImxRe); export res; }
+
+dmcCmultRe: is dmcOp1=0x0 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe - dmcImxIm; export res; }
+dmcCmultRe: is dmcOp1=0x1 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe + dmcImxIm; export res; }
+dmcCmultRe: is dmcOp1=0x2 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe - dmcImxIm; export res; }
+
+dmcOpA0: is dmcCmultRe & ... dmcOp0=0x0 { A0 = dmcCmultRe; export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmcOp0=0x1 { sadd_sat(A0, A0, dmcCmultRe, 5); export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmcOp0=0x2 { ssub_sat(A0, A0, dmcCmultRe, 5); export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmcOp0=0x3 { export dmcCmultRe; }
+
+dmcOpA1: is dmcCmultIm & ... dmcOp0=0x0 { A1 = dmcCmultIm; export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmcOp0=0x1 { sadd_sat(A1, A1, dmcCmultIm, 5); export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmcOp0=0x2 { ssub_sat(A1, A1, dmcCmultIm, 5); export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmcOp0=0x3 { export dmcCmultIm; }
+
+dmcMvRe: is (dmcP=0x0 ; dmcW0=0x0) & dmcOpA0 { build dmcOpA0; }
+dmcMvRe: is (dmcMmod=0xd & dmcP=0x0 ; dmcW0=0x1 & dmcDstL) & dmcOpA0 {
+	local rounded:5;
+	rounding(rounded, dmcOpA0, 2);
+	local truncated:3 = rounded:3;
+	strunc2_sat(dmcDstL, truncated);
+}
+dmcMvRe: is (dmcMmod=0xe & dmcP=0x0 ; dmcW0=0x1 & dmcDstL) & dmcOpA0 {
+	local truncated:3 = dmcOpA0:3;
+	strunc2_sat(dmcDstL, truncated);
+}
+dmcMvRe: is (dmcMmod=0xf & dmcP=0x0 ; dmcW0=0x1 & dmcDstL) & dmcOpA0 {
+	strunc2_sat(dmcDstL, dmcOpA0);
+}
+dmcMvRe: is (dmcP=0x1 ; dmcW0=0x1 & dmcDstO) & dmcOpA0 { strunc4_sat(dmcDstO, dmcOpA0); }
+
+dmcMvIm: is (dmcP=0x0 ; dmcW0=0x0) & dmcOpA1 { build dmcOpA1; }
+dmcMvIm: is (dmcMmod=0xd & dmcP=0x0 ; dmcW0=0x1 & dmcDstH) & dmcOpA1 {
+	local rounded:5;
+	rounding(rounded, dmcOpA1, 2);
+	local truncated:3 = rounded:3;
+	strunc2_sat(dmcDstH, truncated);
+}
+dmcMvIm: is (dmcMmod=0xe & dmcP=0x0 ; dmcW0=0x1 & dmcDstH) & dmcOpA1 {
+	local truncated:3 = dmcOpA1:3;
+	strunc2_sat(dmcDstH, truncated);
+}
+dmcMvIm: is (dmcMmod=0xf & dmcP=0x0 ; dmcW0=0x1 & dmcDstH) & dmcOpA1 {
+	strunc2_sat(dmcDstH, dmcOpA1);
+}
+dmcMvIm: is (dmcP=0x1 ; dmcW0=0x1 & dmcDstE) & dmcOpA1 { strunc4_sat(dmcDstE, dmcOpA1); }
+
+
+dmcMode: ""     is dmcMmod=0xd {}
+dmcMode: "(T)"  is dmcMmod=0xe {}
+dmcMode: "(IS)" is dmcMmod=0xf {}
+
+dmcCOp: "CMUL"(dmcSrc0, dmcSrc1)   is dmcOp1=0x0 ; dmcSrc0 & dmcSrc1 {}
+dmcCOp: "CMUL"(dmcSrc0, dmcSrc1*)  is dmcOp1=0x1 ; dmcSrc0 & dmcSrc1 {}
+dmcCOp: "CMUL"(dmcSrc0*, dmcSrc1*) is dmcOp1=0x2 ; dmcSrc0 & dmcSrc1 {}
+
+dmcAOp: "A1:0" = dmcCOp  is dmcCOp & ... dmcOp0=0x0 {}
+dmcAOp: "A1:0" += dmcCOp is dmcCOp & ... dmcOp0=0x1 {}
+dmcAOp: "A1:0" -= dmcCOp is dmcCOp & ... dmcOp0=0x2 {}
+
+dmcDisplay: "Mac32Cmplx" dmcAOp dmcMode is (dmcMode & dmcP=0x0 ; dmcW0=0x0) & dmcAOp {}
+with : dmcP=0x0 ; dmcW0=0x1 {
+dmcDisplay: "Mac32CmplxWithMvN" dmcDst = (dmcAOp) dmcMode is (dmcMode ; dmcDst) & dmcAOp {}
+dmcDisplay: "Mac32CmplxWithMvN" dmcDst = dmcCOp dmcMode   is (dmcMode ; dmcDst & dmcOp0=0x3) & dmcCOp {}
+}
+with : dmcP=0x1 ; dmcW0=0x1 {
+dmcDisplay: "Mac32CmplxWithMv" dmcDstPairD = (dmcAOp) dmcMode is (dmcMode ; dmcDstPairD) & dmcAOp {}
+dmcDisplay: "Mac32CmplxWithMv" dmcDstPairD = dmcCOp dmcMode   is (dmcMode ; dmcDstPairD & dmcOp0=0x3) & dmcCOp {}
+}
+
+with Dsp32Mac: (dmcSig=0xc & dmcSigDsp=0x0) ... {
+# :^TRADMAC is (dmMmod1=0x0 ; any32) & TRADMAC unimpl
+# :^TRADMAC is (dmMmod2=0x2 ; any32) & TRADMAC unimpl
+# :^TRADMAC is (dmMmod=0xc ; any32) & TRADMAC unimpl
+
+:^dmcDisplay is dmcDisplay & dmcMvRe & dmcMvIm { build dmcDisplay; build dmcMvRe; build dmcMvIm; }
+}
+
+
+:^Dsp32Mac is dmcM=0x0 ... & Dsp32Mac { build Dsp32Mac; }
+:^Dsp32Mac is dmcM=0x1 ... & Dsp32Mac { build Dsp32Mac; delayslot(4); }

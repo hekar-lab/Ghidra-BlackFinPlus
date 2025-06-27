@@ -10,7 +10,7 @@ define token cctInstr16 (16)
 	cctSig           = ( 6,15) 
 	cctA             = ( 5, 5) 
 	cctOpc           = ( 3, 4) 
-	cctReg          = ( 0, 2) 
+	cctReg           = ( 0, 2) 
 ;
 
 

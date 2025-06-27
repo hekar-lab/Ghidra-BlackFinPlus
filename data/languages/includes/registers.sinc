@@ -2,6 +2,7 @@
 ########>--------             Registers              --------<########
 ######################################################################
 
+## Blackfin+ registers
 # Data registers
 define register offset=0x0000 size=8
     [R10                 R32                R54                  R76         ];
@@ -34,6 +35,7 @@ define register offset=0x0040 size=2 [
 
 # Accumulators (40 bit)
 # A0.X and A1.X only contain 8 bit
+define register offset=0x0080 size=10 [ A10 ];
 define register offset=0x0080 size=5 [ A0            A1 ];
 define register offset=0x0080 size=4 [ A0.W               ];
 define register offset=0x0085 size=4 [               A1.W ];
@@ -81,12 +83,23 @@ define register offset=0x00a0 size=4 [
     CYCLES CYCLES2
 ];
 
-# Context registers
-define register offset=0x0100 size=4 [ contextreg ];
 
-define context contextreg
+## Temporary Blackfin+ registers
+
+
+## Computation registers
+
+
+
+## Context registers
+define register offset=0x0300 size=4 [ main_ctxreg ];
+
+define context main_ctxreg
     phase       = (0,0)
     loop0active = (1,1) noflow
     loop1active = (2,2) noflow
     zloop       = (3,4) noflow
+
+    dmcCtxSrc0  = (5,5)
+    dmcCtxSrc1  = (6,6)
 ;

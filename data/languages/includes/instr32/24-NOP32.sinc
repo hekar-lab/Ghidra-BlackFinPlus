@@ -1,0 +1,31 @@
+## 32-bit Slot Nop (NOP32)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token mnopInstr16 (16)
+	mnopSigDsp       = (12,15) 
+	mnopM            = (11,11) 
+	mnopSigH         = ( 0,10) 
+;
+
+define token mnopInstr32 (16)
+	mnopSigL         = ( 0,15) 
+;
+
+
+### Instructions ###
+
+NOP32: "NOP32" 
+	is mnopSigDsp=0xc & mnopSigH=0x003 
+	 ; mnopSigL=0x1800 {}
+
+
+
+:^NOP32 is mnopM=0x0 ... & NOP32 { build NOP32; }
+:^NOP32 is mnopM=0x1 ... & NOP32 { build NOP32; delayslot(4); }
