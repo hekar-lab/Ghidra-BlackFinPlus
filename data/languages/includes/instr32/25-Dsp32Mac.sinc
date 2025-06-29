@@ -9,61 +9,72 @@
 ### Tokens ###
 
 define token dmcInstr16 (16)
-	dmcSig           = (12,15) 
-	dmcM             = (11,11) 
-	dmcSigDsp        = ( 9,10) 
-	dmcMmod          = ( 5, 8) 
-	dmcMm            = ( 4, 4) 
-	dmcP             = ( 3, 3) 
-	dmcW1            = ( 2, 2) 
-	dmcOp1           = ( 0, 1) 
+	dmAny16          = ( 0,15)
+	dmSig            = (12,15) 
+	dmM              = (11,11) 
+	dmSigDsp         = ( 9,10) 
+	dmMmod           = ( 5, 8) 
+	dmMmodD          = ( 5, 8)
+	dmMmodU          = ( 8, 8) 
+	dmMmodI          = ( 7, 7) 
+	dmMmodOp         = ( 5, 6) 
+	dmMm             = ( 4, 4) 
+	dmP              = ( 3, 3) 
+	dmW1             = ( 2, 2) 
+	dmOp1            = ( 0, 1) 
 ;
 
 define token dmcInstr32 (16)
-	dmcH01           = (15,15) 
-	dmcH11           = (14,14) 
-	dmcW0            = (13,13) 
-	dmcOp0           = (11,12) 
-	dmcH00           = (10,10) 
-	dmcH10           = ( 9, 9) 
-	dmcDst           = ( 6, 8) 
-	dmcDstL          = ( 6, 8) 
-	dmcDstH          = ( 6, 8) 
-	dmcDstE          = ( 6, 8) 
-	dmcDstO          = ( 6, 8) 
-	dmcDstPairD      = ( 6, 8) 
-	dmcSrc0          = ( 3, 5) 
-	dmcSrc0L         = ( 3, 5) 
-	dmcSrc0H         = ( 3, 5) 
-	dmcSrc1          = ( 0, 2) 
-	dmcSrc1L         = ( 0, 2) 
-	dmcSrc1H         = ( 0, 2) 
+	dmAny32          = ( 0,15)
+	dmH01            = (15,15) 
+	dmH11            = (14,14) 
+	dmW0             = (13,13) 
+	dmOp0            = (11,12) 
+	dmH00            = (10,10) 
+	dmH10            = ( 9, 9) 
+	dmDst            = ( 6, 8) 
+	dmDstL           = ( 6, 8) 
+	dmDstH           = ( 6, 8) 
+	dmDstE           = ( 6, 8) 
+	dmDstO           = ( 6, 8) 
+	dmDstPairD       = ( 6, 8) 
+	dmSrc0           = ( 3, 5) 
+	dmSrc0L          = ( 3, 5) 
+	dmSrc0H          = ( 3, 5) 
+	dmSrc1           = ( 0, 2) 
+	dmSrc1L          = ( 0, 2) 
+	dmSrc1H          = ( 0, 2) 
 ;
 
 
 ### Variables ###
 
-attach variables [dmcDst dmcSrc0 dmcSrc1] [R0 R1 R2 R3 R4 R5 R6 R7];
-attach variables [dmcDstL dmcSrc0L dmcSrc1L] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
-attach variables [dmcDstH dmcSrc0H dmcSrc1H] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
-attach variables dmcDstE [R0 _ R2 _ R4 _ R6 _];
-attach variables dmcDstO [R1 _ R3 _ R5 _ R7 _];
+attach variables [dmDst dmSrc0 dmSrc1] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [dmDstL dmSrc0L dmSrc1L] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables [dmDstH dmSrc0H dmSrc1H] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dmDstE [R0 _ R2 _ R4 _ R6 _];
+attach variables dmDstO [R1 _ R3 _ R5 _ R7 _];
 
-attach names dmcDstPairD ["R1:0" _ "R3:2" _ "R5:4" _ "R7:6" _];
-
+attach names dmDstPairD ["R1:0" _ "R3:2" _ "R5:4" _ "R7:6" _];
+attach names dmMmodD [
+	""   "S2RND" "T" "W32" "FU" _ "TFU" _
+	"IS" "ISS2"  _   "IH"  "IU" _ _     _
+];
 
 ### Instructions ###
 
-dmcSrc0Val: is dmcCtxSrc0=0x0 & dmcSrc0L { local value:5 = sext(dmcSrc0L); export value; }
-dmcSrc0Val: is dmcCtxSrc0=0x1 & dmcSrc0H { local value:5 = sext(dmcSrc0H); export value; }
-dmcSrc1Val: is dmcCtxSrc1=0x0 & dmcSrc1L { local value:5 = sext(dmcSrc1L); export value; }
-dmcSrc1Val: is dmcCtxSrc1=0x1 & dmcSrc1H { local value:5 = sext(dmcSrc1H); export value; }
+#################### CMPLXMAC ####################
+## Semantics ##
+dmcSrc0Val: is dmcCtxSrc0=0x0 & dmSrc0L { local value:5 = sext(dmSrc0L); export value; }
+dmcSrc0Val: is dmcCtxSrc0=0x1 & dmSrc0H { local value:5 = sext(dmSrc0H); export value; }
+dmcSrc1Val: is dmcCtxSrc1=0x0 & dmSrc1L { local value:5 = sext(dmSrc1L); export value; }
+dmcSrc1Val: is dmcCtxSrc1=0x1 & dmSrc1H { local value:5 = sext(dmSrc1H); export value; }
 
-dmcMult: is (dmcMmod=0xd | dmcMmod=0xe) ; dmcSrc0Val & dmcSrc1Val {
+dmcMult: is (dmMmod=0xd | dmMmod=0xe) ; dmcSrc0Val & dmcSrc1Val {
 	local res = (dmcSrc0Val * dmcSrc1Val) << 1; 
 	export res;
 }
-dmcMult: is dmcMmod=0xf ; dmcSrc0Val & dmcSrc1Val { 
+dmcMult: is dmMmod=0xf ; dmcSrc0Val & dmcSrc1Val { 
 	local res = dmcSrc0Val * dmcSrc1Val; 
 	export res; 
 }
@@ -73,87 +84,252 @@ dmcImxRe: is dmcMult [dmcCtxSrc0 = 1; dmcCtxSrc1 = 0;] { export dmcMult; }
 dmcRexRe: is dmcMult [dmcCtxSrc0 = 0; dmcCtxSrc1 = 0;] { export dmcMult; } 
 dmcImxIm: is dmcMult [dmcCtxSrc0 = 1; dmcCtxSrc1 = 1;] { export dmcMult; } 
 
-dmcCmultIm: is dmcOp1=0x0 ... & dmcRexIm & dmcImxRe { local res = dmcRexIm + dmcImxRe; export res; }
-dmcCmultIm: is dmcOp1=0x1 ... & dmcRexIm & dmcImxRe { local res = dmcImxRe - dmcRexIm; export res; }
-dmcCmultIm: is dmcOp1=0x2 ... & dmcRexIm & dmcImxRe { local res = -(dmcRexIm + dmcImxRe); export res; }
+dmcCmultIm: is dmOp1=0x0 ... & dmcRexIm & dmcImxRe { local res = dmcRexIm + dmcImxRe; export res; }
+dmcCmultIm: is dmOp1=0x1 ... & dmcRexIm & dmcImxRe { local res = dmcImxRe - dmcRexIm; export res; }
+dmcCmultIm: is dmOp1=0x2 ... & dmcRexIm & dmcImxRe { local res = -(dmcRexIm + dmcImxRe); export res; }
 
-dmcCmultRe: is dmcOp1=0x0 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe - dmcImxIm; export res; }
-dmcCmultRe: is dmcOp1=0x1 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe + dmcImxIm; export res; }
-dmcCmultRe: is dmcOp1=0x2 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe - dmcImxIm; export res; }
+dmcCmultRe: is dmOp1=0x0 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe - dmcImxIm; export res; }
+dmcCmultRe: is dmOp1=0x1 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe + dmcImxIm; export res; }
+dmcCmultRe: is dmOp1=0x2 ... & dmcRexRe & dmcImxIm { local res = dmcRexRe - dmcImxIm; export res; }
 
-dmcOpA0: is dmcCmultRe & ... dmcOp0=0x0 { A0 = dmcCmultRe; export dmcCmultRe; }
-dmcOpA0: is dmcCmultRe & ... dmcOp0=0x1 { sadd_sat(A0, A0, dmcCmultRe, 5); export dmcCmultRe; }
-dmcOpA0: is dmcCmultRe & ... dmcOp0=0x2 { ssub_sat(A0, A0, dmcCmultRe, 5); export dmcCmultRe; }
-dmcOpA0: is dmcCmultRe & ... dmcOp0=0x3 { export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmOp0=0x0 { A0 = dmcCmultRe; export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmOp0=0x1 { sadd_sat(A0, A0, dmcCmultRe, 5); export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmOp0=0x2 { ssub_sat(A0, A0, dmcCmultRe, 5); export dmcCmultRe; }
+dmcOpA0: is dmcCmultRe & ... dmOp0=0x3 { export dmcCmultRe; }
 
-dmcOpA1: is dmcCmultIm & ... dmcOp0=0x0 { A1 = dmcCmultIm; export dmcCmultIm; }
-dmcOpA1: is dmcCmultIm & ... dmcOp0=0x1 { sadd_sat(A1, A1, dmcCmultIm, 5); export dmcCmultIm; }
-dmcOpA1: is dmcCmultIm & ... dmcOp0=0x2 { ssub_sat(A1, A1, dmcCmultIm, 5); export dmcCmultIm; }
-dmcOpA1: is dmcCmultIm & ... dmcOp0=0x3 { export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmOp0=0x0 { A1 = dmcCmultIm; export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmOp0=0x1 { sadd_sat(A1, A1, dmcCmultIm, 5); export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmOp0=0x2 { ssub_sat(A1, A1, dmcCmultIm, 5); export dmcCmultIm; }
+dmcOpA1: is dmcCmultIm & ... dmOp0=0x3 { export dmcCmultIm; }
 
-dmcMvRe: is (dmcP=0x0 ; dmcW0=0x0) & dmcOpA0 { build dmcOpA0; }
-dmcMvRe: is (dmcMmod=0xd & dmcP=0x0 ; dmcW0=0x1 & dmcDstL) & dmcOpA0 {
+dmcMvRe: is (dmP=0x0 ; dmW0=0x0) & dmcOpA0 { build dmcOpA0; }
+dmcMvRe: is (dmMmod=0xd & dmP=0x0 ; dmW0=0x1 & dmDstL) & dmcOpA0 {
 	local rounded:5;
 	rounding(rounded, dmcOpA0, 2);
-	local truncated:3 = rounded:3;
-	strunc2_sat(dmcDstL, truncated);
+	local truncated:3 = rounded (2);
+	strunc2_sat(dmDstL, truncated);
 }
-dmcMvRe: is (dmcMmod=0xe & dmcP=0x0 ; dmcW0=0x1 & dmcDstL) & dmcOpA0 {
-	local truncated:3 = dmcOpA0:3;
-	strunc2_sat(dmcDstL, truncated);
+dmcMvRe: is (dmMmod=0xe & dmP=0x0 ; dmW0=0x1 & dmDstL) & dmcOpA0 {
+	local truncated:3 = dmcOpA0 (2);
+	strunc2_sat(dmDstL, truncated);
 }
-dmcMvRe: is (dmcMmod=0xf & dmcP=0x0 ; dmcW0=0x1 & dmcDstL) & dmcOpA0 {
-	strunc2_sat(dmcDstL, dmcOpA0);
+dmcMvRe: is (dmMmod=0xf & dmP=0x0 ; dmW0=0x1 & dmDstL) & dmcOpA0 {
+	strunc2_sat(dmDstL, dmcOpA0);
 }
-dmcMvRe: is (dmcP=0x1 ; dmcW0=0x1 & dmcDstO) & dmcOpA0 { strunc4_sat(dmcDstO, dmcOpA0); }
+dmcMvRe: is (dmP=0x1 ; dmW0=0x1 & dmDstO) & dmcOpA0 { strunc4_sat(dmDstO, dmcOpA0); }
 
-dmcMvIm: is (dmcP=0x0 ; dmcW0=0x0) & dmcOpA1 { build dmcOpA1; }
-dmcMvIm: is (dmcMmod=0xd & dmcP=0x0 ; dmcW0=0x1 & dmcDstH) & dmcOpA1 {
+dmcMvIm: is (dmP=0x0 ; dmW0=0x0) & dmcOpA1 { build dmcOpA1; }
+dmcMvIm: is (dmMmod=0xd & dmP=0x0 ; dmW0=0x1 & dmDstH) & dmcOpA1 {
 	local rounded:5;
 	rounding(rounded, dmcOpA1, 2);
-	local truncated:3 = rounded:3;
-	strunc2_sat(dmcDstH, truncated);
+	local truncated:3 = rounded (2);
+	strunc2_sat(dmDstH, truncated);
 }
-dmcMvIm: is (dmcMmod=0xe & dmcP=0x0 ; dmcW0=0x1 & dmcDstH) & dmcOpA1 {
-	local truncated:3 = dmcOpA1:3;
-	strunc2_sat(dmcDstH, truncated);
+dmcMvIm: is (dmMmod=0xe & dmP=0x0 ; dmW0=0x1 & dmDstH) & dmcOpA1 {
+	local truncated:3 = dmcOpA1 (2);
+	strunc2_sat(dmDstH, truncated);
 }
-dmcMvIm: is (dmcMmod=0xf & dmcP=0x0 ; dmcW0=0x1 & dmcDstH) & dmcOpA1 {
-	strunc2_sat(dmcDstH, dmcOpA1);
+dmcMvIm: is (dmMmod=0xf & dmP=0x0 ; dmW0=0x1 & dmDstH) & dmcOpA1 {
+	strunc2_sat(dmDstH, dmcOpA1);
 }
-dmcMvIm: is (dmcP=0x1 ; dmcW0=0x1 & dmcDstE) & dmcOpA1 { strunc4_sat(dmcDstE, dmcOpA1); }
+dmcMvIm: is (dmP=0x1 ; dmW0=0x1 & dmDstE) & dmcOpA1 { strunc4_sat(dmDstE, dmcOpA1); }
 
+## Display ##
+dmcMode: ""     is dmMmod=0xd {}
+dmcMode: "(T)"  is dmMmod=0xe {}
+dmcMode: "(IS)" is dmMmod=0xf {}
 
-dmcMode: ""     is dmcMmod=0xd {}
-dmcMode: "(T)"  is dmcMmod=0xe {}
-dmcMode: "(IS)" is dmcMmod=0xf {}
+dmcCOp: "CMUL"(dmSrc0, dmSrc1)   is dmOp1=0x0 ; dmSrc0 & dmSrc1 {}
+dmcCOp: "CMUL"(dmSrc0, dmSrc1*)  is dmOp1=0x1 ; dmSrc0 & dmSrc1 {}
+dmcCOp: "CMUL"(dmSrc0*, dmSrc1*) is dmOp1=0x2 ; dmSrc0 & dmSrc1 {}
 
-dmcCOp: "CMUL"(dmcSrc0, dmcSrc1)   is dmcOp1=0x0 ; dmcSrc0 & dmcSrc1 {}
-dmcCOp: "CMUL"(dmcSrc0, dmcSrc1*)  is dmcOp1=0x1 ; dmcSrc0 & dmcSrc1 {}
-dmcCOp: "CMUL"(dmcSrc0*, dmcSrc1*) is dmcOp1=0x2 ; dmcSrc0 & dmcSrc1 {}
+dmcAOp: "A1:0" = dmcCOp  is dmcCOp & ... dmOp0=0x0 {}
+dmcAOp: "A1:0" += dmcCOp is dmcCOp & ... dmOp0=0x1 {}
+dmcAOp: "A1:0" -= dmcCOp is dmcCOp & ... dmOp0=0x2 {}
 
-dmcAOp: "A1:0" = dmcCOp  is dmcCOp & ... dmcOp0=0x0 {}
-dmcAOp: "A1:0" += dmcCOp is dmcCOp & ... dmcOp0=0x1 {}
-dmcAOp: "A1:0" -= dmcCOp is dmcCOp & ... dmcOp0=0x2 {}
-
-dmcDisplay: "Mac32Cmplx" dmcAOp dmcMode is (dmcMode & dmcP=0x0 ; dmcW0=0x0) & dmcAOp {}
-with : dmcP=0x0 ; dmcW0=0x1 {
-dmcDisplay: "Mac32CmplxWithMvN" dmcDst = (dmcAOp) dmcMode is (dmcMode ; dmcDst) & dmcAOp {}
-dmcDisplay: "Mac32CmplxWithMvN" dmcDst = dmcCOp dmcMode   is (dmcMode ; dmcDst & dmcOp0=0x3) & dmcCOp {}
+dmcDisplay: "Mac32Cmplx" dmcAOp dmcMode is (dmcMode & dmP=0x0 ; dmW0=0x0) & dmcAOp {}
+with : dmP=0x0 ; dmW0=0x1 {
+dmcDisplay: "Mac32CmplxWithMvN" dmDst = (dmcAOp) dmcMode is (dmcMode ; dmDst) & dmcAOp {}
+dmcDisplay: "Mac32CmplxWithMvN" dmDst = dmcCOp dmcMode   is (dmcMode ; dmDst & dmOp0=0x3) & dmcCOp {}
 }
-with : dmcP=0x1 ; dmcW0=0x1 {
-dmcDisplay: "Mac32CmplxWithMv" dmcDstPairD = (dmcAOp) dmcMode is (dmcMode ; dmcDstPairD) & dmcAOp {}
-dmcDisplay: "Mac32CmplxWithMv" dmcDstPairD = dmcCOp dmcMode   is (dmcMode ; dmcDstPairD & dmcOp0=0x3) & dmcCOp {}
+with : dmP=0x1 ; dmW0=0x1 {
+dmcDisplay: "Mac32CmplxWithMv" dmDstPairD = (dmcAOp) dmcMode is (dmcMode ; dmDstPairD) & dmcAOp {}
+dmcDisplay: "Mac32CmplxWithMv" dmDstPairD = dmcCOp dmcMode   is (dmcMode ; dmDstPairD & dmOp0=0x3) & dmcCOp {}
+}
+#################### CMPLXMAC ####################
+
+#################### TRADMAC ####################
+## Semantics ##
+dmtSrc0: dmSrc0L is dmtCtxMac=0x0 & dmH00=0x0 & dmSrc0L { export dmSrc0L; }
+dmtSrc0: dmSrc0H is dmtCtxMac=0x0 & dmH00=0x1 & dmSrc0H { export dmSrc0H; }
+dmtSrc0: dmSrc0L is dmtCtxMac=0x1 & dmH01=0x0 & dmSrc0L { export dmSrc0L; }
+dmtSrc0: dmSrc0H is dmtCtxMac=0x1 & dmH01=0x1 & dmSrc0H { export dmSrc0H; }
+
+dmtSrc1: dmSrc1L is dmtCtxMac=0x0 & dmH10=0x0 & dmSrc1L { export dmSrc1L; }
+dmtSrc1: dmSrc1H is dmtCtxMac=0x0 & dmH10=0x1 & dmSrc1H { export dmSrc1H; }
+dmtSrc1: dmSrc1L is dmtCtxMac=0x1 & dmH11=0x0 & dmSrc1L { export dmSrc1L; }
+dmtSrc1: dmSrc1H is dmtCtxMac=0x1 & dmH11=0x1 & dmSrc1H { export dmSrc1H; }
+
+dmtSrc0Ext: dmtSrc0 is dmtCtxMml=0x0 & dmtCtxMU=0x0 & dmtSrc0 { local ext:5 = sext(dmtSrc0); export ext; }
+dmtSrc0Ext: dmtSrc0 is dmtCtxMml=0x0 & dmtCtxMU=0x1 & dmtSrc0 { local ext:5 = zext(dmtSrc0); export ext; }
+dmtSrc0Ext: dmtSrc0 is dmtCtxMml=0x1 & dmtSrc0 { local ext:5 = zext(dmtSrc0); export ext; }
+
+dmtSrc1Ext: dmtSrc1 is dmtCtxMml=0x0 & dmtCtxMU=0x0 & dmtSrc1 { local ext:5 = sext(dmtSrc1); export ext; }
+dmtSrc1Ext: dmtSrc1 is dmtCtxMml=0x0 & dmtCtxMU=0x1 & dmtSrc1 { local ext:5 = zext(dmtSrc1); export ext; }
+dmtSrc1Ext: dmtSrc1 is dmtCtxMml=0x1 ; dmtSrc1 { local ext:5 = sext(dmtSrc1); export ext; }
+
+dmtMult: dmtSrc0Ext * dmtSrc1Ext is dmtCtxMU=0x0 & dmtCtxMI=0x0 & dmtCtxMml=0x0 & dmtSrc0Ext & dmtSrc1Ext { 
+	local res = (dmtSrc0Ext * dmtSrc1Ext) << 1; 
+	export res; 
+}
+dmtMult: dmtSrc0Ext * dmtSrc1Ext is (dmtCtxMU=0x1 | dmtCtxMI=0x1 | dmtCtxMml=0x1) & dmtSrc0Ext & dmtSrc1Ext { 
+	local res = dmtSrc0Ext * dmtSrc1Ext; 
+	export res; 
 }
 
-with Dsp32Mac: (dmcSig=0xc & dmcSigDsp=0x0) ... {
-# :^TRADMAC is (dmMmod1=0x0 ; any32) & TRADMAC unimpl
-# :^TRADMAC is (dmMmod2=0x2 ; any32) & TRADMAC unimpl
-# :^TRADMAC is (dmMmod=0xc ; any32) & TRADMAC unimpl
+dmtAccReg: "A0" is dmtCtxMac=0x0 { export A0; }
+dmtAccReg: "A1" is dmtCtxMac=0x1 { export A1; }
 
+dmtAop: dmtAccReg = dmtMult is dmtCtxAop=0x0 & dmtAccReg & dmtMult { 
+	dmtAccReg = dmtMult; 
+	export dmtAccReg;
+}
+dmtAop: dmtAccReg += dmtMult is dmtCtxAop=0x1 & dmtCtxMU=0x0 & dmtAccReg & dmtMult { 
+	sadd_sat(dmtAccReg, dmtAccReg, dmtMult, 5);
+	export dmtAccReg;
+}
+dmtAop: dmtAccReg += dmtMult is dmtCtxAop=0x1 & dmtCtxMU=0x1 & dmtAccReg & dmtMult { 
+	add_sat(dmtAccReg, dmtAccReg, dmtMult, 5);
+	export dmtAccReg;
+}
+dmtAop: dmtAccReg -= dmtMult is dmtCtxAop=0x2 & dmtCtxMU=0x0 & dmtAccReg & dmtMult { 
+	ssub_sat(dmtAccReg, dmtAccReg, dmtMult, 5);
+	export dmtAccReg;
+}
+dmtAop: dmtAccReg -= dmtMult is dmtCtxAop=0x2 & dmtCtxMU=0x1 & dmtAccReg & dmtMult { 
+	sub_sat(dmtAccReg, dmtAccReg, dmtMult, 5);
+	export dmtAccReg;
+}
+dmtAop: dmtAccReg is dmtCtxAop=0x3 & dmtAccReg { 
+	export dmtAccReg; 
+}
+
+dmtAop32: dmtAop is dmtCtxMOp!=0x3 & dmtAop { export dmtAop; }
+dmtAop32: dmtAop is dmtCtxMOp=0x3 & dmtAop {
+	local trunc:4;
+	strunc4_sat(trunc, dmtAop);
+	dmtAop = sext(trunc);
+	export dmtAop;
+}
+
+dmtAcc: dmtAop32 is dmtCtxMac=0x0 & dmAny16 ; (dmtAop32 & dmOp0) [dmtCtxAop=dmOp0;] { export dmtAop32; }
+dmtAcc: dmtAop32 is dmtCtxMac=0x1 & dmOp1 ; dmtAop32 [dmtCtxAop=dmOp1;] { export dmtAop32; }
+
+dmtExtr2x: dmtAcc is dmtCtxMOp!=0x1 & dmtAcc { export dmtAcc; }
+dmtExtr2x: dmtAcc is dmtCtxMOp=0x1 & dmtAcc { local double = dmtAcc * 2; export double; }
+
+dmtExtrRnd: dmtExtr2x is dmtCtxMI=0x0 & (dmtCtxMOp=0x2 & dmP=0x0) ... & dmtExtr2x { 
+	local rnd:5;
+	round_trunc(rnd, dmtExtr2x, 2);
+	export rnd; 
+}
+dmtExtrRnd: dmtExtr2x is dmtCtxMI=0x0 & (dmtCtxMOp!=0x2 & dmP=0x0) ... & dmtExtr2x { 
+	local rnd:5;
+	rounding(rnd, dmtExtr2x, 2);
+	export rnd; 
+}
+dmtExtrRnd: dmtExtr2x is (dmtCtxMI=0x1 | dmP=0x1) ... & dmtExtr2x { export dmtExtr2x; }
+
+dmtExtrReg2: dmDstL is dmtCtxMac=0x0 & dmP=0x0 ; dmW0=0x1 & dmDstL { export dmDstL; }
+dmtExtrReg2: dmDstH is dmtCtxMac=0x1 & dmP=0x0 & dmW1=0x1 ; dmDstH { export dmDstH; }
+dmtExtrReg4: dmDstE is dmtCtxMac=0x0 & dmP=0x1 ; dmW0=0x1 & dmDstE { export dmDstE; }
+dmtExtrReg4: dmDstO is dmtCtxMac=0x1 & dmP=0x1 & dmW1=0x1 ; dmDstO { export dmDstO; }
+
+dmtExtract: dmtExtrReg2 = (dmtExtrRnd) is dmtCtxMI=0x0 & dmtCtxMU=0x0 & dmtExtrReg2 & dmtExtrRnd {
+	local trunc:3 = dmtExtrRnd (2);
+	strunc2_sat(dmtExtrReg2, trunc);
+}
+dmtExtract: dmtExtrReg2 = (dmtExtrRnd) is dmtCtxMI=0x1 & dmtCtxMU=0x0 & dmtExtrReg2 & dmtExtrRnd {
+	strunc2_sat(dmtExtrReg2, dmtExtrRnd);
+}
+dmtExtract: dmtExtrReg2 = (dmtExtrRnd) is dmtCtxMI=0x0 & dmtCtxMU=0x1 & dmtExtrReg2 & dmtExtrRnd {
+	local trunc:3 = dmtExtrRnd (2);
+	trunc2_sat(dmtExtrReg2, trunc);
+}
+dmtExtract: dmtExtrReg2 = (dmtExtrRnd) is dmtCtxMI=0x1 & dmtCtxMU=0x1 & dmtExtrReg2 & dmtExtrRnd {
+	trunc2_sat(dmtExtrReg2, dmtExtrRnd);
+}
+dmtExtract: dmtExtrReg4 = (dmtExtrRnd) is dmtCtxMU=0x0 & dmtExtrReg4 & dmtExtrRnd {
+	strunc4_sat(dmtExtrReg4, dmtExtrRnd);
+}
+dmtExtract: dmtExtrReg4 = (dmtExtrRnd) is dmtCtxMU=0x1 & dmtExtrReg4 & dmtExtrRnd {
+	trunc4_sat(dmtExtrReg4, dmtExtrRnd);
+}
+
+dmtMmodD: ""        is dmMmod=0x0 {}
+dmtMmodD: (dmMmodD) is dmMmodD {}
+
+dmtMmlD: ""    is dmMm=0x0 {}
+dmtMmlD: "(M)" is dmMm=0x1 {}
+
+dmtMmlMmodD: ""             is dmMmod=0x0 & dmMm=0x0 {}
+dmtMmlMmodD: (dmMmodD)      is dmMmodD & dmMm=0x0 {}
+dmtMmlMmodD: ("M")          is dmMmod=0x0 & dmMm=0x1 {}
+dmtMmlMmodD: ("M", dmMmodD) is dmMmodD & dmMm=0x1 {}
+
+dmtMac0NA: dmtAcc dmtMmodD
+	is (dmtMmodD & dmMmodU & dmMmodI & dmMmodOp & dmW1=0x0 & dmOp1=0x3 ; dmW0=0x0 & dmOp0!=0x3) & dmtAcc 
+[
+	dmtCtxMml=0x0; dmtCtxMac=0x0; dmtCtxMU=dmMmodU; dmtCtxMI=dmMmodI; dmtCtxMOp=dmMmodOp;
+] { build dmtAcc; }
+dmtMac1NA: dmtAcc dmtMmlMmodD
+	is (dmtMmlMmodD & dmMmodU & dmMmodI & dmMmodOp & dmMm & dmW1=0x0 & dmOp1!=0x3 ; dmW0=0x0 & dmOp0=0x3) & dmtAcc 
+[
+	dmtCtxMml=dmMm; dmtCtxMac=0x1; dmtCtxMU=dmMmodU; dmtCtxMI=dmMmodI; dmtCtxMOp=dmMmodOp;
+] { build dmtAcc; }
+dmtMac0ParaNA: dmtAcc dmtMmodD is (dmtMmodD & dmMmodU & dmMmodI & dmMmodOp) ... & dmtAcc [
+	dmtCtxMml=0x0; dmtCtxMac=0x0; dmtCtxMU=dmMmodU; dmtCtxMI=dmMmodI; dmtCtxMOp=dmMmodOp;
+] { build dmtAcc; }
+dmtMac1ParaNA: dmtAcc dmtMmlD is (dmtMmlD & dmMm) ... & dmtAcc  [
+	dmtCtxMml=dmMm; dmtCtxMac=0x1; dmtCtxMU=0x0; dmtCtxMI=0x0; dmtCtxMOp=0x0;
+] { build dmtAcc; }
+dmtMacParaNA: dmtMac1ParaNA, dmtMac0ParaNA 
+	is dmtMac0ParaNA & dmtMac1ParaNA & (dmW1=0x0 & dmOp1!=0x3 ; dmW0=0x0 & dmOp0!=0x3) 
+{
+	build dmtMac1ParaNA; 
+	build dmtMac0ParaNA; 
+}
+
+dmtMac0: dmtExtract dmtMmodD is (dmtMmodD & dmMmodU & dmMmodI & dmMmodOp & dmW1=0x0 ; dmW0=0x1) & dmtExtract [
+	dmtCtxMml=0x0; dmtCtxMac=0x0; dmtCtxMU=dmMmodU; dmtCtxMI=dmMmodI; dmtCtxMOp=dmMmodOp;
+] { build dmtExtract; }
+dmtMac1: dmtExtract dmtMmlMmodD 
+	is (dmtMmlMmodD & dmMm & dmMmodU & dmMmodI & dmMmodOp & dmW1=0x1 ; dmW0=0x0) & dmtExtract 
+[
+	dmtCtxMml=dmMm; dmtCtxMac=0x1; dmtCtxMU=dmMmodU; dmtCtxMI=dmMmodI; dmtCtxMOp=dmMmodOp;
+] { build dmtExtract; }
+dmtMac0Para: dmtExtract dmtMmodD is (dmtMmodD & dmMmodU & dmMmodI & dmMmodOp) ... & dmtExtract [
+	dmtCtxMml=0x0; dmtCtxMac=0x0; dmtCtxMU=dmMmodU; dmtCtxMI=dmMmodI; dmtCtxMOp=dmMmodOp;
+] { build dmtExtract; }
+dmtMac1Para: dmtExtract dmtMmlD is (dmtMmlD & dmMm) ... & dmtExtract [
+	dmtCtxMml=dmMm; dmtCtxMac=0x1; dmtCtxMU=0x0; dmtCtxMI=0x0; dmtCtxMOp=0x0;
+] { build dmtExtract; }
+dmtMacPara: dmtMac1Para, dmtMac0Para
+	is dmtMac0Para & dmtMac1Para & (dmW1=0x1 ; dmW0=0x1) { build dmtMac1Para; build dmtMac0Para; }
+
+dmtMac: dmtMac0NA is dmtMac0NA       { build dmtMac0NA; }
+dmtMac: dmtMac1NA is dmtMac1NA       { build dmtMac1NA; }
+dmtMac: dmtMacParaNA is dmtMacParaNA { build dmtMacParaNA; }
+dmtMac: dmtMac0 is dmtMac0           { build dmtMac0; }
+dmtMac: dmtMac1 is dmtMac1           { build dmtMac1; }
+dmtMac: dmtMacPara is dmtMacPara     { build dmtMacPara; }
+#################### TRADMAC ####################
+
+with Dsp32Mac: (dmSig=0xc & dmSigDsp=0x0) ... {
 :^dmcDisplay is dmcDisplay & dmcMvRe & dmcMvIm { build dmcDisplay; build dmcMvRe; build dmcMvIm; }
+: "Mac16" dmtMac is dmtMac { build dmtMac; }
 }
 
 
-:^Dsp32Mac is dmcM=0x0 ... & Dsp32Mac { build Dsp32Mac; }
-:^Dsp32Mac is dmcM=0x1 ... & Dsp32Mac { build Dsp32Mac; delayslot(4); }
+:^Dsp32Mac is dmM=0x0 ... & Dsp32Mac { build Dsp32Mac; }
+:^Dsp32Mac is dmM=0x1 ... & Dsp32Mac { build Dsp32Mac; delayslot(4); }
