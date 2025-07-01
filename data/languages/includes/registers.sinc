@@ -103,10 +103,10 @@ define context main_ctxreg
     dmcCtxSrc0  = ( 5, 5)
     dmcCtxSrc1  = ( 6, 6)
 
-    dmtCtxMac   = ( 7, 7)
-    dmtCtxAop   = ( 8, 9)
-    dmtCtxMml   = (10,10)
-    dmtCtxMU    = (11,11)
-    dmtCtxMI    = (12,12)
-    dmtCtxMOp   = (13,14)
+    dspCtxMac   = ( 7, 7)
+    dspCtxAop   = ( 8, 9)
+    dspCtxMml   = (10,10)
+    dspCtxMU    = (11,11)
+    dspCtxMI    = (12,12)
+    dspCtxMOp   = (13,14)
 ;

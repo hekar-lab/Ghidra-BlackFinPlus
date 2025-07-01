@@ -58,6 +58,15 @@ macro trunc4_sat(dst, src) {
 <trunc_sat_end>
 }
 
+macro trunc8_sat(dst, src) {
+    if (zext(src:8) == src) goto <saturated>;
+    dst = src:8;
+    goto <trunc_sat_end>;
+<saturated>
+    dst = 0xffffffffffffffff;
+<trunc_sat_end>
+}
+
 ### Signed
 macro sadd_sat(dst, src0, src1, size) {
     if (scarry(src0, src1)) goto <saturated>;
@@ -108,6 +117,19 @@ macro strunc4_sat(dst, src) {
     goto <strunc_sat_end>;
 <negative>
     dst = 0x80000000;
+<strunc_sat_end>
+}
+
+macro strunc8_sat(dst, src) {
+    if (sext(src:8) != src) goto <saturated>;
+    dst = src:8;
+    goto <strunc_sat_end>;
+<saturated>
+    if (src s< 0) goto <negative>;
+    dst = 0x7fffffffffffffff;
+    goto <strunc_sat_end>;
+<negative>
+    dst = 0x8000000000000000;
 <strunc_sat_end>
 }
 

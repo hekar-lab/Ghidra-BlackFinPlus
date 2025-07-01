@@ -1,0 +1,310 @@
+## Multiply with 3 operands (Dsp32Mult)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 0 | 1 |.....mmod......|mm.|.p.|w1.|..op1..|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |h01|h11|w0.|..op0..|h00|h10|....dst....|...src0....|...src1....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dxInstr16 (16)
+    dxAny16          = ( 0,15)
+	dxSig            = (12,15)
+	dxM              = (11,11)
+	dxSigDsp         = ( 9,10)
+	dxMmod           = ( 5, 8)
+    dxMmodD          = ( 5, 8)
+	dxMmodU          = ( 8, 8)
+	dxMmodI          = ( 7, 7)
+    dxM32D           = ( 5, 8)
+    dxM32M           = ( 8, 8)
+    dxM32U           = ( 7, 7)
+    dxM32I           = ( 6, 6)
+    dxM32TNS         = ( 5, 5)
+	dxMmodOp         = ( 5, 6)
+	dxMm             = ( 4, 4)
+	dxP              = ( 3, 3)
+	dxW1             = ( 2, 2)
+	dxOp1            = ( 0, 1)
+;
+
+define token dxInstr32 (16)
+    dxAny32          = ( 0,15)
+	dxH01            = (15,15)
+	dxH11            = (14,14)
+	dxW0             = (13,13)
+	dxOp0            = (11,12)
+	dxH00            = (10,10)
+	dxH10            = ( 9, 9)
+	dxDst            = ( 6, 8)
+	dxDstL           = ( 6, 8)
+	dxDstH           = ( 6, 8)
+	dxDstE           = ( 6, 8)
+	dxDstO           = ( 6, 8)
+    dxDstPair        = ( 6, 8)
+    dxDstPairD       = ( 6, 8)
+	dxSrc0           = ( 3, 5)
+	dxSrc0L          = ( 3, 5)
+	dxSrc0H          = ( 3, 5)
+	dxSrc1           = ( 0, 2)
+	dxSrc1L          = ( 0, 2)
+	dxSrc1H          = ( 0, 2)
+;
+
+
+### Variables ###
+
+attach variables [dxDst dxSrc0 dxSrc1] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [dxDstL dxSrc0L dxSrc1L] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables [dxDstH dxSrc0H dxSrc1H] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dxDstE [R0 _ R2 _ R4 _ R6 _];
+attach variables dxDstO [R1 _ R3 _ R5 _ R7 _];
+attach variables dxDstPair [R10 R10 R32 R32 R54 R54 R76 R76];
+
+attach names dxDstPairD ["R1:0" _ "R3:2" _ "R5:4" _ "R7:6" _];
+attach names dxMmodD [
+	""   "S2RND" "T" "W32" "FU" _ "TFU" _
+	"IS" "ISS2"  _   "IH"  "IU" _ _     _
+];
+attach names dxM32D  [
+    ""    "(T)"   "(IS)"   "(IS,NS)"   "(FU)"   "(TFU)"   "(IU)"   "(IU,NS)"
+    "(M)" "(M,T)" "(M,IS)" "(M,IS,NS)" "(M,FU)" "(M,TFU)" "(M,IU)" "(M,IU,NS)"
+];
+
+
+### Instructions ###
+
+#################### MULT16 ####################
+dx16Src0: dxSrc0L is dspCtxMac=0x0 & dxH00=0x0 & dxSrc0L { export dxSrc0L; }
+dx16Src0: dxSrc0H is dspCtxMac=0x0 & dxH00=0x1 & dxSrc0H { export dxSrc0H; }
+dx16Src0: dxSrc0L is dspCtxMac=0x1 & dxH01=0x0 & dxSrc0L { export dxSrc0L; }
+dx16Src0: dxSrc0H is dspCtxMac=0x1 & dxH01=0x1 & dxSrc0H { export dxSrc0H; }
+
+dx16Src1: dxSrc1L is dspCtxMac=0x0 & dxH10=0x0 & dxSrc1L { export dxSrc1L; }
+dx16Src1: dxSrc1H is dspCtxMac=0x0 & dxH10=0x1 & dxSrc1H { export dxSrc1H; }
+dx16Src1: dxSrc1L is dspCtxMac=0x1 & dxH11=0x0 & dxSrc1L { export dxSrc1L; }
+dx16Src1: dxSrc1H is dspCtxMac=0x1 & dxH11=0x1 & dxSrc1H { export dxSrc1H; }
+
+dx16Src0Ext: dx16Src0 is dspCtxMml=0x0 & dspCtxMU=0x0 & dx16Src0 { local ext:5 = sext(dx16Src0); export ext; }
+dx16Src0Ext: dx16Src0 is dspCtxMml=0x0 & dspCtxMU=0x1 & dx16Src0 { local ext:5 = zext(dx16Src0); export ext; }
+dx16Src0Ext: dx16Src0 is dspCtxMml=0x1 & dx16Src0 { local ext:5 = zext(dx16Src0); export ext; }
+
+dx16Src1Ext: dx16Src1 is dspCtxMml=0x0 & dspCtxMU=0x0 & dx16Src1 { local ext:5 = sext(dx16Src1); export ext; }
+dx16Src1Ext: dx16Src1 is dspCtxMml=0x0 & dspCtxMU=0x1 & dx16Src1 { local ext:5 = zext(dx16Src1); export ext; }
+dx16Src1Ext: dx16Src1 is dspCtxMml=0x1 & dx16Src1 { local ext:5 = sext(dx16Src1); export ext; }
+
+dx16Mult: dx16Src0Ext * dx16Src1Ext is dspCtxMU=0x0 & dspCtxMI=0x0 & dspCtxMml=0x0 & dx16Src0Ext & dx16Src1Ext { 
+	local res = (dx16Src0Ext * dx16Src1Ext) << 1; 
+	export res; 
+}
+dx16Mult: dx16Src0Ext * dx16Src1Ext is (dspCtxMU=0x1 | dspCtxMI=0x1 | dspCtxMml=0x1) & dx16Src0Ext & dx16Src1Ext { 
+	local res = dx16Src0Ext * dx16Src1Ext; 
+	export res; 
+}
+
+dx16Extr2x: dx16Mult is dspCtxMOp!=0x1 & dx16Mult { export dx16Mult; }
+dx16Extr2x: dx16Mult is dspCtxMOp=0x1 & dx16Mult { local double = dx16Mult * 2; export double; }
+
+dx16ExtrRnd: dx16Extr2x is dspCtxMI=0x0 & dspCtxMOp=0x2 & dxP=0x0 ; dx16Extr2x { 
+	local rnd:5;
+	round_trunc(rnd, dx16Extr2x, 2);
+	export rnd; 
+}
+dx16ExtrRnd: dx16Extr2x is dspCtxMI=0x0 & dspCtxMOp!=0x2 & dxP=0x0 ; dx16Extr2x { 
+	local rnd:5;
+	rounding(rnd, dx16Extr2x, 2);
+	export rnd; 
+}
+dx16ExtrRnd: dx16Extr2x is ((dspCtxMI=0x1 & dxAny16) | dxP=0x1) ; dx16Extr2x { export dx16Extr2x; }
+
+dx16ExtrReg2: dxDstL is dspCtxMac=0x0 & dxP=0x0 ; dxW0=0x1 & dxDstL { export dxDstL; }
+dx16ExtrReg2: dxDstH is dspCtxMac=0x1 & dxP=0x0 & dxW1=0x1 ; dxDstH { export dxDstH; }
+dx16ExtrReg4: dxDstE is dspCtxMac=0x0 & dxP=0x1 ; dxW0=0x1 & dxDstE { export dxDstE; }
+dx16ExtrReg4: dxDstO is dspCtxMac=0x1 & dxP=0x1 & dxW1=0x1 ; dxDstO { export dxDstO; }
+
+dx16Extract: dx16ExtrReg2 = dx16ExtrRnd is dspCtxMI=0x0 & dspCtxMU=0x0 & dx16ExtrReg2 & dx16ExtrRnd {
+	local trunc:3 = dx16ExtrRnd (2);
+	strunc2_sat(dx16ExtrReg2, trunc);
+}
+dx16Extract: dx16ExtrReg2 = dx16ExtrRnd is dspCtxMI=0x1 & dspCtxMU=0x0 & dx16ExtrReg2 & dx16ExtrRnd {
+	strunc2_sat(dx16ExtrReg2, dx16ExtrRnd);
+}
+dx16Extract: dx16ExtrReg2 = dx16ExtrRnd is dspCtxMI=0x0 & dspCtxMU=0x1 & dx16ExtrReg2 & dx16ExtrRnd {
+	local trunc:3 = dx16ExtrRnd (2);
+	trunc2_sat(dx16ExtrReg2, trunc);
+}
+dx16Extract: dx16ExtrReg2 = dx16ExtrRnd is dspCtxMI=0x1 & dspCtxMU=0x1 & dx16ExtrReg2 & dx16ExtrRnd {
+	trunc2_sat(dx16ExtrReg2, dx16ExtrRnd);
+}
+dx16Extract: dx16ExtrReg4 = dx16ExtrRnd is dspCtxMU=0x0 & dx16ExtrReg4 & dx16ExtrRnd {
+	strunc4_sat(dx16ExtrReg4, dx16ExtrRnd);
+}
+dx16Extract: dx16ExtrReg4 = dx16ExtrRnd is dspCtxMU=0x1 & dx16ExtrReg4 & dx16ExtrRnd {
+	trunc4_sat(dx16ExtrReg4, dx16ExtrRnd);
+}
+
+dx16MmodD: ""        is dxMmod=0x0 {}
+dx16MmodD: (dxMmodD) is dxMmodD {}
+
+dx16MmlD: ""    is dxMm=0x0 {}
+dx16MmlD: "(M)" is dxMm=0x1 {}
+
+dx16MmlMmodD: ""             is dxMmod=0x0 & dxMm=0x0 {}
+dx16MmlMmodD: (dxMmodD)      is dxMmodD & dxMm=0x0 {}
+dx16MmlMmodD: ("M")          is dxMmod=0x0 & dxMm=0x1 {}
+dx16MmlMmodD: ("M", dxMmodD) is dxMmodD & dxMm=0x1 {}
+
+dx16Mult16L: "Mult16" dx16Extract dx16MmodD 
+    is (dx16MmodD & dxMmodU & dxMmodI & dxMmodOp & dxW1=0x0 ; dxW0=0x1) & dx16Extract 
+[
+	dspCtxMml=0x0; dspCtxMac=0x0; dspCtxMU=dxMmodU; dspCtxMI=dxMmodI; dspCtxMOp=dxMmodOp;
+] { build dx16Extract; }
+dx16Mult16H: "Mult16" dx16Extract dx16MmlMmodD 
+	is (dx16MmlMmodD & dxMm & dxMmodU & dxMmodI & dxMmodOp & dxW1=0x1 ; dxW0=0x0) & dx16Extract 
+[
+	dspCtxMml=dxMm; dspCtxMac=0x1; dspCtxMU=dxMmodU; dspCtxMI=dxMmodI; dspCtxMOp=dxMmodOp;
+] { build dx16Extract; }
+dx16Mult16LPara: dx16Extract dx16MmodD is (dx16MmodD & dxMmodU & dxMmodI & dxMmodOp) ... & dx16Extract [
+	dspCtxMml=0x0; dspCtxMac=0x0; dspCtxMU=dxMmodU; dspCtxMI=dxMmodI; dspCtxMOp=dxMmodOp;
+] { build dx16Extract; }
+dx16Mult16HPara: dx16Extract dx16MmlD is (dx16MmlD & dxMm) ... & dx16Extract [
+	dspCtxMml=dxMm; dspCtxMac=0x1; dspCtxMU=0x0; dspCtxMI=0x0; dspCtxMOp=0x0;
+] { build dx16Extract; }
+dx16Mult16Para: "ParaMult16" dx16Mult16HPara, dx16Mult16LPara
+	is dx16Mult16LPara & dx16Mult16HPara & (dxW1=0x1 ; dxW0=0x1) { build dx16Mult16HPara; build dx16Mult16LPara; }
+
+with dxMult16: dxOp1=0x0 ; dxOp0=0x0 {
+:^dx16Mult16L    is dx16Mult16L { build dx16Mult16L; }
+:^dx16Mult16H    is dx16Mult16H { build dx16Mult16H; }
+:^dx16Mult16Para is dx16Mult16Para { build dx16Mult16Para; }
+}
+#################### MULT16 ####################
+
+#################### MAC32 & MULT32 ####################
+dx32Src0Ext: dxSrc0 is dxM32M=0x0 & dxM32U=0x0 ; dxSrc0 { local ext:9 = sext(dxSrc0); export ext; }
+dx32Src0Ext: dxSrc0 is dxM32M=0x0 & dxM32U=0x1 ; dxSrc0 { local ext:9 = zext(dxSrc0); export ext; }
+dx32Src0Ext: dxSrc0 is dxM32M=0x1 ; dxSrc0 { local ext:9 = zext(dxSrc0); export ext; }
+
+dx32Src1Ext: dxSrc1 is dxM32M=0x0 & dxM32U=0x0 ; dxSrc1 { local ext:9 = sext(dxSrc1); export ext; }
+dx32Src1Ext: dxSrc1 is dxM32M=0x0 & dxM32U=0x1 ; dxSrc1 { local ext:9 = zext(dxSrc1); export ext; }
+dx32Src1Ext: dxSrc1 is dxM32M=0x1 ; dxSrc1 { local ext:9 = sext(dxSrc1); export ext; }
+
+dx32Mult: dx32Src0Ext * dx32Src1Ext is (dxM32M=0x0 & dxM32U=0x0 & dxM32I=0x0) ... & dx32Src0Ext & dx32Src1Ext { 
+	local res = (dx32Src0Ext * dx32Src1Ext) << 1; 
+	export res; 
+}
+dx32Mult: dx32Src0Ext * dx32Src1Ext is (dxM32M=0x1 | dxM32U=0x1 | dxM32I=0x1) ... & dx32Src0Ext & dx32Src1Ext { 
+	local res = dx32Src0Ext * dx32Src1Ext; 
+	export res; 
+}
+
+dx32A10: "A1:0" is epsilon { local a10:9 = (zext(A1) << 4) | zext(A0.W); export a10; }
+
+dx32Aop: dx32A10 = dx32Mult is dx32A10 & dx32Mult & ... dxOp0=0x0 { 
+	dx32A10 = dx32Mult; 
+	export dx32A10;
+}
+dx32Aop: dx32A10 += dx32Mult 
+    is dx32A10 & dx32Mult & (dxM32U=0x0 & (dxM32I=0x0 | (dxM32I=0x1 & dxM32TNS=0x0)) ; dxOp0=0x1) 
+{ 
+	sadd_sat(dx32A10, dx32A10, dx32Mult, 9);
+	export dx32A10;
+}
+dx32Aop: dx32A10 += dx32Mult 
+    is dx32A10 & dx32Mult & (dxM32U=0x1 & (dxM32I=0x0 | (dxM32I=0x1 & dxM32TNS=0x0)) ; dxOp0=0x1) 
+{ 
+	add_sat(dx32A10, dx32A10, dx32Mult, 9);
+	export dx32A10;
+}
+dx32Aop: dx32A10 += dx32Mult 
+    is dx32A10 & dx32Mult & (dxM32I=0x1 & dxM32TNS=0x1 ; dxOp0=0x1) 
+{ 
+	dx32A10 = dx32A10 + dx32Mult;
+	export dx32A10;
+}
+dx32Aop: dx32A10 -= dx32Mult 
+    is dx32A10 & dx32Mult & (dxM32U=0x0 & (dxM32I=0x0 | (dxM32I=0x1 & dxM32TNS=0x0)) ; dxOp0=0x2) 
+{ 
+	ssub_sat(dx32A10, dx32A10, dx32Mult, 9);
+	export dx32A10;
+}
+dx32Aop: dx32A10 -= dx32Mult 
+    is dx32A10 & dx32Mult & (dxM32U=0x1 & (dxM32I=0x0 | (dxM32I=0x1 & dxM32TNS=0x0)) ; dxOp0=0x2) 
+{ 
+	sub_sat(dx32A10, dx32A10, dx32Mult, 9);
+	export dx32A10;
+}
+dx32Aop: dx32A10 -= dx32Mult 
+    is dx32A10 & dx32Mult & (dxM32I=0x1 & dxM32TNS=0x1 ; dxOp0=0x2)
+{ 
+	dx32A10 = dx32A10 - dx32Mult;
+	export dx32A10;
+}
+dx32Aop: dx32A10 is dx32A10 & (dxAny16 ; dxOp0=0x3) { 
+	export dx32A10; 
+}
+
+dx32Acc: dx32Aop is dx32Aop & (dxAny16 ; dxOp0!=0x3) { A0 = dx32Aop (4); A1.W = dx32Aop:4; export dx32Aop; }
+dx32Acc: dx32Aop is dx32Aop & (dxAny16 ; dxOp0=0x3)  { export dx32Aop; }
+
+dx32ExtrAccD: (dx32Acc) is (dxMm=0x0 ; dxOp0!=0x3) & dx32Acc { export dx32Acc; }
+dx32ExtrAccD: dx32Acc   is (dxMm=0x0 ; dxOp0=0x3) & dx32Acc  { export dx32Acc; }
+dx32ExtrAccD: dx32Mult  is (dxMm=0x1 ; dxAny32) & dx32Mult   { export dx32Mult; }
+
+dx32ExtrRnd: dx32ExtrAccD is (dxM32I=0x0 & dxM32TNS=0x0 & dxP=0x0) ... & dx32ExtrAccD { 
+	local rnd:9;
+	round_trunc(rnd, dx32ExtrAccD, 4);
+	export rnd; 
+}
+dx32ExtrRnd: dx32ExtrAccD is (dxM32I=0x0 & dxM32TNS=0x1 & dxP=0x0) ... & dx32ExtrAccD { 
+	local rnd:9;
+	rounding(rnd, dx32ExtrAccD, 4);
+	export rnd; 
+}
+dx32ExtrRnd: dx32ExtrAccD is (dxM32I=0x1 | dxP=0x1) ... & dx32ExtrAccD { export dx32ExtrAccD; }
+
+dx32ExtrReg4: dxDst      is dxP=0x0 ; dxDst                    { export dxDst; }
+dx32ExtrReg8: dxDstPairD is dxP=0x1 ; (dxDstPair & dxDstPairD) { export dxDstPair; }
+
+dx32ExtractOp: dx32ExtrReg4 = dx32ExtrRnd is (dxM32I=0x0 & dxM32U=0x0) ... & dx32ExtrReg4 & dx32ExtrRnd {
+	local trunc:5 = dx32ExtrRnd (4);
+	strunc4_sat(dx32ExtrReg4, trunc);
+}
+dx32ExtractOp: dx32ExtrReg4 = dx32ExtrRnd is (dxM32I=0x1 & dxM32U=0x0 & dxM32TNS=0x0) ... & dx32ExtrReg4 & dx32ExtrRnd {
+	strunc4_sat(dx32ExtrReg4, dx32ExtrRnd);
+}
+dx32ExtractOp: dx32ExtrReg4 = dx32ExtrRnd is (dxM32I=0x0 & dxM32U=0x1) ... & dx32ExtrReg4 & dx32ExtrRnd {
+	local trunc:5 = dx32ExtrRnd (4);
+	trunc4_sat(dx32ExtrReg4, trunc);
+}
+dx32ExtractOp: dx32ExtrReg4 = dx32ExtrRnd is (dxM32I=0x1 & dxM32U=0x1 & dxM32TNS=0x0) ... & dx32ExtrReg4 & dx32ExtrRnd {
+	trunc4_sat(dx32ExtrReg4, dx32ExtrRnd);
+}
+dx32ExtractOp: dx32ExtrReg4 = dx32ExtrRnd is (dxM32I=0x1 & dxM32TNS=0x1) ... & dx32ExtrReg4 & dx32ExtrRnd {
+    dx32ExtrReg4 = dx32ExtrRnd:4;
+}
+dx32ExtractOp: dx32ExtrReg8 = dx32ExtrRnd is dxM32U=0x0 ... & dx32ExtrReg8 & dx32ExtrRnd {
+	strunc8_sat(dx32ExtrReg8, dx32ExtrRnd);
+}
+dx32ExtractOp: dx32ExtrReg8 = dx32ExtrRnd is dxM32U=0x1 ... & dx32ExtrReg8 & dx32ExtrRnd {
+	trunc8_sat(dx32ExtrReg8, dx32ExtrRnd);
+}
+
+dx32Extract: dx32ExtractOp dxM32D is dxM32D ... & dx32ExtractOp { build dx32ExtractOp; }
+
+dxMac32:  "Mac32" dx32Extract  is (dxMm=0x0 & dxOp1=0x1) ... & dx32Extract { build dx32Extract; }
+dxMult32: "Mult32" dx32Extract is (dxMm=0x1 & dxW1=0x0 & dxOp1=0x1 ; dxW0=0x1 & dxOp0=0x0) & dx32Extract { 
+    build dx32Extract;
+}
+#################### MAC32 & MULT32 ####################
+
+with Dsp32Mult: (dxSig=0xc & dxSigDsp=0x1) ... {
+:^dxMult16 is dxMult16 { build dxMult16; }
+:^dxMac32  is dxMac32  { build dxMac32; }
+:^dxMult32 is dxMult32 { build dxMult32; }
+}
+
+
+:^Dsp32Mult is dxM=0x0 ... & Dsp32Mult { build Dsp32Mult; }
+:^Dsp32Mult is dxM=0x1 ... & Dsp32Mult { build Dsp32Mult; delayslot(4); }
