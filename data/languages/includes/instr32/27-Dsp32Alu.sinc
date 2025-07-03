@@ -1,0 +1,688 @@
+## ALU Operations (Dsp32Alu)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 1 | 0 |...dead....|hl.|.......aopc........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..aop..|.s.|.x.|...dst0....|...dst1....|...src0....|...src1....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token daInstr16 (16)
+	daAny16         = ( 0,15)
+	daSig           = (12,15) 
+	daM             = (11,11) 
+	daSigDsp        = ( 9,10) 
+	daHl            = ( 5, 5) 
+	daAopc          = ( 0, 4) 
+;
+
+define token daInstr32 (16)
+	daAny32         = ( 0,15)
+	daSXAD          = (12,15)
+	daAop           = (14,15) 
+	daAopH          = (15,15) 
+	daAopL          = (14,14) 
+	daSXD           = (12,13)
+	daS             = (13,13)
+	daSATD          = (13,13)
+	daX             = (12,12) 
+	daDst0          = ( 9,11) 
+	daDst0L         = ( 9,11) 
+	daDst0H         = ( 9,11) 
+	daDst0B         = ( 9,11) 
+	daDst1          = ( 6, 8) 
+	daDst1L         = ( 6, 8) 
+	daDst1H         = ( 6, 8) 
+	daSrc0          = ( 3, 5) 
+	daSrc0L         = ( 3, 5) 
+	daSrc0H         = ( 3, 5) 
+	daSrc0E         = ( 3, 5)
+	daSrc0O         = ( 3, 5)
+	daSrc0Pair      = ( 3, 5)
+	daSrc0PairD     = ( 3, 5) 
+	daSrc0Cpy       = ( 3, 5) 
+	daSrc1          = ( 0, 2) 
+	daSrc1L         = ( 0, 2) 
+	daSrc1H         = ( 0, 2) 
+	daSrc1E         = ( 3, 5)
+	daSrc1O         = ( 3, 5)
+	daSrc1Pair      = ( 0, 2) 
+	daSrc1PairD     = ( 0, 2) 
+	daSrc1Cpy       = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables [daDst0 daDst1 daSrc0 daSrc0Cpy daSrc1 daSrc1Cpy] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [daDst0L daDst1L daSrc0L daSrc1L] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables [daDst0H daDst1H daSrc0H daSrc1H] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables daDst0B [R0.B R1.B R2.B R3.B R4.B R5.B R6.B R7.B];
+attach variables [daSrc0Pair daSrc1Pair] [R10 R10 R32 R32 R54 R54 R76 R76];
+attach variables [daSrc0E daSrc1E] [R0 R0 R2 R2 R4 R4 R6 R6];
+attach variables [daSrc0O daSrc1O] [R1 R1 R3 R3 R5 R5 R7 R7];
+
+attach names daSXD  ["" "(CO)" "(S)" "(SCO)"];
+attach names daSXAD [
+	""      "(CO)"      "(S)"      "(SCO)" 
+	_       _           _          _ 
+	"(ASR)" "(CO, ASR)" "(S, ASR)" "(SCO, ASR)"
+	"(ASL)" "(CO, ASL)" "(S, ASL)" "(SCO, ASL)"	
+];
+attach names daSATD ["(NS)" "(S)"];
+attach names [daSrc0PairD daSrc1PairD] ["R1:0" "R1:0" "R3:2" "R3:2" "R5:4" "R5:4" "R7:6" "R7:6"];
+
+### Operations ###
+
+define pcodeop disalignexcpt;
+
+
+### Instructions ###
+
+#################### ADDSUBVEC16 ####################
+asvOpH: is daCtxVOpH=0x0 & daS=0x0 & daSrc0H & daSrc1H { local res:2 = daSrc0H + daSrc1H; export res; }
+asvOpH: is daCtxVOpH=0x0 & daS=0x1 & daSrc0H & daSrc1H { local res:2; sadd_sat(res, daSrc0H, daSrc1H, 2); export res; }
+asvOpH: is daCtxVOpH=0x1 & daS=0x0 & daSrc0H & daSrc1H { local res:2 = daSrc0H - daSrc1H; export res; }
+asvOpH: is daCtxVOpH=0x1 & daS=0x1 & daSrc0H & daSrc1H { local res:2; ssub_sat(res, daSrc0H, daSrc1H, 2); export res; }
+
+asvOpL: is daCtxVOpL=0x0 & daS=0x0 & daSrc0L & daSrc1L { local res:2 = daSrc0L + daSrc1L; export res; }
+asvOpL: is daCtxVOpL=0x0 & daS=0x1 & daSrc0L & daSrc1L { local res:2; sadd_sat(res, daSrc0L, daSrc1L, 2); export res; }
+asvOpL: is daCtxVOpL=0x1 & daS=0x0 & daSrc0L & daSrc1L { local res:2 = daSrc0L - daSrc1L; export res; }
+asvOpL: is daCtxVOpL=0x1 & daS=0x1 & daSrc0L & daSrc1L { local res:2; ssub_sat(res, daSrc0L, daSrc1L, 2); export res; }
+
+asvOpHD: "+" is daCtxVOpH=0x0 {}
+asvOpHD: "-" is daCtxVOpH=0x1 {}
+asvOpLD: "+" is daCtxVOpL=0x0 {}
+asvOpLD: "-" is daCtxVOpL=0x1 {}
+asvOpD: asvOpHD"|"asvOpLD is asvOpHD & asvOpLD {}
+
+asvShfH: is daAopc=0x00 ; asvOpH { export asvOpH; }
+asvShfH: is daAopc=0x01 ; daAop=0x0 & asvOpH { export asvOpH; }
+asvShfH: is daAopc=0x01 ; daAop=0x2 & asvOpH { local shf = asvOpH s>> 1; export shf; }
+asvShfH: is daAopc=0x01 ; daAop=0x3 & asvOpH { local shf = asvOpH << 1; export shf; }
+
+asvShfL: is daAopc=0x00 ; asvOpL { export asvOpL; }
+asvShfL: is daAopc=0x01 ; daAop=0x0 & asvOpL { export asvOpL; }
+asvShfL: is daAopc=0x01 ; daAop=0x2 & asvOpL { local shf = asvOpL s>> 1; export shf; }
+asvShfL: is daAopc=0x01 ; daAop=0x3 & asvOpL { local shf = asvOpL << 1; export shf; }
+
+asvDstH: is asvShfH & (daAny16 ; (daAopH & daX=0x0)) { export asvShfH; }
+asvDstH: is asvShfL & (daAny16 ; (daAopL & daX=0x1)) { export asvShfL; }
+asvDstL: is asvShfH & (daAny16 ; (daAopH & daX=0x1)) { export asvShfH; }
+asvDstL: is asvShfL & (daAny16 ; (daAopL & daX=0x0)) { export asvShfL; }
+
+asvBinOpD: daSrc0 asvOpD daSrc1 is asvOpD & daSrc0 & daSrc1 {}
+
+asvAopl: daDst0 = asvBinOpD daSXD
+	is (daAopc=0x00 ; (daAopH & daAopL & daSXD & daDst0 & daDst0H & daDst0L & asvBinOpD)) & asvDstH & asvDstL
+	[ daCtxVOpH=daAopH; daCtxVOpL=daAopL; ] { daDst0H = asvDstH; daDst0L = asvDstL; }
+
+asvDual0: daDst0 = asvBinOpD is (daHl=0x0 ; (daDst0 & daDst0H & daDst0L & asvBinOpD)) & asvDstH & asvDstL 
+	[ daCtxVOpH=0x0; daCtxVOpL=0x0; ] { daDst0H = asvDstH; daDst0L = asvDstL; }
+asvDual0: daDst0 = asvBinOpD is (daHl=0x1 ; (daDst0 & daDst0H & daDst0L & asvBinOpD)) & asvDstH & asvDstL 
+	[ daCtxVOpH=0x0; daCtxVOpL=0x1; ] { daDst0H = asvDstH; daDst0L = asvDstL; }
+
+asvDual1: daDst1 = asvBinOpD is (daHl=0x0 ; (daDst1 & daDst1H & daDst1L & asvBinOpD)) & asvDstH & asvDstL 
+	[ daCtxVOpH=0x1; daCtxVOpL=0x1; ] { daDst1H = asvDstH; daDst1L = asvDstL; }
+asvDual1: daDst1 = asvBinOpD is (daHl=0x1 ; (daDst1 & daDst1H & daDst1L & asvBinOpD)) & asvDstH & asvDstL 
+	[ daCtxVOpH=0x1; daCtxVOpL=0x0; ] { daDst1H = asvDstH; daDst1L = asvDstL; }
+
+asvDual: asvDual0, asvDual1 daSXAD is (daAopc=0x01 ; daSXAD) & asvDual0 & asvDual1 { build asvDual0; build asvDual1; }
+
+with daAddSubVec16: {
+: "AddSubVec16" asvAopl is asvAopl { build asvAopl; }
+: "AddSubVec16" asvDual is asvDual { build asvDual; }
+}
+
+#################### ADDSUB16 ####################
+as16Dst: daDst0L is daHl=0x0 ; daDst0L { export daDst0L; }
+as16Dst: daDst0H is daHl=0x1 ; daDst0H { export daDst0H; }
+
+as16Src0: daSrc0L is daAopH=0x0 & daSrc0L { export daSrc0L; }
+as16Src0: daSrc0H is daAopH=0x1 & daSrc0H { export daSrc0H; }
+as16Src1: daSrc1L is daAopL=0x0 & daSrc1L { export daSrc1L; }
+as16Src1: daSrc1H is daAopL=0x1 & daSrc1H { export daSrc1H; }
+
+with daAddSub16: ... daX=0x0 {
+: "AddSub16" as16Dst = as16Src0 + as16Src1 "(NS)" is (daAopc=0x02 ; (daS=0x0 & as16Src0 & as16Src1)) & as16Dst {
+	as16Dst = as16Src0 + as16Src1;
+}
+: "AddSub16" as16Dst = as16Src0 + as16Src1 "(S)"  is (daAopc=0x02 ; (daS=0x1 & as16Src0 & as16Src1)) & as16Dst {
+	sadd_sat(as16Dst, as16Src0, as16Src1, 2);
+}
+: "AddSub16" as16Dst = as16Src0 - as16Src1 "(NS)" is (daAopc=0x03 ; (daS=0x0 & as16Src0 & as16Src1)) & as16Dst {
+	as16Dst = as16Src0 + as16Src1;
+}
+: "AddSub16" as16Dst = as16Src0 - as16Src1 "(S)"  is (daAopc=0x03 ; (daS=0x1 & as16Src0 & as16Src1)) & as16Dst {
+	ssub_sat(as16Dst, as16Src0, as16Src1, 2);
+}
+}
+
+#################### ADDSUB32 ####################
+as32Dst: daDst0 is daCtx32Dst=0x0 & daDst0 { export daDst0; }
+as32Dst: daDst1 is daCtx32Dst=0x1 & daDst1 { export daDst1; }
+
+as32Add: as32Dst = daSrc0 + daSrc1 is as32Dst & daS=0x0 & daSrc0 & daSrc1 { as32Dst = daSrc0 + daSrc1; }
+as32Add: as32Dst = daSrc0 + daSrc1 is as32Dst & daS=0x1 & daSrc0 & daSrc1 { sadd_sat(as32Dst, daSrc0, daSrc1, 4); }
+as32Sub: as32Dst = daSrc0 - daSrc1 is as32Dst & daS=0x0 & daSrc0 & daSrc1 { as32Dst = daSrc0 - daSrc1; }
+as32Sub: as32Dst = daSrc0 - daSrc1 is as32Dst & daS=0x1 & daSrc0 & daSrc1 { ssub_sat(as32Dst, daSrc0, daSrc1, 4); }
+
+as32Dual0: as32Add is as32Add [ daCtx32Dst=0x0; ]{ build as32Add; }
+as32Dual1: as32Sub is as32Sub [ daCtx32Dst=0x1; ]{ build as32Sub; }
+
+with daAddSub32: (daHl=0x0 & daAopc=0x04) ; daX=0x0 {
+: "AddSub32" as32Add daSATD is daAny16 ; (daSATD & daAop=0x0 & as32Add) [ daCtx32Dst=0x0; ]{ build as32Add; }
+: "AddSub32" as32Sub daSATD is daAny16 ; (daSATD & daAop=0x1 & as32Sub) [ daCtx32Dst=0x0; ]{ build as32Sub; }
+: "AddSub32Dual" as32Dual0, as32Dual1 daSATD is daAny16 ; (daSATD & daAop=0x2 & as32Dual0 & as32Dual1) 
+	{ build as32Dual0; build as32Dual1; }
+}
+
+#################### ADDSUBRND ####################
+asrDst: daDst0L is daHl=0x0 ; daDst0L { export daDst0L; }
+asrDst: daDst0H is daHl=0x1 ; daDst0H { export daDst0H; }
+
+asrSrc0: daSrc0 is daX=0x0 & daSrc0 { local src:5 = sext(daSrc0) << 4; export src; }
+asrSrc0: daSrc0 is daX=0x1 & daSrc0 { local src:5 = sext(daSrc0) s>> 4; export src; }
+asrSrc1: daSrc1 is daX=0x0 & daSrc1 { local src:5 = sext(daSrc1) << 4; export src; }
+asrSrc1: daSrc1 is daX=0x1 & daSrc1 { local src:5 = sext(daSrc1) s>> 4; export src; }
+
+asrBinOp: asrSrc0 + asrSrc1 is daAopL=0x0 & asrSrc0 & asrSrc1 { local res:5 = asrSrc0 + asrSrc1; export res; }
+asrBinOp: asrSrc0 - asrSrc1 is daAopL=0x1 & asrSrc0 & asrSrc1 { local res:5 = asrSrc0 - asrSrc1; export res; }
+
+with daAddSubRnd: (daAopc=0x05) ... {
+: "AddSubRnd12" asrDst = asrBinOp "(RND12)" is (daAny16 ; (daAopH=0x0 & daX=0x0 & asrBinOp)) & asrDst { 
+	local rnd:5; 
+	round_biased(rnd, asrBinOp, 2); 
+	local trunc:3 = rnd (2);
+	strunc2_sat(asrDst, trunc);
+}
+: "AddSubRnd20" asrDst = asrBinOp "(RND20)" is (daAny16 ; (daAopH=0x1 & daX=0x1 & asrBinOp)) & asrDst { 
+	local rnd:5; 
+	round_biased(rnd, asrBinOp, 2); 
+	local trunc:3 = rnd (2);
+	asrDst = trunc:2;
+}
+}
+
+#################### MAX/MIN/ABS VEC ####################
+mmavDisp: "Max16Vec" daDst0 = "MAX"(daSrc0, daSrc1) "(V)" is daAop=0x0 & daDst0 & daSrc0 & daSrc1 {}
+mmavDisp: "Min16Vec" daDst0 = "MIN"(daSrc0, daSrc1) "(V)" is daAop=0x1 & daDst0 & daSrc0 & daSrc1 {}
+mmavDisp: "Abs16Vec" daDst0 = "ABS" daSrc0 "(V)"          is daAop=0x2 & daDst0 & daSrc0 {}
+mmavDisp: "Neg16Vec" daDst0 = -daSrc0 "(V)"               is daAop=0x3 & daDst0 & daSrc0 {}
+
+with daMMAVec: daHl=0x0 ; (daS=0x0 & daX=0x0) {
+: mmavDisp is daAopc=0x06 ; (mmavDisp & daAop=0x0 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
+	{ max(daDst0H, daSrc0H, daSrc1H); max(daDst0L, daSrc0L, daSrc1L); }
+: mmavDisp is daAopc=0x06 ; (mmavDisp & daAop=0x1 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
+	{ min(daDst0H, daSrc0H, daSrc1H); min(daDst0L, daSrc0L, daSrc1L); }
+: mmavDisp is daAopc=0x06 ; (mmavDisp & daAop=0x2 & daDst0H & daDst0L & daSrc0H & daSrc0L) 
+	{ abs_sat(daDst0H, daSrc0H, 2); abs_sat(daDst0L, daSrc0L, 2); }
+: mmavDisp is daAopc=0x0f ; (mmavDisp & daAop=0x3 & daDst0H & daDst0L & daSrc0H & daSrc0L) 
+	{ neg_sat(daDst0H, daSrc0H, 2); neg_sat(daDst0L, daSrc0L, 2); }
+}
+
+#################### MAX/MIN/ABS 32 ####################
+with daMMA32: (daAopc=0x07 & daHl=0x0) ; daX=0x0 {
+: "Max32" daDst0 = "MAX"(daSrc0, daSrc1) is daAny16 ; (daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1)
+	{ max(daDst0, daSrc0, daSrc1); }
+: "Min32" daDst0 = "MIN"(daSrc0, daSrc1) is daAny16 ; (daAop=0x1 & daS=0x0 & daDst0 & daSrc0 & daSrc1)
+	{ min(daDst0, daSrc0, daSrc1); }
+: "Abs32" daDst0 = "ABS" daSrc0          is daAny16 ; (daAop=0x2 & daS=0x0 & daDst0 & daSrc0) 
+	{ abs_sat(daDst0, daSrc0, 2); }
+: "Neg32" daDst0 = "NEG" daSrc0 "(NS)"   is daAny16 ; (daAop=0x3 & daS=0x0 & daDst0 & daSrc0) 
+	{ daDst0 = -daSrc0; }
+: "Neg32" daDst0 = "NEG" daSrc0 "(S)"    is daAny16 ; (daAop=0x3 & daS=0x1 & daDst0 & daSrc0)
+	{ neg_sat(daDst0, daSrc0, 2); }
+}
+
+#################### ACCUMULATORS INSTRUCTIONS ####################
+aoDstHl: daDst0L is daHl=0x0 ; daDst0L { export daDst0L; }
+aoDstHl: daDst0H is daHl=0x1 ; daDst0H { export daDst0H; }
+aoSrcHl: daSrc0L is daHl=0x0 ; daSrc0L { export daSrc0L; }
+aoSrcHl: daSrc0H is daHl=0x1 ; daSrc0H { export daSrc0H; }
+
+aoA0Hl: "A0.L" is daHl=0x0 ; daAny32 { export A0.L; }
+aoA0Hl: "A0.H" is daHl=0x1 ; daAny32 { export A0.H; }
+aoA1Hl: "A1.L" is daHl=0x0 ; daAny32 { export A1.L; }
+aoA1Hl: "A1.H" is daHl=0x1 ; daAny32 { export A1.H; }
+
+aoSrc0X: daSrc0 "(X)" is daX=0x0 & daSrc0 { local ext:5 = sext(daSrc0); export ext; }
+aoSrc0X: daSrc0 "(Z)" is daX=0x1 & daSrc0 { local ext:5 = zext(daSrc0); export ext; }
+aoSrc1S: daSrc1 "(X)" is daS=0x0 & daSrc1 { local ext:5 = sext(daSrc1); export ext; }
+aoSrc1S: daSrc1 "(Z)" is daS=0x1 & daSrc1 { local ext:5 = zext(daSrc1); export ext; }
+
+L: "" is epsilon {}
+
+with daAccOp: {
+## Acc Manipulation
+: "LdImmToAx" "A0 = 0"L      is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x0 & daS=0x0 & daX=0x0) { A0 = 0; }
+: "SatAcc0"   "A0 = A0 (S)"L is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x0 & daS=0x1 & daX=0x0) { 
+	local sat:4; trunc4_sat(sat, A0); A0 = sext(sat); 
+}
+: "LdImmToAx" "A1 = 0"L      is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x1 & daS=0x0 & daX=0x0) { A1 = 0; }
+: "SatAcc1"   "A1 = A1 (S)"L is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x1 & daS=0x1 & daX=0x0) {
+	local sat:4; trunc4_sat(sat, A1); A1 = sext(sat); 
+}
+: "LdImmToAxDual" "A1 = A0 = 0"L is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x2 & daS=0x0 & daX=0x0) { A1 = 0; A0 = 0; }
+: "SatAccDual"    "A1 = A1 (S), A0 = A0 (S)"L is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x2 & daS=0x1 & daX=0x0) {
+	local sat:4; 
+	trunc4_sat(sat, A1); A1 = sext(sat); 
+	trunc4_sat(sat, A0); A0 = sext(sat); 
+}
+: "MvAxToAx" "A0 = A1"L is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x3 & daS=0x0 & daX=0x0) { A0 = A1; }
+: "MvAxToAx" "A1 = A0"L is L & (daAopc=0x08 & daHl=0x0) ; (daAop=0x3 & daS=0x1 & daX=0x0) { A1 = A0; }
+
+## Move Reg to Acc
+: "MvDregHLToAxHL" aoA0Hl = aoSrcHl    is ((daAopc=0x09) ; (daAop=0x0 & daS=0x0 & daX=0x0)) & aoSrcHl & aoA0Hl {
+	aoA0Hl = aoSrcHl;
+}
+: "MvDregToAx"     "A0" = daSrc0 "(X)" is (daHl=0x0 & daAopc=0x09) ; (daAop=0x0 & daS=0x1 & daX=0x0 & daSrc0) {
+	A0 = sext(daSrc0);
+}
+: "MvDregToAx"     "A0" = daSrc0 "(Z)" is (daHl=0x0 & daAopc=0x09) ; (daAop=0x0 & daS=0x1 & daX=0x1 & daSrc0) {
+	A0 = zext(daSrc0);
+}
+: "MvDregLToAxX"   "A0.X" = daSrc0L    is (daHl=0x0 & daAopc=0x09) ; (daAop=0x1 & daS=0x0 & daX=0x0 & daSrc0L) {
+	A0.X = daSrc0L:1;
+}
+: "MvDregHLToAxHL" aoA1Hl = aoSrcHl    is ((daAopc=0x09) ; (daAop=0x2 & daS=0x0 & daX=0x0)) & aoSrcHl & aoA1Hl {
+	aoA1Hl = aoSrcHl;
+}
+: "MvDregToAx"     "A1" = daSrc0 "(X)" is (daHl=0x0 & daAopc=0x09) ; (daAop=0x2 & daS=0x1 & daX=0x0 & daSrc0) {
+	A1 = sext(daSrc0);
+}
+: "MvDregToAx"     "A1" = daSrc0 "(Z)" is (daHl=0x0 & daAopc=0x09) ; (daAop=0x2 & daS=0x1 & daX=0x1 & daSrc0) {
+	A1 = zext(daSrc0);
+}
+: "MvDregLToAxX"   "A1.X" = daSrc0L    is (daHl=0x0 & daAopc=0x09) ; (daAop=0x3 & daS=0x0 & daX=0x0 & daSrc0L) {
+	A1.X = daSrc0L:1;
+}
+
+## Move Acc to Reg
+: "MvAxXToDregL" daSrc0L = "A0.X" is (daHl=0x0 & daAopc=0x0a) ; (daAop=0x0 & daS=0x0 & daX=0x0 & daDst0B & daSrc0L) {
+	daDst0B = A0.X;
+}
+: "MvAxXToDregL" daSrc0L = "A1.X" is (daHl=0x0 & daAopc=0x0a) ; (daAop=0x1 & daS=0x0 & daX=0x0 & daDst0B & daSrc0L) {
+	daDst0B = A1.X;
+}
+
+## Arithm on Acc
+: "AddAccExt" daDst0 = ("A0 += A1")  is (daHl=0x0 & daAopc=0x0b) ; (daAop=0x0 & daS=0x0 & daX=0x0 & daDst0) {
+	sadd_sat(A0, A0, A1, 5); strunc4_sat(daDst0, A0);
+}
+: "AddAccExt" aoDstHl = ("A0 += A1") is ((daHl=0x0 & daAopc=0x0b) ; (daAop=0x1 & daS=0x0 & daX=0x0)) & aoDstHl {
+	sadd_sat(A0, A0, A1, 5); 
+	local rnd:5;  rounding(rnd, A0, 2);
+	local trunc:3 = rnd (2);
+	strunc2_sat(aoDstHl, trunc);
+}
+: "AddSubAcc" "A0 += A1"       is (daHl=0x0 & daAopc=0x0b) ; (daAop=0x2 & daS=0x0 & daX=0x0 & daDst0) { 
+	sadd_sat(A0, A0, A1, 5);
+}
+: "AddSubAcc" "A0 += A1 (W32)" is (daHl=0x0 & daAopc=0x0b) ; (daAop=0x2 & daS=0x1 & daX=0x0 & daDst0) { 
+	sadd_sat(A0, A0, A1, 5);
+	local trunc:4; strunc4_sat(trunc, A0);
+	A0 = sext(trunc);
+}
+: "AddSubAcc" "A0 += A1"       is (daHl=0x0 & daAopc=0x0b) ; (daAop=0x3 & daS=0x0 & daX=0x0 & daDst0) { 
+	ssub_sat(A0, A0, A1, 5);
+}
+: "AddSubAcc" "A0 += A1 (W32)" is (daHl=0x0 & daAopc=0x0b) ; (daAop=0x3 & daS=0x1 & daX=0x0 & daDst0) { 
+	ssub_sat(A0, A0, A1, 5);
+	local trunc:4; strunc4_sat(trunc, A0);
+	A0 = sext(trunc);
+}
+
+## Neg for Acc
+: "NegAcc0" "A0 = -A0" is (daHl=0x0 & daAopc=0x0e) ; (daAop=0x0 & daS=0x0 & daX=0x0) { neg_sat(A0, A0, 5); }
+: "NegAcc1" "A1 = -A0" is (daHl=0x1 & daAopc=0x0e) ; (daAop=0x0 & daS=0x0 & daX=0x0) { neg_sat(A1, A0, 5); }
+: "NegAcc0" "A0 = -A1" is (daHl=0x0 & daAopc=0x0e) ; (daAop=0x1 & daS=0x0 & daX=0x0) { neg_sat(A0, A1, 5); }
+: "NegAcc1" "A1 = -A1" is (daHl=0x1 & daAopc=0x0e) ; (daAop=0x1 & daS=0x0 & daX=0x0) { neg_sat(A1, A1, 5); }
+: "NegAccDual" "A1 = -A1, A0 = -A0" is (daHl=0x0 & daAopc=0x0e) ; (daAop=0x3 & daS=0x0 & daX=0x0) {
+	neg_sat(A1, A1, 5); neg_sat(A0, A0, 5);  
+}
+
+## Abs for Acc
+: "AbsAcc0" "A0 = ABS A0" is (daHl=0x0 & daAopc=0x10) ; (daAop=0x0 & daS=0x0 & daX=0x0) { abs_sat(A0, A0, 5); }
+: "AbsAcc1" "A1 = ABS A0" is (daHl=0x1 & daAopc=0x10) ; (daAop=0x0 & daS=0x0 & daX=0x0) { abs_sat(A1, A0, 5); }
+: "AbsAcc0" "A0 = ABS A1" is (daHl=0x0 & daAopc=0x10) ; (daAop=0x1 & daS=0x0 & daX=0x0) { abs_sat(A0, A1, 5); }
+: "AbsAcc1" "A1 = ABS A1" is (daHl=0x1 & daAopc=0x10) ; (daAop=0x1 & daS=0x0 & daX=0x0) { abs_sat(A1, A1, 5); }
+: "AbsAccDual" "A1 = ABS A1, A0 = ABS A0" is (daHl=0x0 & daAopc=0x10) ; (daAop=0x3 & daS=0x0 & daX=0x0) {
+	abs_sat(A1, A1, 5); abs_sat(A0, A0, 5);  
+}
+
+## Misc
+: "MvDregToAxDual" "A1" = aoSrc1S, "A0" = aoSrc0X is (daHl=0x1 & daAopc=0x10) ; (daAop=0x3 & aoSrc0X & aoSrc1S) {
+	A1 = aoSrc1S; A0 = aoSrc0X;
+}
+: "AddSubAccExt" daDst0 = "A1 + A0", daDst1 = "A1 - A0" "(NS)" 
+	is (daHl=0x0 & daAopc=0x11) ; (daAop=0x0 & daS=0x0 & daX=0x0 & daDst0 & daDst1) 
+	{ local res:5 = A1 + A0; daDst0 = res:4; res = A1 - A0; daDst1 = res:4; }
+: "AddSubAccExt" daDst0 = "A1 + A0", daDst1 = "A1 - A0" "(S)" 
+	is (daHl=0x0 & daAopc=0x11) ; (daAop=0x0 & daS=0x1 & daX=0x0 & daDst0 & daDst1) { 
+		local res:5; 
+		sadd_sat(res, A1, A0, 5); strunc4_sat(daDst0, res); 
+		ssub_sat(res, A1, A0, 5); strunc4_sat(daDst1, res);
+	}
+: "AddSubAccExt" daDst0 = "A0 + A1", daDst1 = "A0 - A1" "(NS)" 
+	is (daHl=0x1 & daAopc=0x11) ; (daAop=0x0 & daS=0x0 & daX=0x0 & daDst0 & daDst1) 
+	{ local res:5 = A0 + A1; daDst0 = res:4; res = A0 - A1; daDst1 = res:4; }
+: "AddSubAccExt" daDst0 = "A0 + A1", daDst1 = "A0 - A1" "(S)" 
+	is (daHl=0x1 & daAopc=0x11) ; (daAop=0x0 & daS=0x1 & daX=0x0 & daDst0 & daDst1) { 
+		local res:5; 
+		sadd_sat(res, A0, A1, 5); strunc4_sat(daDst0, res); 
+		ssub_sat(res, A0, A1, 5); strunc4_sat(daDst1, res);
+	}
+}
+
+#################### MISC ####################
+with daMisc: ((daHl=0x0 & daAopc=0x0c) ; (daS=0x0 & daX=0x0)) {
+: "AddOnSign" daDst0H = daDst0L = "SIGN"(daSrc0H) * daSrc1H + "SIGN"(daSrc0L) * daSrc1L
+	is daAny16 ; (daAop=0x0 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
+	{
+		local sgnH:2 = (daSrc0H s>> 14) | 1; local sgnL:2 = (daSrc0L s>> 14) | 1;
+		daDst0L = sgnH * daSrc1H + sgnL * daSrc1L; daDst0H = daDst0L;
+	}
+
+: "AddAccHalf" daDst1 = "A1.L" + "A1.H", daDst0 = "A0.L" + "A0.H" is daAny16 ; (daAop=0x1 & daDst0 & daDst1) 
+	{ daDst1 = sext(A1.L) + sext(A1.H); daDst0 = sext(A0.L) + sext(A0.H); }
+
+: "Pass32Rnd16" aoDstHl = daSrc0 "(RND)" is (daAny16 ; (daAop=0x3 & daSrc0)) & aoDstHl 
+	{ local rnd:4; round_biased(rnd, daSrc0, 2); aoDstHl = rnd (2);}
+}
+
+#################### SEARCH ####################
+
+with daSearch: (daHl=0x0 & daAopc=0x0d) ; (daS=0x0 & daX=0x0) {
+: "Search" (daDst1, daDst0) = "SEARCH" daSrc0 "(GT)" 
+	is daAny16 ; (daAop=0x0 & daDst0 & daDst1 & daSrc0 & daSrc0H & daSrc0L) 
+	{ 
+		if (!(daSrc0L s> A0.L)) goto <search_end_A0>;
+		A0.L = daSrc0L; daDst0 = P0;
+	<search_end_A0>
+		if (!(daSrc0H s> A1.L)) goto <search_end_A1>;
+		A1.L = daSrc0H; daDst1 = P0;
+	<search_end_A1>
+	}
+: "Search" (daDst1, daDst0) = "SEARCH" daSrc0 "(GE)" 
+	is daAny16 ; (daAop=0x1 & daDst0 & daDst1 & daSrc0 & daSrc0H & daSrc0L) 
+	{ 
+		if (!(daSrc0L s>= A0.L)) goto <search_end_A0>;
+		A0.L = daSrc0L; daDst0 = P0;
+	<search_end_A0>
+		if (!(daSrc0H s>= A1.L)) goto <search_end_A1>;
+		A1.L = daSrc0H; daDst1 = P0;
+	<search_end_A1>
+	}
+: "Search" (daDst1, daDst0) = "SEARCH" daSrc0 "(LT)" 
+	is daAny16 ; (daAop=0x2 & daDst0 & daDst1 & daSrc0 & daSrc0H & daSrc0L) 
+	{ 
+		if (!(daSrc0L < A0.L)) goto <search_end_A0>;
+		A0.L = daSrc0L; daDst0 = P0;
+	<search_end_A0>
+		if (!(daSrc0H < A1.L)) goto <search_end_A1>;
+		A1.L = daSrc0H; daDst1 = P0;
+	<search_end_A1>
+	}
+: "Search" (daDst1, daDst0) = "SEARCH" daSrc0 "(LE)" 
+	is daAny16 ; (daAop=0x3 & daDst0 & daDst1 & daSrc0 & daSrc0H & daSrc0L) 
+	{ 
+		if (!(daSrc0L s<= A0.L)) goto <search_end_A0>;
+		A0.L = daSrc0L; daDst0 = P0;
+	<search_end_A0>
+		if (!(daSrc0H s<= A1.L)) goto <search_end_A1>;
+		A1.L = daSrc0H; daDst1 = P0;
+	<search_end_A1>
+	}
+}
+
+#################### VIDEO INSTRUTIONS ####################
+## Misc
+saaPair0: is daS=0x0 & daSrc0E & daSrc0O { local pair:8 = (zext(daSrc0O) << 32) | zext(daSrc0E); export pair; }
+saaPair0: is daS=0x1 & daSrc0E & daSrc0O { local pair:8 = (zext(daSrc0E) << 32) | zext(daSrc0O); export pair; }
+saaPair1: is daS=0x0 & daSrc1E & daSrc1O { local pair:8 = (zext(daSrc1O) << 32) | zext(daSrc1E); export pair; }
+saaPair1: is daS=0x1 & daSrc1E & daSrc1O { local pair:8 = (zext(daSrc1E) << 32) | zext(daSrc1O); export pair; }
+
+saaBytes0: is saaPair0 { local pairShf:8 = saaPair0 >> ((I0 & 0x3) * 8); local bytes:4 = pairShf:4; export bytes; }
+saaBytes1: is saaPair1 { local pairShf:8 = saaPair1 >> ((I1 & 0x3) * 8); local bytes:4 = pairShf:4; export bytes; }
+
+saaByte0: is daCtxByte=0x0 & saaBytes0 { local byte:1 = saaBytes0:1; export byte; }
+saaByte0: is daCtxByte & saaBytes0 { 
+	local bytesShf:4 = saaBytes0 >> (daCtxByte * 8); 
+	local byte:1 = bytesShf:1; export byte; 
+}
+
+saaByte1: is daCtxByte=0x0 &  saaBytes1 { local byte:1 = saaBytes1:1; export byte; }
+saaByte1: is daCtxByte & saaBytes1 { 
+	local bytesShf:4 = saaBytes1 >> (daCtxByte * 8); 
+	local byte:1 = bytesShf:1; export byte; 
+}
+
+saaAbsDiff: is saaByte0 & saaByte1 {
+	local diff:2;
+	if (saaByte0 > saaByte1) goto <invSub>;
+	diff = zext(saaByte0) - zext(saaByte1);
+	goto <endDiff>;
+<invSub>
+	diff = zext(saaByte1) - zext(saaByte0);
+<endDiff>
+	export diff;
+}
+
+saaAbsDiff0: is saaAbsDiff [daCtxByte=0x0;] { export saaAbsDiff; }
+saaAbsDiff1: is saaAbsDiff [daCtxByte=0x1;] { export saaAbsDiff; }
+saaAbsDiff2: is saaAbsDiff [daCtxByte=0x2;] { export saaAbsDiff; }
+saaAbsDiff3: is saaAbsDiff [daCtxByte=0x3;] { export saaAbsDiff; }
+
+saaSD:       is daS=0x0 {}
+saaSD: "(R)" is daS=0x1 {}
+
+with daVipMisc: (daHl=0x0 & daAopc=0x12) ; (daX=0x0) {
+: "SAD8Vec" "SAA" (daSrc0PairD, daSrc1PairD) saaSD 
+	is daAny16 
+	 ; (daAop=0x0 & saaSD & daSrc0PairD & daSrc1PairD & saaAbsDiff0 & saaAbsDiff1 & saaAbsDiff2 & saaAbsDiff3) {
+		sadd_sat(A0.L, A0.L, saaAbsDiff0, 2);
+		sadd_sat(A0.H, A0.H, saaAbsDiff1, 2);
+		sadd_sat(A1.L, A1.L, saaAbsDiff2, 2);
+		sadd_sat(A1.H, A1.H, saaAbsDiff3, 2);
+	}
+
+: "DisAlignExcpt" "DISALIGNEXCPT" is daAny16 ; (daAop=0x3 & daS=0x0) { disalignexcpt(); }
+}
+
+## ByteOp
+vidPair0: is daS=0x0 & daSrc0E & daSrc0O { local pair:8 = (zext(daSrc0O) << 32) | zext(daSrc0E); export pair; }
+vidPair0: is daS=0x1 & daSrc0E & daSrc0O { local pair:8 = (zext(daSrc0E) << 32) | zext(daSrc0O); export pair; }
+vidPair1: is daS=0x0 & daSrc1E & daSrc1O { local pair:8 = (zext(daSrc1O) << 32) | zext(daSrc1E); export pair; }
+vidPair1: is daS=0x1 & daSrc1E & daSrc1O { local pair:8 = (zext(daSrc1E) << 32) | zext(daSrc1O); export pair; }
+
+vidBytes0: is daAny16 ; vidPair0 
+	{ local pairShf:8 = vidPair0 >> ((I0 & 0x3) * 8); local bytes:4 = pairShf:4; export bytes; }
+vidBytes1: is daAny16 ; vidPair1 
+	{ local pairShf:8 = vidPair1 >> ((I1 & 0x3) * 8); local bytes:4 = pairShf:4; export bytes; }
+vidBytes1: is daAopc=0x16 ; vidPair1 
+	{ local pairShf:8 = vidPair1 >> ((I0 & 0x3) * 8); local bytes:4 = pairShf:4; export bytes; }
+
+vidByte0: is daCtxByte=0x0 & vidBytes0 { local byte:1 = vidBytes0:1; export byte; }
+vidByte0: is daCtxByte & vidBytes0 { 
+	local bytesShf:4 = vidBytes0 >> (daCtxByte * 8); 
+	local byte:1 = bytesShf:1; export byte; 
+}
+
+vidByte1: is daCtxByte=0x0 &  vidBytes1 { local byte:1 = vidBytes1:1; export byte; }
+vidByte1: is daCtxByte & vidBytes1 { 
+	local bytesShf:4 = vidBytes1 >> (daCtxByte * 8); 
+	local byte:1 = bytesShf:1; export byte; 
+}
+
+vidWord0: is (daCtxByte=0x0 | daCtxByte=0x1) & vidBytes0 { local word:2 = vidBytes0:2; export word; }
+vidWord0: is (daCtxByte=0x2 | daCtxByte=0x3) & vidBytes0 { 
+	local bytesShf:4 = vidBytes0 >> 2;
+	local word:2 = bytesShf:2; export word; 
+}
+
+vidAvg: is vidByte0 & vidByte1 & ... daAop=0x0 {
+	local sum:4 = (zext(vidByte0) + zext(vidByte1) + 1) >> 1; export sum;
+}
+vidAvg: is vidByte0 & vidByte1 & ... daAop=0x1 {
+	local sum:4 = (zext(vidByte0) + zext(vidByte1)) >> 1; export sum;
+}
+vidAvg0: is vidAvg [daCtxByte=0x0;] { export vidAvg; }
+vidAvg1: is vidAvg [daCtxByte=0x1;] { export vidAvg; }
+vidAvg2: is vidAvg [daCtxByte=0x2;] { export vidAvg; }
+vidAvg3: is vidAvg [daCtxByte=0x3;] { export vidAvg; }
+
+vidAS: is vidByte0 & vidByte1 & ... daAop=0x0 { local res:2 = zext(vidByte0 + vidByte1); export res; }
+vidAS: is vidByte0 & vidByte1 & ... daAop=0x1 { local res:2 = zext(vidByte0 - vidByte1); export res; }
+vidAS0: is vidAS [daCtxByte=0x0;] { export vidAS; }
+vidAS1: is vidAS [daCtxByte=0x1;] { export vidAS; }
+vidAS2: is vidAS [daCtxByte=0x2;] { export vidAS; }
+vidAS3: is vidAS [daCtxByte=0x3;] { export vidAS; }
+
+vidSum: is vidByte0 & vidByte1 { local res:2 = zext(vidByte0) + zext(vidByte1); export res; }
+vidSum0: is vidSum [daCtxByte=0x0;] { export vidSum; }
+vidSum1: is vidSum [daCtxByte=0x1;] { export vidSum; }
+vidSum2: is vidSum [daCtxByte=0x2;] { export vidSum; }
+vidSum3: is vidSum [daCtxByte=0x3;] { export vidSum; }
+
+vidAvg40: is vidSum0 & vidSum1 & ... daAop=0x0 
+	{ local res:2 = (vidSum0 + vidSum1 + 2) >> 2; local out:4 = zext(res); export out; }
+vidAvg40: is vidSum0 & vidSum1 & ... daAop=0x1 
+	{ local res:2 = (vidSum0 + vidSum1) >> 2; local out:4 = zext(res); export out; }
+vidAvg41: is vidSum2 & vidSum3 & ... daAop=0x0 
+	{ local res:2 = (vidSum2 + vidSum3 + 2) >> 2; local out:4 = zext(res); export out; }
+vidAvg41: is vidSum2 & vidSum3 & ... daAop=0x1 
+	{ local res:2 = (vidSum2 + vidSum3) >> 2; local out:4 = zext(res); export out; }
+
+vidClp: is vidWord0 & vidByte1 { 
+	local sum:2 = vidWord0 + zext(vidByte1); 
+	local clip:1; trunc1_sat(clip, sum);
+	local out:4 = zext(clip); export out; 
+}
+vidClp0: is vidClp [daCtxByte=0x0;] { export vidClp; }
+vidClp1: is vidClp [daCtxByte=0x1;] { export vidClp; }
+vidClp2: is vidClp [daCtxByte=0x2;] { export vidClp; }
+vidClp3: is vidClp [daCtxByte=0x3;] { export vidClp; }
+
+vidB0: is vidByte0 [daCtxByte=0x0;] { local out:4 = zext(vidByte0); export out; }
+vidB1: is vidByte0 [daCtxByte=0x1;] { local out:4 = zext(vidByte0); export out; }
+vidB2: is vidByte0 [daCtxByte=0x2;] { local out:4 = zext(vidByte0); export out; }
+vidB3: is vidByte0 [daCtxByte=0x3;] { local out:4 = zext(vidByte0); export out; }
+
+vidOptD: ""      is daS=0x0 {}
+vidOptD: "(R)"   is daS=0x1 {}
+
+vidRSCD: "" is daS=0x0 {}
+vidRSCD: ",R" is daS=0x1 {}
+
+vidAvgOptD: ""      is daAop=0x0 & daS=0x0 {}
+vidAvgOptD: "(R)"   is daAop=0x0 & daS=0x1 {}
+vidAvgOptD: "(T)"   is daAop=0x1 & daS=0x0 {}
+vidAvgOptD: "(T,R)" is daAop=0x1 & daS=0x1 {}
+
+vidAvg4TRD: "RND" is daAop=0x0 {}
+vidAvg4TRD: "T"   is daAop=0x1 {}
+
+vidAvg4HLD: "L" is daHl=0x0 {}
+vidAvg4HLD: "H" is daHl=0x1 {}
+
+vidAvg4OptD: (vidAvg4TRD^vidAvg4HLD^vidRSCD) is vidAvg4HLD ; vidAvg4TRD & vidRSCD {}
+
+vidClpOptD: ("LO"vidRSCD) is daHl=0x0 ; vidRSCD {}
+vidClpOptD: ("HI"vidRSCD) is daHl=0x1 ; vidRSCD {}
+
+vidASD: "BYTEOP16P" is daAop=0x0 {}
+vidASD: "BYTEOP16M" is daAop=0x1 {}
+
+with daVidOp: ... daX=0x0 {
+: "Avg8Vec" daDst0 = "BYTEOP1P"(daSrc0PairD, daSrc1PairD) vidAvgOptD
+	is ((daHl=0x0 & daAopc=0x14) 
+	 ; (vidAvgOptD & daDst0 & daSrc0PairD & daSrc1PairD))
+	 & vidAvg0 & vidAvg1 & vidAvg2 & vidAvg3 {
+		daDst0 = (vidAvg3 << 24) | (vidAvg3 << 16) | (vidAvg3 << 8) | vidAvg0;
+	}
+: "AddSub4x8" (daDst1, daDst0) = vidASD(daSrc0PairD, daSrc1PairD) vidOptD
+	is ((daHl=0x0 & daAopc=0x15)
+	 ; (vidASD & vidOptD & daDst0 & daDst0L & daDst0H & daDst1 & daDst1L & daDst1H & daSrc0PairD & daSrc1PairD)) 
+	 & vidAS0 & vidAS1 & vidAS2 & vidAS3 {
+		daDst0L = vidAS0; daDst0H = vidAS1;
+		daDst1L = vidAS2; daDst1H = vidAS3;
+	}
+: "Avg4x8Vec" daDst0 = "BYTEOP2P"(daSrc0PairD, daSrc1PairD) vidAvg4OptD
+	is ((daHl=0x0 & daAopc=0x16)
+	 ; (daDst0 & daSrc0PairD & daSrc1PairD))
+	 & vidAvg4OptD & vidAvg40 & vidAvg41 {
+		daDst0 = (vidAvg41 << 16) | vidAvg40;
+	}
+: "Avg4x8Vec" daDst0 = "BYTEOP2P"(daSrc0PairD, daSrc1PairD) vidAvg4OptD
+	is ((daHl=0x1 & daAopc=0x16)
+	 ; (daDst0 & daSrc0PairD & daSrc1PairD))
+	 & vidAvg4OptD & vidAvg40 & vidAvg41 {
+		daDst0 = (vidAvg41 << 24) | (vidAvg41 << 8);
+	}
+: "AddClip" daDst0 = "BYTEOP3P"(daSrc0PairD, daSrc1PairD) vidClpOptD
+	is ((daHl=0x0 & daAopc=0x17)
+	 ; (daDst0 & daSrc0PairD & daSrc1PairD))
+	 & vidClpOptD & vidClp1 & vidClp3 {
+		daDst0 = (vidClp3 << 16) | vidClp1;
+	}
+: "AddClip" daDst0 = "BYTEOP3P"(daSrc0PairD, daSrc1PairD) vidClpOptD
+	is ((daHl=0x1 & daAopc=0x17)
+	 ; (daDst0 & daSrc0PairD & daSrc1PairD))
+	 & vidClpOptD & vidClp0 & vidClp2 {
+		daDst0 = (vidClp2 << 24) | (vidClp0 << 8);
+	}
+: "BytePack" daDst0 = "BYTEPACK"(daSrc0, daSrc1) 
+	is (daHl=0x0 & daAopc=0x18) ; (daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1) {
+		daDst0 = (
+			((daSrc1 & 0xff0000) << 8) 
+			| ((daSrc1 & 0xff) << 16) 
+			| ((daSrc0 & 0xff0000) >> 8) 
+			| (daSrc0 & 0xff)
+		);
+	}
+: "ByteUnPack" (daDst1, daDst0) = "BYTEUNPACK"(daSrc0PairD) vidOptD 
+	is ((daHl=0x0 & daAopc=0x18)
+	 ; (daAop=0x1 & vidOptD & daDst0 & daDst1 & daSrc0PairD))
+	 & vidB0 & vidB1 & vidB2 & vidB3 {
+		daDst0 = (vidB1 << 16) | vidB0;
+		daDst1 = (vidB3 << 16) | vidB2;
+	}
+}
+
+#################### ADDSUBAC0 ####################
+
+with daAddSubAC0: (daHl=0x0 & daAopc=0x19) ; daX=0x0 {
+: "AddSubAC0" daDst0 = daSrc0 + daSrc1 + "AC0" "(NS)" 
+	is daAny16 ; (daAop=0x0 & daS=0x0 & daDst0 & daSrc0 & daSrc1)
+	{ daDst0 = daSrc0 + daSrc1 + zext(AC0); }
+: "AddSubAC0" daDst0 = daSrc0 + daSrc1 + "AC0" "(S)" 
+	is daAny16 ; (daAop=0x0 & daS=0x1 & daDst0 & daSrc0 & daSrc1)
+	{ sadd_sat(daDst0, daSrc0, daSrc1, 4); local ac:4 = zext(AC0); sadd_sat(daDst0, daDst0, ac, 4); }
+: "AddSubAC0" daDst0 = daSrc0 - daSrc1 + "AC0 - 1" "(NS)" 
+	is daAny16 ; (daAop=0x1 & daS=0x0 & daDst0 & daSrc0 & daSrc1)
+	{ daDst0 = daSrc0 - daSrc1 + zext(AC0) - 1; }
+: "AddSubAC0" daDst0 = daSrc0 - daSrc1 + "AC0 - 1" "(S)" 
+	is daAny16 ; (daAop=0x1 & daS=0x1 & daDst0 & daSrc0 & daSrc1)
+	{ ssub_sat(daDst0, daSrc0, daSrc1, 4); local ac:4 = zext(AC0) - 1; sadd_sat(daDst0, daDst0, ac, 4); }
+}
+
+with Dsp32Alu: (daSig=0xc & daSigDsp=0x2) ... {
+:^daAddSubVec16 is daAddSubVec16 { build daAddSubVec16; }
+:^daAddSub16    is daAddSub16    { build daAddSub16; }
+:^daAddSub32    is daAddSub32    { build daAddSub32; }
+:^daAddSubRnd   is daAddSubRnd   { build daAddSubRnd; }
+:^daMMAVec      is daMMAVec      { build daMMAVec; }
+:^daMMA32       is daMMA32       { build daMMA32; }
+:^daAccOp       is daAccOp       { build daAccOp; }
+:^daMisc        is daMisc        { build daMisc; }
+:^daSearch      is daSearch      { build daSearch; }
+:^daVipMisc     is daVipMisc     { build daVipMisc; }
+:^daVidOp       is daVidOp       { build daVidOp; }
+:^daAddSubAC0   is daAddSubAC0   { build daAddSubAC0; }
+}
+
+
+:^Dsp32Alu is daM=0x0 ... & Dsp32Alu { build Dsp32Alu; }
+:^Dsp32Alu is daM=0x1 ... & Dsp32Alu { build Dsp32Alu; delayslot(4); }

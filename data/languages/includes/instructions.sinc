@@ -30,7 +30,7 @@
 @include "instr32/24-NOP32.sinc"
 @include "instr32/25-Dsp32Mac.sinc"
 @include "instr32/26-Dsp32Mult.sinc"
-# @include "instr32/27-Dsp32Alu.sinc"
+@include "instr32/27-Dsp32Alu.sinc"
 # @include "instr32/28-Dsp32Shf.sinc"
 # @include "instr32/29-Dsp32ShfImm.sinc"
 # @include "instr32/30-LoopSetupImm.sinc"

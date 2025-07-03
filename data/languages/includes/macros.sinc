@@ -40,6 +40,15 @@ macro sub_sat(dst, src0, src1, size) {
 <sub_sat_end>
 }
 
+macro trunc1_sat(dst, src) {
+    if (zext(src:1) != src) goto <saturated>;
+    dst = src:1;
+    goto <trunc_sat_end>;
+<saturated>
+    dst = 0xff;
+<trunc_sat_end>
+}
+
 macro trunc2_sat(dst, src) {
     if (zext(src:2) != src) goto <saturated>;
     dst = src:2;
@@ -199,7 +208,7 @@ macro round_trunc(dst, src, trunc_size) {
 ## Min/Max
 
 macro min(dst, src0, src1) {
-    if (src1 < src0) goto <src1_min>;
+    if (src1 s< src0) goto <src1_min>;
     dst = src0;
     goto <min_end>;
 <src1_min>
@@ -208,7 +217,7 @@ macro min(dst, src0, src1) {
 }
 
 macro max(dst, src0, src1) {
-    if (src1 > src0) goto <src1_max>;
+    if (src1 s> src0) goto <src1_max>;
     dst = src0;
     goto <max_end>;
 <src1_max>

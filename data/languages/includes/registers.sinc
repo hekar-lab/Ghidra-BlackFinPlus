@@ -109,4 +109,9 @@ define context main_ctxreg
     dspCtxMU    = (11,11)
     dspCtxMI    = (12,12)
     dspCtxMOp   = (13,14)
+
+    daCtxVOpH   = (15,15)
+    daCtxVOpL   = (16,16)
+    daCtx32Dst  = (17,17)
+    daCtxByte   = (18,19)
 ;
