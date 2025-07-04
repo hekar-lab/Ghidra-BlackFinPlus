@@ -199,7 +199,7 @@ dmtAop: dmtAccReg += dmtMult is dspCtxAop=0x1 & dspCtxMU=0x0 & dmtAccReg & dmtMu
 	export dmtAccReg;
 }
 dmtAop: dmtAccReg += dmtMult is dspCtxAop=0x1 & dspCtxMU=0x1 & dmtAccReg & dmtMult { 
-	add_sat(dmtAccReg, dmtAccReg, dmtMult, 5);
+	add_sat(dmtAccReg, dmtAccReg, dmtMult);
 	export dmtAccReg;
 }
 dmtAop: dmtAccReg -= dmtMult is dspCtxAop=0x2 & dspCtxMU=0x0 & dmtAccReg & dmtMult { 
@@ -207,7 +207,7 @@ dmtAop: dmtAccReg -= dmtMult is dspCtxAop=0x2 & dspCtxMU=0x0 & dmtAccReg & dmtMu
 	export dmtAccReg;
 }
 dmtAop: dmtAccReg -= dmtMult is dspCtxAop=0x2 & dspCtxMU=0x1 & dmtAccReg & dmtMult { 
-	sub_sat(dmtAccReg, dmtAccReg, dmtMult, 5);
+	sub_sat(dmtAccReg, dmtAccReg, dmtMult);
 	export dmtAccReg;
 }
 dmtAop: dmtAccReg is dspCtxAop=0x3 & dmtAccReg { 
@@ -332,7 +332,7 @@ dmtMac: dmtMacPara is dmtMacPara     { build dmtMacPara; }
 
 with Dsp32Mac: (dmSig=0xc & dmSigDsp=0x0) ... {
 :^dmcDisplay is dmcDisplay & dmcMvRe & dmcMvIm { build dmcDisplay; build dmcMvRe; build dmcMvIm; }
-: dmtMac is dmtMac { build dmtMac; }
+:^dmtMac is dmtMac { build dmtMac; }
 }
 
 

@@ -214,7 +214,7 @@ dx32Aop: dx32A10 += dx32Mult
 dx32Aop: dx32A10 += dx32Mult 
     is dx32A10 & dx32Mult & (dxM32U=0x1 & (dxM32I=0x0 | (dxM32I=0x1 & dxM32TNS=0x0)) ; dxOp0=0x1) 
 { 
-	add_sat(dx32A10, dx32A10, dx32Mult, 9);
+	add_sat(dx32A10, dx32A10, dx32Mult);
 	export dx32A10;
 }
 dx32Aop: dx32A10 += dx32Mult 
@@ -232,7 +232,7 @@ dx32Aop: dx32A10 -= dx32Mult
 dx32Aop: dx32A10 -= dx32Mult 
     is dx32A10 & dx32Mult & (dxM32U=0x1 & (dxM32I=0x0 | (dxM32I=0x1 & dxM32TNS=0x0)) ; dxOp0=0x2) 
 { 
-	sub_sat(dx32A10, dx32A10, dx32Mult, 9);
+	sub_sat(dx32A10, dx32A10, dx32Mult);
 	export dx32A10;
 }
 dx32Aop: dx32A10 -= dx32Mult 

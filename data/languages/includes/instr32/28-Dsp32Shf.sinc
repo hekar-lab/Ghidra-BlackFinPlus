@@ -1,0 +1,263 @@
+## Shift (Dsp32Shf)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 1 | 1 | 0 | 0 |.dead..|.......sopc........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..sop..|..hls..|....dst....| 0 | 0 | 0 |...src0....|...src1....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token dsInstr16 (16)
+	dsSig           = (12,15) 
+	dsM             = (11,11) 
+	dsSigDsp        = ( 7,10) 
+	dsSopc          = ( 0, 4) 
+;
+
+define token dsInstr32 (16)
+	dsSop           = (14,15) 
+	dsSopH          = (15,15)
+	dsSopL          = (14,14)
+	dsHls           = (12,13) 
+	dsHlsH          = (13,13) 
+	dsHlsL          = (12,12) 
+	dsDst           = ( 9,11) 
+	dsDstL          = ( 9,11) 
+	dsDstH          = ( 9,11) 
+	dsMask3         = ( 6, 8) 
+	dsSrc0          = ( 3, 5) 
+	dsSrc0L         = ( 3, 5) 
+	dsSrc0H         = ( 3, 5) 
+	dsSrc0B0        = ( 3, 5) 
+	dsSrc0B1        = ( 3, 5) 
+	dsSrc1          = ( 0, 2) 
+	dsSrc1L         = ( 0, 2) 
+	dsSrc1H         = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables [dsDst dsSrc0 dsSrc1] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [dsDstL dsSrc0L dsSrc1L] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables [dsDstH dsSrc0H dsSrc1H] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables dsSrc0B0 [R0.B R1.B R2.B R3.B R4.B R5.B R6.B R7.B];
+attach variables dsSrc0B1 [R0.B1 R1.B1 R2.B1 R3.B1 R4.B1 R5.B1 R6.B1 R7.B1];
+
+
+### Instructions ###
+
+shift16: dsSrc0L is dsSrc0L { local shft:2 = dsSrc0L; get_shift16(shft); export shft; }
+shift32: dsSrc0L is dsSrc0L { local shft:2 = dsSrc0L; get_shift32(shft); export shft; }
+
+#################### SHIFT16 ###################
+s16Dst: dsDstL is dsHlsH=0x0 & dsDstL { export dsDstL; }
+s16Dst: dsDstH is dsHlsH=0x1 & dsDstH { export dsDstH; }
+
+s16Src: dsSrc1L is dsHlsL=0x0 & dsSrc1L { export dsSrc1L; }
+s16Src: dsSrc1H is dsHlsL=0x1 & dsSrc1H { export dsSrc1H; }
+
+with dsShift16: {
+: "AShift16" s16Dst = "ASHIFT" s16Src "BY" shift16       is dsSop=0x0 & s16Dst & s16Src & shift16 
+	{ ashift(s16Dst, s16Src, shift16); }
+: "AShift16" s16Dst = "ASHIFT" s16Src "BY" shift16 "(S)" is dsSop=0x1 & s16Dst & s16Src & shift16 
+	{ ashift_sat(s16Dst, s16Src, shift16, 2); }
+: "LShift16" s16Dst = "LSHIFT" s16Src "BY" shift16       is dsSop=0x2 & s16Dst & s16Src & shift16 
+	{ lshift(s16Dst, s16Src, shift16); }
+}
+
+#################### SHIFT16VEC ###################
+with dsShift16Vec: {
+: "AShift16Vec" dsDst = "ASHIFT" dsSrc1 "BY" shift16 "(V)"
+	is dsSop=0x0 & dsDst & dsDstL & dsDstH & dsSrc1 & dsSrc1L & dsSrc1H & shift16 
+	{ ashift(dsDstL, dsSrc1L, shift16); ashift(dsDstH, dsSrc1H, shift16); }
+: "AShift16Vec" dsDst = "ASHIFT" dsSrc1 "BY" shift16 "(V,S)"
+	is dsSop=0x1 & dsDst & dsDstL & dsDstH & dsSrc1 & dsSrc1L & dsSrc1H & shift16 
+	{ ashift_sat(dsDstL, dsSrc1L, shift16, 2); ashift_sat(dsDstH, dsSrc1H, shift16, 2); }
+: "LShift16Vec" dsDst = "LSHIFT" dsSrc1 "BY" shift16 "(V)"
+	is dsSop=0x2 & dsDst & dsDstL & dsDstH & dsSrc1 & dsSrc1L & dsSrc1H & shift16 
+	{ lshift(dsDstL, dsSrc1L, shift16); lshift(dsDstH, dsSrc1H, shift16); }
+}
+
+#################### SHIFT32 ###################
+with dsShift32: {
+: "AShift32" dsDst = "ASHIFT" dsSrc1 "BY" shift32       is dsSop=0x0 & dsDst & dsSrc1 & shift32 
+	{ ashift(dsDst, dsSrc1, shift32); }
+: "AShift32" dsDst = "ASHIFT" dsSrc1 "BY" shift32 "(S)" is dsSop=0x1 & dsDst & dsSrc1 & shift32 
+	{ ashift_sat(dsDst, dsSrc1, shift32, 4); }
+: "LShift32" dsDst = "LSHIFT" dsSrc1 "BY" shift32       is dsSop=0x2 & dsDst & dsSrc1 & shift32 
+	{ lshift(dsDst, dsSrc1, shift32); }
+: "Rot32"    dsDst = "ROT" dsSrc1 "BY" shift32          is dsSop=0x3 & dsDst & dsSrc1 & shift32 
+	{ rot(dsDst, dsSrc1, shift32, 4); }
+}
+
+#################### SHIFTACC ###################
+with dsShiftAcc: {
+: "AShiftAcc" "A0" = "ASHIFT" "A0" "BY" shift32   is dsSop=0x0 & dsHls=0x0 & shift32 
+	{ ashift_sat(A0, A0, shift32, 5); }
+: "LShift32Acc" "A0" = "LSHIFT" "A0" "BY" shift32 is dsSop=0x1 & dsHls=0x0 & shift32 
+	{ lshift(A0, A0, shift32); }
+: "Rot32Acc"    "A0" = "LSHIFT" "A0" "BY" shift32 is dsSop=0x2 & dsHls=0x0 & shift32 
+	{ rot(A0, A0, shift32, 5); }
+: "AShiftAcc" "A1" = "ASHIFT" "A1" "BY" shift32   is dsSop=0x0 & dsHls=0x1 & shift32 
+	{ ashift_sat(A1, A1, shift32, 5); }
+: "LShift32Acc" "A1" = "LSHIFT" "A1" "BY" shift32 is dsSop=0x1 & dsHls=0x1 & shift32 
+	{ lshift(A1, A1, shift32); }
+: "Rot32Acc"    "A1" = "ROT" "A1" "BY" shift32    is dsSop=0x2 & dsHls=0x1 & shift32 
+	{ rot(A1, A1, shift32, 5); }
+}
+
+#################### PACK16VEC ###################
+pvSrc0: dsSrc0L is dsSopH=0x0 & dsSrc0L { export dsSrc0L; }
+pvSrc0: dsSrc0H is dsSopH=0x1 & dsSrc0H { export dsSrc0H; }
+pvSrc1: dsSrc1L is dsSopL=0x0 & dsSrc1L { export dsSrc1L; }
+pvSrc1: dsSrc1H is dsSopL=0x1 & dsSrc1H { export dsSrc1H; }
+
+dsPackVec: "Pack16Vec" dsDst = "PACK"(pvSrc0, pvSrc1) is dsDst & dsDstH & dsDstL & pvSrc0 & pvSrc1
+	{ dsDstH = pvSrc0; dsDstL = pvSrc1; }
+
+#################### SIGNBITS ###################
+with dsSignBits: {
+: "SignBits32" dsDstL = "SIGNBITS" dsSrc0  is dsSop=0x0 & dsDstL & dsSrc0  { sgnbits(dsDstL, dsSrc0); }
+: "SignBits16" dsDstL = "SIGNBITS" dsSrc0L is dsSop=0x1 & dsDstL & dsSrc0L { sgnbits(dsDstL, dsSrc0L); }
+: "SignBits16" dsDstL = "SIGNBITS" dsSrc0H is dsSop=0x2 & dsDstL & dsSrc0H { sgnbits(dsDstL, dsSrc0H); }
+}
+
+#################### SIGNBITSACC ###################
+with dsSignBitsAcc: {
+: "SignBitsAcc" dsDstL = "SIGNBITS" "A0" is dsSop=0x0 & dsDstL { sgnbits(dsDstL, A0); }
+: "SignBitsAcc" dsDstL = "SIGNBITS" "A1" is dsSop=0x1 & dsDstL { sgnbits(dsDstL, A1); }
+}
+
+#################### ONES ###################
+dsOnes: "Ones" dsDstL = "ONES" dsSrc0 is dsSop=0x3 & dsDstL & dsSrc0 { dsDstL = popcount(dsSrc0); }
+
+#################### EXPADJ ###################
+with dsExpAdj: {
+: "ExpAdj32" dsDstL = "EXPADJ"(dsSrc0, dsSrc1L)       is dsSop=0x0 & dsDstL & dsSrc0 & dsSrc1L
+	{ local exp:2; sgnbits(exp, dsSrc0); min(dsDstL, exp, dsSrc1L); }
+: "ExpAdj32" dsDstL = "EXPADJ"(dsSrc0, dsSrc1L) "(V)" is dsSop=0x1 & dsDstL & dsSrc0 & dsSrc0L & dsSrc0H & dsSrc1L { 
+		local exp:2; 
+		sgnbits(exp, dsSrc0L); min(dsDstL, exp, dsSrc1L); 
+		sgnbits(exp, dsSrc0H); min(dsDstL, dsDstL, exp);  
+	}
+: "ExpAdj32" dsDstL = "EXPADJ"(dsSrc0L, dsSrc1L)      is dsSop=0x2 & dsDstL & dsSrc0L & dsSrc1L
+	{ local exp:2; sgnbits(exp, dsSrc0L); min(dsDstL, exp, dsSrc1L); }
+: "ExpAdj32" dsDstL = "EXPADJ"(dsSrc0H, dsSrc1L)      is dsSop=0x3 & dsDstL & dsSrc0H & dsSrc1L
+	{ local exp:2; sgnbits(exp, dsSrc0H); min(dsDstL, exp, dsSrc1L); }
+}
+
+#################### BITMUX ###################
+with dsBitMux: {
+: "BitMux" "BITMUX"(dsSrc1, dsSrc0, "A0") "(ASR)" is dsSop=0x0 & dsSrc0 & dsSrc1 {
+	local bits:5 = ((zext(dsSrc0) & 0x1) << 1) | (zext(dsSrc1) & 0x1);
+	dsSrc0 = dsSrc0 >> 1; dsSrc1 = dsSrc1 >> 1;
+	A0 = (A0 >> 2) | bits << 38;
+}
+: "BitMux" "BITMUX"(dsSrc1, dsSrc0, "A0") "(ASL)" is dsSop=0x1 & dsSrc0 & dsSrc1 {
+	local bits:5 = ((zext(dsSrc0) >> 31) << 1) | (zext(dsSrc1) >> 31);
+	dsSrc0 = dsSrc0 << 1; dsSrc1 = dsSrc1 << 1;
+	A0 = (A0 << 2) | bits;
+}
+}
+
+#################### VITMAX ###################
+with dsVitMax: {
+: "VitMax" dsDstL = "VIT_MAX"(dsSrc0) "(ASL)" is dsSop=0x0 & dsDstL & dsSrc0 & dsSrc0H & dsSrc0L 
+	{ vitmaxl(dsDstL, dsSrc0L, dsSrc0H); } 
+: "VitMax" dsDstL = "VIT_MAX"(dsSrc0) "(ASR)" is dsSop=0x1 & dsDstL & dsSrc0 & dsSrc0H & dsSrc0L 
+	{ vitmaxr(dsDstL, dsSrc0L, dsSrc0H); } 
+
+: "VitMaxDual" dsDst = "VIT_MAX"(dsSrc0, dsSrc1) "(ASL)" 
+	is dsSop=0x2 & dsDst & dsDstH & dsDstL & dsSrc0 & dsSrc0H & dsSrc0L & dsSrc1 & dsSrc1H & dsSrc1L 
+	{ vitmaxl(dsDstL, dsSrc1L, dsSrc1H); vitmaxl(dsDstH, dsSrc0L, dsSrc0H); } 
+: "VitMaxDual" dsDst = "VIT_MAX"(dsSrc0, dsSrc1) "(ASR)" 
+	is dsSop=0x3 & dsDst & dsDstH & dsDstL & dsSrc0 & dsSrc0H & dsSrc0L & dsSrc1 & dsSrc1H & dsSrc1L 
+	{ vitmaxr(dsDstL, dsSrc1L, dsSrc1H); vitmaxr(dsDstH, dsSrc0L, dsSrc0H); } 
+}
+
+#################### EXTRACT/DEPOSIT ###################
+with dsExtrDepo: {
+: "Extract" dsDst = "EXTRACT"(dsSrc1, dsSrc0L) "(Z)" is dsSop=0x0 & dsDst & dsSrc0L & dsSrc0B0 & dsSrc0B1 & dsSrc1 {
+	local len:1 = dsSrc0B0 & 0x1f; local off:1 = dsSrc0B1 & 0x1f;
+	local res:8 = (zext(dsSrc1) << (64 - (len + off))) >> (64 - len); 
+	dsDst = res:4; 
+}
+: "Extract" dsDst = "EXTRACT"(dsSrc1, dsSrc0L) "(X)" is dsSop=0x1 & dsDst & dsSrc0L & dsSrc0B0 & dsSrc0B1 & dsSrc1{
+	local len:1 = dsSrc0B0 & 0x1f; local off:1 = dsSrc0B1 & 0x1f;
+	local res:8 = (zext(dsSrc1) << (64 - (len + off))) s>> (64 - len); 
+	dsDst = res:4; 
+}
+
+: "Deposit" dsDst = "DEPOSIT"(dsSrc1, dsSrc0)
+	is dsSop=0x2 & dsDst & dsSrc0 & dsSrc0H & dsSrc0B0 & dsSrc0B1 & dsSrc1 {
+		local len:1 = dsSrc0B0 & 0x1f; local off:1 = dsSrc0B1 & 0x1f;
+		local fg:8 = (zext(dsSrc0H) << (64 - len)) >> (64 - (len + off)); 
+		local mask:8 = ((1 << len) - 1) << off;
+		local res:8 = (zext(dsSrc1) & ~mask) | fg; dsDst = res:4;
+	}
+: "Deposit" dsDst = "DEPOSIT"(dsSrc1, dsSrc0) "(X)"
+	is dsSop=0x3 & dsDst & dsSrc0 & dsSrc0H & dsSrc0B0 & dsSrc0B1 & dsSrc1 {
+		local len:1 = dsSrc0B0 & 0x1f; local off:1 = dsSrc0B1 & 0x1f;
+		local fg:8 = (zext(dsSrc0H) << (64 - len)) s>> (64 - (len + off)); 
+		local mask:8 = (1 << off) - 1;
+		local res:8 = (zext(dsSrc1) & mask) | fg; dsDst = res:4;
+	}
+}
+
+#################### BXOR ###################
+with dsBXorNF: {
+: "BXorShiftNF" dsDstL = "CC" = "BXORSHIFT"("A0", dsSrc0) is dsSop=0x0 & dsDstL & dsSrc0 {
+	A0 = A0 << 1;
+	local out:2 = popcount(A0.W & dsSrc0) & 0x1;
+	CC = out:1; dsDstL = (dsDstL & 0xfffe) | out;
+}
+: "BXorNF" dsDstL = "CC" = "BXOR"("A0", dsSrc0) is dsSop=0x1 & dsDstL & dsSrc0 {
+	local out:2 = popcount(A0.W & dsSrc0) & 0x1;
+	CC = out:1; dsDstL = (dsDstL & 0xfffe) | out;
+}
+}
+
+with dsBXor: {
+: "BXorShift" "A0 = BXORSHIFT(A0, A1, CC)" is dsSop=0x2 {
+	local out:5 = (popcount(A0 & A1) & 0x1) ^ zext(CC);
+	A0 = (A0 << 1) | out;
+}
+: "BXor" dsDstL = "CC = A0 = BXOR(A0, A1, CC)" is dsSop=0x3 & dsDstL {
+	local out:2 = (popcount(A0 & A1) & 0x1) ^ zext(CC);
+	CC = out:1; dsDstL = (dsDstL & 0xfffe) | out;
+}
+}
+
+#################### ALIGN ###################
+with dsAlign: {
+: "Align" dsDst = "ALIGN8"(dsSrc1, dsSrc0)  is dsSop=0x0 & dsDst & dsSrc0 & dsSrc1
+	{ dsDst = (dsSrc1 << 24) | (dsSrc0 >> 8); }
+: "Align" dsDst = "ALIGN16"(dsSrc1, dsSrc0) is dsSop=0x1 & dsDst & dsSrc0 & dsSrc1
+	{ dsDst = (dsSrc1 << 16) | (dsSrc0 >> 16); }
+: "Align" dsDst = "ALIGN24"(dsSrc1, dsSrc0) is dsSop=0x2 & dsDst & dsSrc0 & dsSrc1
+	{ dsDst = (dsSrc1 << 8) | (dsSrc0 >> 24); }
+}
+
+with Dsp32Shf: (dsSig=0xc & dsSigDsp=0xc) ; dsMask3=0x0 {
+:^dsShift16     is dsSopc=0x00 ; dsShift16                   { build dsShift16; }
+:^dsShift16Vec  is dsSopc=0x01 ; (dsHls=0x0 & dsShift16Vec)  { build dsShift16Vec; }
+:^dsShift32     is dsSopc=0x02 ; (dsHls=0x0 & dsShift32)     { build dsShift32; }
+:^dsShiftAcc    is dsSopc=0x03 ; dsShiftAcc                  { build dsShiftAcc; }
+:^dsPackVec     is dsSopc=0x04 ; (dsHls=0x0 & dsPackVec)     { build dsPackVec; }
+:^dsSignBits    is dsSopc=0x05 ; (dsHls=0x0 & dsSignBits)    { build dsSignBits; }
+:^dsSignBitsAcc is dsSopc=0x06 ; (dsHls=0x0 & dsSignBitsAcc) { build dsSignBitsAcc; }
+:^dsOnes        is dsSopc=0x06 ; (dsHls=0x0 & dsOnes)        { build dsOnes; }
+:^dsExpAdj      is dsSopc=0x07 ; (dsHls=0x0 & dsExpAdj)      { build dsExpAdj; }
+:^dsBitMux      is dsSopc=0x08 ; (dsHls=0x0 & dsBitMux)      { build dsBitMux; }
+:^dsVitMax      is dsSopc=0x09 ; (dsHls=0x0 & dsVitMax)      { build dsVitMax; }
+:^dsExtrDepo    is dsSopc=0x0a ; (dsHls=0x0 & dsExtrDepo)    { build dsExtrDepo; }
+:^dsBXorNF      is dsSopc=0x0b ; (dsHls=0x0 & dsBXorNF)      { build dsBXorNF; }
+:^dsBXor        is dsSopc=0x0c ; (dsHls=0x0 & dsBXor)        { build dsBXor; }
+:^dsAlign       is dsSopc=0x0d ; (dsHls=0x0 & dsAlign)       { build dsAlign; }
+}
+
+
+:^Dsp32Shf is dsM=0x0 ... & Dsp32Shf { build Dsp32Shf; }
+:^Dsp32Shf is dsM=0x1 ... & Dsp32Shf { build Dsp32Shf; delayslot(4); }

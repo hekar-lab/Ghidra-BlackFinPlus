@@ -22,16 +22,16 @@ macro popb(reg) {
 # Arithmetic macros
 ## Saturated binary operations 
 ### Unsigned
-macro add_sat(dst, src0, src1, size) {
+macro add_sat(dst, src0, src1) {
     if (carry(src0, src1)) goto <saturated>;
     dst = src0 + src1;
     goto <add_sat_end>;
 <saturated>
-    dst = (1 << size * 8) - 1;
+    dst = ~0;
 <add_sat_end>
 }
 
-macro sub_sat(dst, src0, src1, size) {
+macro sub_sat(dst, src0, src1) {
     if (src0 < src1) goto <saturated>;
     dst = src0 - src1;
     goto <sub_sat_end>;
@@ -142,8 +142,8 @@ macro strunc8_sat(dst, src) {
 <strunc_sat_end>
 }
 
-## Saturated unary operations
 
+## Saturated unary operations
 macro abs_sat(dst, src, size) {
     if (src s< 0) goto <negative>;
     dst = src;
@@ -206,7 +206,6 @@ macro round_trunc(dst, src, trunc_size) {
 
 
 ## Min/Max
-
 macro min(dst, src0, src1) {
     if (src1 s< src0) goto <src1_min>;
     dst = src0;
@@ -223,4 +222,108 @@ macro max(dst, src0, src1) {
 <src1_max>
     dst = src1;
 <max_end>
+}
+
+
+# Shifts
+macro get_shift16(shft) {
+    shft = ((shft & 0x1f) << 11) s>> 11;
+}
+
+macro get_shift32(shft) {
+    shft = ((shft & 0x3f) << 10) s>> 10;
+}
+
+macro lshift(dst, src, shft) {
+    if (shft == 0) goto <no_shift>;
+    if (shft s> 0) goto <rshift>;
+    dst = src << -shft;
+    goto <shift_end>;
+<rshift>
+    dst = src >> shft;
+    goto <shift_end>;
+<no_shift>
+    dst = src;
+<shift_end>
+}
+
+macro ashift(dst, src, shft) {
+    if (shft == 0) goto <no_shift>;
+    if (shft s> 0) goto <rshift>;
+    dst = src << -shft;
+    goto <shift_end>;
+<rshift>
+    dst = src s>> shft;
+    goto <shift_end>;
+<no_shift>
+    dst = src;
+<shift_end>
+}
+
+macro ashift_sat(dst, src, shft, size) {
+    if (shft == 0) goto <no_shift>;
+    if (shft s> 0) goto <rshift>;
+    if ((src << 1) s< src) goto <sat>;
+    dst = src << -shft;
+    goto <shift_end>;
+<sat>
+    dst = ((dst s>> (size * 8 - 2)) | 1) ^ (1 << (size * 8 - 1));
+    goto <shift_end>;
+<rshift>
+    dst = src s>> shft;
+    goto <shift_end>;
+<no_shift>
+    dst = src;
+<shift_end>
+}
+
+macro rot(dst, src, shft, size) {
+    local bit = src;
+    if (shft == 0) goto <no_rot>;
+    if (shft s> 0) goto <rrot>;
+    dst = (src << -shft) | (zext(CC) << (-shft - 1)) | (src >> (size + shft + 1));
+    bit = (src >> (size + shft)) & 0x1; CC = bit:1; 
+    goto <rot_end>;
+<rrot>
+    dst = (src << (size - shft + 1)) | (zext(CC) << (size - shft)) | (src >> shft);
+    bit = (src >> (shft - 1)) & 0x1; CC = bit:1; 
+    goto <rot_end>;
+<no_rot>
+    dst = src;
+<rot_end>
+}
+
+
+# Misc
+## SignBits
+macro sgnbits(dst, src) {
+    if (src s< 0) goto <negative>;
+    dst = lzcount(src) - 1;
+    goto <sb_end>;
+<negative>
+    dst = lzcount(~src) - 1;
+<sb_end>
+}
+
+#VitMax
+macro vitmaxl(dst, src0, src1) {
+    if ((src0 - src1) s< 0) goto <src1_greater>;
+    dst = src0;
+    A0.W = A0.W << 1;
+    goto <vitmax_end>;
+<src1_greater>
+    dst = src1;
+    A0.W = (A0.W << 1) | 0x1;
+<vitmax_end>
+}
+
+macro vitmaxr(dst, src0, src1) {
+    if ((src0 - src1) s< 0) goto <src1_greater>;
+    dst = src0;
+    A0.W = A0.W >> 1;
+    goto <vitmax_end>;
+<src1_greater>
+    dst = src1;
+    A0.W = (A0.W >> 1) | 0x80000000;
+<vitmax_end>
 }

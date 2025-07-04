@@ -11,7 +11,16 @@ define register offset=0x0000 size=4
 define register offset=0x0000 size=2
     [R0.L R0.H R1.L R1.H R2.L R2.H R3.L R3.H R4.L R4.H R5.L R5.H R6.L R6.H R7.L R7.H];
 define register offset=0x0000 size=1
-    [R0.B _ _ _ R1.B _ _ _ R2.B _ _ _ R3.B _ _ _ R4.B _ _ _ R5.B _ _ _ R6.B _ _ _ R7.B];
+    [
+        R0.B R0.B1 R0.B2 R0.B3 
+        R1.B R1.B1 R1.B2 R1.B3
+        R2.B R2.B1 R2.B2 R2.B3
+        R3.B R3.B1 R3.B2 R3.B3 
+        R4.B R4.B1 R4.B2 R4.B3
+        R5.B R5.B1 R5.B2 R5.B3
+        R6.B R6.B1 R6.B2 R6.B3
+        R7.B R7.B1 R7.B2 R7.B3
+    ];
 
 # Pointer registers
 define register offset=0x0020 size=4 
