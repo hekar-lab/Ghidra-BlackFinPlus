@@ -263,11 +263,11 @@ macro ashift(dst, src, shft) {
 macro ashift_sat(dst, src, shft, size) {
     if (shft == 0) goto <no_shift>;
     if (shft s> 0) goto <rshift>;
-    if ((src << 1) s< src) goto <sat>;
+    if (src != ((src << shft) s>> shft)) goto <sat>;
     dst = src << -shft;
     goto <shift_end>;
 <sat>
-    dst = ((dst s>> (size * 8 - 2)) | 1) ^ (1 << (size * 8 - 1));
+    dst = ~(((dst s>> (size * 8 - 2)) | 1) ^ (1 << (size * 8 - 1)));
     goto <shift_end>;
 <rshift>
     dst = src s>> shft;
@@ -281,11 +281,11 @@ macro rot(dst, src, shft, size) {
     local bit = src;
     if (shft == 0) goto <no_rot>;
     if (shft s> 0) goto <rrot>;
-    dst = (src << -shft) | (zext(CC) << (-shft - 1)) | (src >> (size + shft + 1));
-    bit = (src >> (size + shft)) & 0x1; CC = bit:1; 
+    dst = (src << -shft) | (zext(CC) << (-shft - 1)) | (src >> (8 * size + shft + 1));
+    bit = (src >> (8 * size + shft)) & 0x1; CC = bit:1; 
     goto <rot_end>;
 <rrot>
-    dst = (src << (size - shft + 1)) | (zext(CC) << (size - shft)) | (src >> shft);
+    dst = (src << (8 * size - shft + 1)) | (zext(CC) << (8 * size - shft)) | (src >> shft);
     bit = (src >> (shft - 1)) & 0x1; CC = bit:1; 
     goto <rot_end>;
 <no_rot>

@@ -1,0 +1,197 @@
+## Shift Immediate (Dsp32ShfImm)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 0 |.m.| 1 | 1 | 0 | 1 |.dead..|.......sopc........|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..sop..|..hls..|....dst....|..........imm..........|....src....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token diInstr16 (16)
+	diSig           = (12,15) 
+	diM             = (11,11) 
+	diSigDsp        = ( 7,10) 
+	diSopc          = ( 0, 4) 
+;
+
+define token diInstr32 (16)
+	diSop           = (14,15) 
+	diHls           = (12,13) 
+    diHlsH          = (13,13) 
+    diHlsL          = (12,12) 
+	diDst           = ( 9,11) 
+	diDstL          = ( 9,11) 
+	diDstH          = ( 9,11) 
+	diImm           = ( 3, 8) signed
+    diImmSgn5       = ( 8, 8) 
+	diImmSgn4       = ( 7, 8) 
+	diImm5          = ( 3, 7) 
+	diImm4          = ( 3, 6) 
+	diSrc           = ( 0, 2) 
+	diSrcL          = ( 0, 2) 
+	diSrcH          = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables [diDst diSrc] [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [diDstL diSrcL] [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables [diDstH diSrcH] [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+
+
+### Instructions ###
+
+#################### SHIFT16 ###################
+si16Dst: diDstL is diHlsH=0x0 & diDstL { export diDstL; }
+si16Dst: diDstH is diHlsH=0x1 & diDstH { export diDstH; }
+
+si16Src: diSrcL is diHlsL=0x0 & diSrcL { export diSrcL; }
+si16Src: diSrcH is diHlsL=0x1 & diSrcH { export diSrcH; }
+
+with diShift16: {
+: "AShift16" si16Dst = si16Src "<<< 0"      is diSop=0x0 & diImm=0x0 & si16Dst & si16Src { si16Dst = si16Src; }
+: "AShift16" si16Dst = si16Src "<<<" diImm4 is diSop=0x0 & diImmSgn4=0x0 & diImm4 & si16Dst & si16Src 
+    { si16Dst = si16Src << diImm4; }
+: "AShift16" si16Dst = si16Src ">>>" shft   is diSop=0x0 & diImmSgn4=0x3 & diImm4 & si16Dst & si16Src 
+    [ shft = 0x10 - diImm4; ] { si16Dst = si16Src s>> shft; }
+
+: "AShift16" si16Dst = si16Src "<<< 0 (S)"        is diSop=0x1 & diImm=0x0 & si16Dst & si16Src { si16Dst = si16Src; }
+: "AShift16" si16Dst = si16Src "<<<" diImm4 "(S)" is diSop=0x1 & diImmSgn4=0x0 & diImm4 & si16Dst & si16Src { 
+    if (si16Dst != ((si16Dst << diImm4) s>> diImm4)) goto <sat>;
+    si16Dst = si16Dst << diImm4; goto <shift_end>;
+<sat>
+    si16Dst = ~(((si16Dst s>> 14) | 1) ^ 0x8000);
+<shift_end> 
+}
+: "AShift16" si16Dst = si16Src ">>>" shft "(S)"   is diSop=0x1 & diImmSgn4=0x3 & diImm4 & si16Dst & si16Src 
+    [ shft = 0x10 - diImm4; ] { si16Dst = si16Src s>> shft; }
+
+: "LShift16" si16Dst = si16Src "<< 0"      is diSop=0x2 & diImm=0x0 & si16Dst & si16Src { si16Dst = si16Src; }
+: "LShift16" si16Dst = si16Src "<<" diImm4 is diSop=0x2 & diImmSgn4=0x0 & diImm4 & si16Dst & si16Src 
+    { si16Dst = si16Src << diImm4; }
+: "LShift16" si16Dst = si16Src ">>" shft   is diSop=0x2 & diImmSgn4=0x3 & diImm4 & si16Dst & si16Src 
+    [ shft = 0x10 - diImm4; ] { si16Dst = si16Src >> shft; }
+}
+
+#################### SHIFT16VEC ###################
+with diShift16Vec: {
+: "AShift16Vec" diDst = diSrc "<<< 0 (V)" is diSop=0x0 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "AShift16Vec" diDst = diSrc "<<<" diImm4 "(V)" 
+    is diSop=0x0 & diImmSgn4=0x0 & diImm4 & diDst & diDstH & diDstL & diSrc & diSrcH & diSrcL
+    { diDstH = diSrcH << diImm4; diDstL = diSrcL << diImm4; }
+: "AShift1Vec6" diDst = diSrc ">>>" shft "(V)" 
+    is diSop=0x0 & diImmSgn4=0x3 & diImm4 & diDst & diDstH & diDstL & diSrc & diSrcH & diSrcL 
+    [ shft = 0x10 - diImm4; ] { diDstH = diSrcH s>> shft; diDstL = diSrcL s>> shft; }
+
+: "AShift16Vec" diDst = diSrc "<<< 0 (V,S)" is diSop=0x1 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "AShift16Vec" diDst = diSrc "<<<" diImm4 "(V,S)"
+    is diSop=0x1 & diImmSgn4=0x0 & diImm4 & diDst & diDstH & diDstL & diSrc & diSrcH & diSrcL { 
+        if (diDstH != ((diDstH << diImm4) s>> diImm4)) goto <satH>;
+        diDstH = diDstH << diImm4; goto <shift_endH>;
+    <satH>
+        diDstH = ~(((diDstH s>> 14) | 1) ^ 0x8000);
+    <shift_endH> 
+        if (diDstL != ((diDstL << diImm4) s>> diImm4)) goto <satL>;
+        diDstL = diDstL << diImm4; goto <shift_endL>;
+    <satL>
+        diDstL = ~(((diDstL s>> 14) | 1) ^ 0x8000);
+    <shift_endL> 
+    }
+: "AShift16Vec" diDst = diSrc ">>>" shft "(V,S)"
+    is diSop=0x1 & diImmSgn4=0x3 & diImm4 & diDst & diDstH & diDstL & diSrc & diSrcH & diSrcL 
+    [ shft = 0x10 - diImm4; ] { diDstH = diSrcH s>> shft; diDstL = diSrcL s>> shft; }
+
+: "LShift16Vec" diDst = diSrc "<< 0 (V)"        is diSop=0x2 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "LShift16Vec" diDst = diSrc "<<" diImm4 "(V)"
+    is diSop=0x2 & diImmSgn4=0x0 & diImm4 & diDst & diDstH & diDstL & diSrc & diSrcH & diSrcL
+    { diDstH = diSrcH << diImm4; diDstL = diSrcL << diImm4; }
+: "LShift16Vec" diDst = diSrc ">>" shft "(V)"
+    is diSop=0x2 & diImmSgn4=0x3 & diImm4 & diDst & diDstH & diDstL & diSrc & diSrcH & diSrcL 
+    [ shft = 0x10 - diImm4; ] { diDstH = diSrcH >> shft; diDstL = diSrcL >> shft; }
+}
+
+#################### SHIFT32 ###################
+with diShift32: {
+: "AShift32" diDst = diSrc "<<< 0"      is diSop=0x0 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "AShift32" diDst = diSrc "<<<" diImm5 is diSop=0x0 & diImmSgn5=0x0 & diImm5 & diDst & diSrc
+    { diDst = diSrc << diImm5; }
+: "AShift32" diDst = diSrc ">>>" shft   is diSop=0x0 & diImmSgn5=0x1 & diImm5 & diDst & diSrc 
+    [ shft = 0x20 - diImm5; ] { diDst = diSrc s>> shft; }
+
+: "AShift32" diDst = diSrc "<<< 0 (S)"        is diSop=0x1 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "AShift32" diDst = diSrc "<<<" diImm5 "(S)" is diSop=0x1 & diImmSgn5=0x0 & diImm5 & diDst & diSrc { 
+        if (diDst != ((diDst << diImm5) s>> diImm5)) goto <sat>;
+        diDst = diDst << diImm5; goto <shift_end>;
+    <sat>
+        diDst = ~(((diDst s>> 30) | 1) ^ 0x80000000);
+    <shift_end> 
+    }
+: "AShift32" diDst = diSrc ">>>" shft "(S)"   is diSop=0x1 & diImmSgn5=0x1 & diImm5 & diDst & diSrc
+    [ shft = 0x20 - diImm5; ] { diDst = diSrc s>> shft; }
+
+: "LShift32" diDst = diSrc "<< 0"      is diSop=0x2 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "LShift32" diDst = diSrc "<<" diImm5 is diSop=0x2 & diImmSgn5=0x0 & diImm5 & diDst & diSrc
+    { diDst = diSrc << diImm5; }
+: "LShift32" diDst = diSrc ">>" shft   is diSop=0x2 & diImmSgn5=0x1 & diImm5 & diDst & diSrc 
+    [ shft = 0x20 - diImm5; ] { diDst = diSrc >> shft; }
+
+: "Rot32" diDst = "ROT" diSrc "BY 0"     is diSop=0x3 & diImm=0x0 & diDst & diSrc { diDst = diSrc; }
+: "Rot32" diDst = "ROT" diSrc "BY" diImm is diSop=0x3 & diImmSgn5=0x0 & diImm & diImm5 & diDst & diSrc { 
+    diDst = (diSrc << (32 - diImm5 + 1)) | (zext(CC) << (32 - diImm5)) | (diSrc >> diImm5);
+    local bit:4 = (diSrc >> (diImm5 - 1)) & 0x1; CC = bit:1;
+}
+: "Rot32" diDst = "ROT" diSrc "BY" diImm is diSop=0x3 & diImmSgn5=0x1 & diImm & diImm5 & diDst & diSrc { 
+    local shft:1 = 0x20 - diImm5;
+    diDst = (diSrc << shft) | (zext(CC) << (shft - 1)) | (diSrc >> (32 - shft + 1));
+    local bit:4 = (diSrc >> (32 - shft)) & 0x1; CC = bit:1; 
+}
+}
+
+#################### SHIFTACC ###################
+sAcc: "A0" is diHls=0x0 { export A0; }
+sAcc: "A1" is diHls=0x1 { export A1; }
+
+sAccC: "A0" is diHls=0x0 { export A0; }
+sAccC: "A1" is diHls=0x1 { export A1; }
+
+with diShiftAcc: {
+: "AShiftAcc" sAcc = sAccC "<<< 0"      is diSop=0x0 & diImm=0x0 & sAcc & sAccC {}
+: "AShiftAcc" sAcc = sAccC "<<<" diImm5 is diSop=0x0 & diImmSgn5=0x0 & diImm5 & sAcc & sAccC { 
+    if (sAcc != ((sAcc << diImm5) s>> diImm5)) goto <sat>;
+    sAcc = sAcc << diImm5; goto <shift_end>;
+<sat>
+    sAcc = ~(((sAcc s>> 38) | 1) ^ 0x8000000000);
+<shift_end> 
+}
+: "AShiftAcc" sAcc = sAccC ">>>" shft   is diSop=0x0 & diImmSgn5=0x1 & diImm5 & sAcc & sAccC [ shft = 0x20 - diImm5; ]
+    { sAcc = sAcc s>> shft; }
+
+: "LShiftAcc" sAcc = sAccC "<< 0"      is diSop=0x1 & diImm=0x0 & sAcc & sAccC {}
+: "LShiftAcc" sAcc = sAccC "<<" diImm5 is diSop=0x1 & diImmSgn5=0x0 & diImm5 & sAcc & sAccC { sAcc = sAcc << diImm5; }
+: "LShiftAcc" sAcc = sAccC ">>" shft   is diSop=0x1 & diImmSgn5=0x1 & diImm5 & sAcc & sAccC [ shft = 0x20 - diImm5; ] 
+    { sAcc = sAcc >> shft; }
+
+: "RotAcc" sAcc = "ROT" sAccC "BY 0"     is diSop=0x2 & diImm=0x0 & sAcc & sAccC {}
+: "RotAcc" sAcc = "ROT" sAccC "BY" diImm is diSop=0x2 & diImmSgn5=0x0 & diImm & diImm5 & sAcc & sAccC { 
+    sAcc = (sAcc << (40 - diImm5 + 1)) | (zext(CC) << (40 - diImm5)) | (sAcc >> diImm5);
+    local bit:5 = (sAcc >> (diImm5 - 1)) & 0x1; CC = bit:1;
+}
+: "RotAcc" sAcc = "ROT" sAccC "BY" diImm is diSop=0x2 & diImmSgn5=0x1 & diImm & diImm5 & sAcc & sAccC { 
+    local shft:1 = 0x20 - diImm5;
+    sAcc = (sAcc << shft) | (zext(CC) << (shft - 1)) | (sAcc >> (40 - shft + 1));
+    local bit:5 = (sAcc >> (40 - shft)) & 0x1; CC = bit:1; 
+}
+}
+
+with Dsp32ShfImm: (diSig=0xc & diSigDsp=0xd) ... {
+:^diShift16     is diSopc=0x00 ; diShift16                   { build diShift16; }
+:^diShift16Vec  is diSopc=0x01 ; (diHls=0x0 & diShift16Vec)  { build diShift16Vec; }
+:^diShift32     is diSopc=0x02 ; (diHls=0x0 & diShift32)     { build diShift32; }
+:^diShiftAcc    is diSopc=0x03 ; diShiftAcc                  { build diShiftAcc; }
+}
+
+
+:^Dsp32ShfImm is diM=0x0 ... & Dsp32ShfImm { build Dsp32ShfImm; }
+:^Dsp32ShfImm is diM=0x1 ... & Dsp32ShfImm { build Dsp32ShfImm; delayslot(4); }
