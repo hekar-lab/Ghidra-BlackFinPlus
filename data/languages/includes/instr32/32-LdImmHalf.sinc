@@ -1,0 +1,101 @@
+## Load Immediate Half Word (LdImmHalf)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 1 |.z.|.h.|.s.|..grp..|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................hword.............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lihInstr16 (16)
+	lihSig           = ( 8,15) 
+	lihZ             = ( 7, 7) 
+	lihH             = ( 6, 6) 
+	lihS             = ( 5, 5) 
+	lihGrp           = ( 3, 4) 
+	lihDReg          = ( 0, 2) 
+	lihDRegL         = ( 0, 2) 
+	lihDRegH         = ( 0, 2) 
+	lihPReg          = ( 0, 2) 
+	lihPRegL         = ( 0, 2) 
+	lihPRegH         = ( 0, 2) 
+	lihRegH          = ( 2, 2) 
+	lihIReg          = ( 0, 1) 
+	lihIRegL         = ( 0, 1) 
+	lihIRegH         = ( 0, 1) 
+	lihMReg          = ( 0, 1) 
+	lihMRegL         = ( 0, 1) 
+	lihMRegH         = ( 0, 1) 
+	lihBReg          = ( 0, 1) 
+	lihBRegL         = ( 0, 1) 
+	lihBRegH         = ( 0, 1) 
+	lihLReg          = ( 0, 1) 
+	lihLRegL         = ( 0, 1) 
+	lihLRegH         = ( 0, 1) 
+;
+
+define token lihInstr32 (16)
+    lihUHword        = ( 0,15) 
+	lihSHword        = ( 0,15) signed
+;
+
+
+### Variables ###
+
+attach variables lihDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lihDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables lihDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables lihPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lihPRegL [P0.L P1.L P2.L P3.L P4.L P5.L SP.L FP.L];
+attach variables lihPRegH [P0.H P1.H P2.H P3.H P4.H P5.H SP.H FP.H];
+attach variables lihIReg [I0 I1 I2 I3];
+attach variables lihIRegL [I0.L I1.L I2.L I3.L];
+attach variables lihIRegH [I0.H I1.H I2.H I3.H];
+attach variables lihMReg [M0 M1 M2 M3];
+attach variables lihMRegL [M0.L M1.L M2.L M3.L];
+attach variables lihMRegH [M0.H M1.H M2.H M3.H];
+attach variables lihBReg [B0 B1 B2 B3];
+attach variables lihBRegL [B0.L B1.L B2.L B3.L];
+attach variables lihBRegH [B0.H B1.H B2.H B3.H];
+attach variables lihLReg [L0 L1 L2 L3];
+attach variables lihLRegL [L0.L L1.L L2.L L3.L];
+attach variables lihLRegH [L0.H L1.H L2.H L3.H];
+
+
+### Instructions ###
+
+lihDst: lihDReg is lihGrp=0x0 & lihDReg { export lihDReg; }
+lihDst: lihPReg is lihGrp=0x1 & lihPReg { export lihPReg; }
+lihDst: lihIReg is lihGrp=0x2 & lihRegH=0x0 & lihIReg { export lihIReg; }
+lihDst: lihMReg is lihGrp=0x2 & lihRegH=0x1 & lihMReg { export lihMReg; }
+lihDst: lihBReg is lihGrp=0x3 & lihRegH=0x0 & lihBReg { export lihBReg; }
+lihDst: lihLReg is lihGrp=0x3 & lihRegH=0x1 & lihLReg { export lihLReg; }
+
+lihDstL: lihDRegL is lihGrp=0x0 & lihDRegL { export lihDRegL; }
+lihDstL: lihPRegL is lihGrp=0x1 & lihPRegL { export lihPRegL; }
+lihDstL: lihIRegL is lihGrp=0x2 & lihRegH=0x0 & lihIRegL { export lihIRegL; }
+lihDstL: lihMRegL is lihGrp=0x2 & lihRegH=0x1 & lihMRegL { export lihMRegL; }
+lihDstL: lihBRegL is lihGrp=0x3 & lihRegH=0x0 & lihBRegL { export lihBRegL; }
+lihDstL: lihLRegL is lihGrp=0x3 & lihRegH=0x1 & lihLRegL { export lihLRegL; }
+
+lihDstH: lihDRegH is lihGrp=0x0 & lihDRegH { export lihDRegH; }
+lihDstH: lihPRegH is lihGrp=0x1 & lihPRegH { export lihPRegH; }
+lihDstH: lihIRegH is lihGrp=0x2 & lihRegH=0x0 & lihIRegH { export lihIRegH; }
+lihDstH: lihMRegH is lihGrp=0x2 & lihRegH=0x1 & lihMRegH { export lihMRegH; }
+lihDstH: lihBRegH is lihGrp=0x3 & lihRegH=0x0 & lihBRegH { export lihBRegH; }
+lihDstH: lihLRegH is lihGrp=0x3 & lihRegH=0x1 & lihLRegH { export lihLRegH; }
+
+with LdImmHalf: lihSig=0xe1 ... {
+: "LdImmToDregHL" lihDstL = lihSHword      is lihZ=0x0 & lihH=0x0 & lihS=0x0 & lihDstL ; lihSHword 
+    { lihDstL = lihSHword; }
+: "LdImmToReg"    lihDst = lihSHword "(X)" is lihZ=0x0 & lihH=0x0 & lihS=0x1 & lihDst ; lihSHword 
+    { lihDst = sext(lihSHword:2); }
+: "LdImmToReg"    lihDst = lihUHword "(Z)" is lihZ=0x1 & lihH=0x0 & lihS=0x0 & lihDst ; lihUHword 
+    { lihDst = zext(lihUHword:2); }
+: "LdImmToDregHL" lihDstH = lihSHword      is lihZ=0x0 & lihH=0x1 & lihS=0x0 & lihDstH ; lihSHword 
+    { lihDstH = lihSHword; }
+}
+
+
+:^LdImmHalf is LdImmHalf { build LdImmHalf; }

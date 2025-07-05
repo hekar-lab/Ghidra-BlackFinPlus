@@ -1,0 +1,94 @@
+## Long Load/Store with indexed addressing (LdStExcl)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 1 | 1 |.w.|.z.|..sz...|....ptr....|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.........................happyToBeHere.........................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lseInstr16 (16)
+	lseSig           = (10,15) 
+	lseW             = ( 9, 9) 
+	lseZ             = ( 8, 8) 
+	lseSz            = ( 6, 7) 
+	lsePtr           = ( 3, 5) 
+	lseReg           = ( 0, 2) 
+	lseRegL          = ( 0, 2) 
+	lseRegH          = ( 0, 2) 
+;
+
+define token lseInstr32 (16)
+    lseAny32         = ( 0,15)
+	lseHappyToBeHere = ( 0,15) 
+;
+
+
+### Variables ###
+
+attach variables lseReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lseRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables lseRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables lsePtr [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Operations ###
+
+define pcodeop syncexcl;
+
+
+### Instructions ###
+
+with LdStExcl: lseSig=0x3b ; lseHappyToBeHere=0x0 {
+with : lseW=0x0 ... {
+: "LdX32bitToDreg"  lseReg = [lsePtr] "(EXCL)"      is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; lseAny32 {
+	lseReg = *[ram]:4 lsePtr;
+}
+: "LdX16bitToDreg"  lseReg = "W"[lsePtr] "(Z,EXCL)" is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; lseAny32 {
+	lseReg = zext(*[ram]:2 lsePtr);
+}
+: "LdX16bitToDreg"  lseReg = "W"[lsePtr] "(X,EXCL)" is lseSz=0x1 & lseZ=0x1 & lseReg & lsePtr ; lseAny32 {
+	lseReg = sext(*[ram]:2 lsePtr);
+}
+: "LdX08bitToDreg"  lseReg = "B"[lsePtr] "(Z,EXCL)" is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; lseAny32 {
+	lseReg = zext(*[ram]:1 lsePtr);
+}
+: "LdX08bitToDreg"  lseReg = "B"[lsePtr] "(X,EXCL)" is lseSz=0x2 & lseZ=0x1 & lseReg & lsePtr ; lseAny32 {
+	lseReg = sext(*[ram]:1 lsePtr);
+}
+: "LdX16bitToDregL" lseRegL = "W"[lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x0 & lseRegL & lsePtr ; lseAny32 {
+	lseRegL = *[ram]:2 lsePtr;
+}
+: "LdX16bitToDregH" lseRegH = "W"[lsePtr] "(EXCL)"  is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; lseAny32 {
+	lseRegH = *[ram]:2 lsePtr;
+}
+}
+
+with : lseW=0x1 ... {
+# Normally CC = write attempted
+# As write will always succeed in our case CC will always be set to 1
+: "StDregToX32bit"  "CC" = ([lsePtr] = lseReg) "(EXCL)"     is lseSz=0x0 & lseZ=0x0 & lseReg & lsePtr ; lseAny32 {
+	*[ram]:4 lsePtr = lseReg;
+	CC = 1;
+}
+: "StDregLToX16bit" "CC" = ("W"[lsePtr] = lseReg) "(EXCL)"  is lseSz=0x1 & lseZ=0x0 & lseReg & lsePtr ; lseAny32 {
+	*[ram]:2 lsePtr = lseReg:2;
+	CC = 1;
+}
+: "StDregToX08bit"  "CC" = ("B"[lsePtr] = lseReg) "(EXCL)"  is lseSz=0x2 & lseZ=0x0 & lseReg & lsePtr ; lseAny32 {
+	*[ram]:1 lsePtr = lseReg:1;
+	CC = 1;
+}
+: "StDregHToX16bit" "CC" = ("W"[lsePtr] = lseRegH) "(EXCL)" is lseSz=0x3 & lseZ=0x0 & lseRegH & lsePtr ; lseAny32 {
+	*[ram]:2 lsePtr = lseRegH;
+	CC = 1;
+}
+: "SyncExcl"                                                is lseSz=0x3 & lseZ=0x1 & lseRegH & lsePtr ; lseAny32 {
+	syncexcl();
+}
+}
+}
+
+
+:^LdStExcl is LdStExcl { build LdStExcl; }

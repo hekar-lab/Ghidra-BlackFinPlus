@@ -1,0 +1,116 @@
+## Virtually Zero Overhead Loop Mechanism (LoopSetup)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |..rop..|.c.|.....soff......|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |imm|....reg....|..lop..|.................eoff..................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lpsInstr16 (16)
+    lpsAny16         = ( 0,15)
+	lpsSig           = ( 7,15) 
+	lpsRop           = ( 5, 6) 
+	lpsC             = ( 4, 4) 
+	lpsSoff          = ( 0, 3) 
+;
+
+define token lpsInstr32 (16)
+    lpsAny32         = ( 0,15)
+	lpsReg           = (12,14) 
+	lpsLop           = (10,11) 
+	lpsEoff          = ( 0, 9) 
+;
+
+
+### Variables ###
+
+attach variables lpsReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lpsC [LC0 LC1];
+
+
+### Instructions ###
+
+lpsLC: lpsC                   is lpsRop=0x0 & lpsC ; lpsAny32 {}
+lpsLC: lpsC = lpsReg          is lpsRop=0x1 & lpsC ; lpsReg { lpsC = lpsReg; }
+lpsLC: lpsC = lpsReg ">> 0x1" is lpsRop=0x3 & lpsC ; lpsReg { lpsC = lpsReg >> 1; }
+
+with LoopSetup: lpsSig=0x1c1 ... {
+with : lpsC=0x0 ... {
+: "LoopSetup" "LSETUP"(startImm, endImm) lpsLC is (lpsSoff ; lpsLop=0x0 & lpsEoff) & lpsLC [
+	startImm = lpsSoff * 2 + inst_start; 
+	endImm = lpsEoff * 2 + inst_start; 
+    loop0active = 1; globalset(endImm, loop0active);
+]{
+	LT0 = startImm;
+    LB0 = endImm;
+    build lpsLC;
+}
+: "LoopSetup" "LSETUPZ"(endImm) lpsLC         is (lpsAny16 ; lpsLop=0x1 & lpsEoff) & lpsLC [
+	endImm = lpsEoff * 2 + inst_start; 
+    loop0active = 1; globalset(endImm, loop0active);
+    zloop = 1; globalset(endImm, zloop);
+]{
+	LT0 = inst_next;
+    LB0 = endImm;
+    build lpsLC;
+    if (LC0 != 0) goto <end>;
+    goto [endImm:4];
+    <end>
+}
+: "LoopSetup" "LSETUPLEZ"(endImm) lpsLC       is (lpsAny16 ; lpsLop=0x2 & lpsEoff) & lpsLC [
+	endImm = lpsEoff * 2 + inst_start; 
+    loop0active = 1; globalset(endImm, loop0active);
+    zloop = 1; globalset(endImm, zloop);
+]{
+	LT0 = inst_next;
+    LB0 = endImm;
+    build lpsLC;
+    if (LC0 s> 0) goto <end>;
+    LC0 = 0;
+    goto [endImm:4];
+    <end>
+}
+}
+
+with : lpsC=0x1 ... {
+: "LoopSetup" "LSETUP"(startImm, endImm) lpsLC is (lpsSoff ; lpsLop=0x0 & lpsEoff) & lpsLC [
+	startImm = lpsSoff * 2 + inst_start; 
+	endImm = lpsEoff * 2 + inst_start; 
+    loop1active = 1; globalset(endImm, loop1active);
+]{
+	LT1 = startImm;
+    LB1 = endImm;
+    build lpsLC;
+}
+: "LoopSetup" "LSETUPZ"(endImm) lpsLC         is (lpsAny16 ; lpsLop=0x1 & lpsEoff) & lpsLC [
+	endImm = lpsEoff * 2 + inst_start; 
+    loop1active = 1; globalset(endImm, loop1active);
+    zloop = 2; globalset(endImm, zloop);
+]{
+	LT1 = inst_next;
+    LB1 = endImm;
+    build lpsLC;
+    if (LC1 != 0) goto <end>;
+    goto [endImm:4];
+    <end>
+}
+: "LoopSetup" "LSETUPLEZ"(endImm) lpsLC       is (lpsAny16 ; lpsLop=0x2 & lpsEoff) & lpsLC [
+	endImm = lpsEoff * 2 + inst_start; 
+    loop1active = 1; globalset(endImm, loop1active);
+    zloop = 2; globalset(endImm, zloop);
+]{
+	LT1 = inst_next;
+    LB1 = endImm;
+    build lpsLC;
+    if (LC1 s> 0) goto <end>;
+    LC1 = 0;
+    goto [endImm:4];
+    <end>
+}
+}
+}
+
+
+:^LoopSetup is LoopSetup { build LoopSetup; }

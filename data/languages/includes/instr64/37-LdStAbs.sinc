@@ -1,0 +1,104 @@
+## Load/Store 32-bit Absolute Address (LdStAbs)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................immH..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.............................immL..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 0 | 0 | 0 | 0 |..sz...|.w.| 0 | 0 |.z.| 0 | 0 | 0 |....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lsaInstr16 (16)
+    lsaAny16         = ( 0,15)
+	lsaSig           = ( 0,15) 
+;
+
+define token lsaInstr32 (16)
+	lsaImmH          = ( 0,15) 
+;
+
+define token lsaInstr48 (16)
+	lsaImmL          = ( 0,15) 
+;
+
+define token lsaInstr64 (16)
+	lsaMask4z        = (12,15) 
+	lsaSz            = (10,11) 
+	lsaW             = ( 9, 9) 
+	lsaMask2z        = ( 7, 8) 
+	lsaZ             = ( 6, 6) 
+	lsaMask3z        = ( 3, 5) 
+	lsaDReg          = ( 0, 2) 
+	lsaDRegL         = ( 0, 2) 
+	lsaDRegH         = ( 0, 2) 
+	lsaPReg          = ( 0, 2) 
+;
+
+
+### Variables ###
+
+attach variables lsaDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lsaDRegL [R0.L R1.L R2.L R3.L R4.L R5.L R6.L R7.L];
+attach variables lsaDRegH [R0.H R1.H R2.H R3.H R4.H R5.H R6.H R7.H];
+attach variables lsaPReg [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+lsaImm: imm is lsaImmH ; lsaImmL [imm = lsaImmH << 16 | lsaImmL;] { local tmp:4 = imm; export tmp; }
+
+with LdStAbs: lsaSig=0xd800 ... {
+with : ... (lsaMask4z=0x0 & lsaMask2z=0x0 & lsaMask3z=0x0) {
+with : ... lsaW=0x0 {
+: "LdM32bitToDreg"  lsaDReg = [lsaImm]          is lsaAny16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x0 & lsaDReg {
+    lsaDReg = *[ram]:4 lsaImm;
+}
+: "LdM32bitToDreg"  lsaPReg = [lsaImm]          is lsaAny16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x1 & lsaPReg {
+	lsaPReg = *[ram]:4 lsaImm;
+}
+: "LdM16bitToDreg"  lsaDReg = "W"[lsaImm] "(Z)" is lsaAny16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x0 & lsaDReg {
+	lsaDReg = zext(*[ram]:2 lsaImm);
+}
+: "LdM16bitToDreg"  lsaDReg = "W"[lsaImm] "(X)" is lsaAny16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x1 & lsaDReg {
+	lsaDReg = sext(*[ram]:2 lsaImm);
+}
+: "LdM08bitToDreg"  lsaDReg = "B"[lsaImm] "(Z)" is lsaAny16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x0 & lsaDReg {
+	lsaDReg = zext(*[ram]:1 lsaImm);
+}
+: "LdM08bitToDreg"  lsaDReg = "B"[lsaImm] "(X)" is lsaAny16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x1 & lsaDReg {
+	lsaDReg = sext(*[ram]:1 lsaImm);
+}
+: "LdM16bitToDregL" lsaDRegL = "W"[lsaImm]      is lsaAny16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x0 & lsaDRegL {
+	lsaDRegL = *[ram]:2 lsaImm;
+}
+: "LdM16bitToDregH" lsaDRegH = "W"[lsaImm]      is lsaAny16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x1 & lsaDRegH {
+	lsaDRegH = *[ram]:2 lsaImm;
+}
+}
+
+with : ... lsaW=0x1 {
+: "StDregToM32bit"  [lsaImm] = lsaDReg          is lsaAny16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x0 & lsaDReg {
+	*[ram]:4 lsaImm = lsaDReg;
+}
+: "StDregToM32bit"  [lsaImm] = lsaPReg          is lsaAny16 ; lsaImm ; lsaSz=0x0 & lsaZ=0x1 & lsaPReg {
+	*[ram]:4 lsaImm = lsaPReg;
+}
+: "StDregToM16bit"  "W"[lsaImm] = lsaDReg       is lsaAny16 ; lsaImm ; lsaSz=0x1 & lsaZ=0x0 & lsaDReg {
+	*[ram]:2 lsaImm = lsaDReg:2;
+}
+: "StDregToM08bit"  "B"[lsaImm] = lsaDReg       is lsaAny16 ; lsaImm ; lsaSz=0x2 & lsaZ=0x0 & lsaDReg {
+	*[ram]:1 lsaImm = lsaDReg:1;
+}
+: "StDregHToM16bit" "W"[lsaImm] = lsaDRegH      is lsaAny16 ; lsaImm ; lsaSz=0x3 & lsaZ=0x1 & lsaDRegH {
+	*[ram]:2 lsaImm = lsaDRegH;
+}
+}
+}
+}
+
+
+:^LdStAbs is LdStAbs { build LdStAbs; }

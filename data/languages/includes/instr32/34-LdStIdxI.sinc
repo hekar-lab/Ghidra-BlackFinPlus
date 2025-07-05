@@ -1,0 +1,76 @@
+## Long Load/Store with indexed addressing (LdStIdxI)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 1 |.w.|.z.|..sz...|....ptr....|....reg....|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..............................off..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lidInstr16 (16)
+	lidSig           = (10,15) 
+	lidW             = ( 9, 9) 
+	lidZ             = ( 8, 8) 
+	lidSz            = ( 6, 7) 
+	lidPtr           = ( 3, 5) 
+	lidDReg          = ( 0, 2) 
+	lidPReg          = ( 0, 2) 
+;
+
+define token lidInstr32 (16)
+	lidOff           = ( 0,15) signed
+;
+
+
+### Variables ###
+
+attach variables lidDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables [lidPtr lidPReg] [P0 P1 P2 P3 P4 P5 SP FP];
+
+
+### Instructions ###
+
+lidImm2: imm is lidOff [imm = lidOff * 2;] { local tmp:4 = imm; export tmp; }
+lidImm4: imm is lidOff [imm = lidOff * 4;] { local tmp:4 = imm; export tmp; }
+
+with LdStIdxI: lidSig=0x39 ... {
+with : lidW=0x0 ... {
+: "LdM32bitToDreg" lidDReg = [lidPtr + lidImm4]          is lidZ=0x0 & lidSz=0x0 & lidPtr & lidDReg ; lidImm4 { 
+	lidDReg = *[ram]:4 (lidPtr + lidImm4);
+}
+: "LdM32bitToPreg" lidPReg = [lidPtr + lidImm4]          is lidZ=0x1 & lidSz=0x0 & lidPtr & lidPReg ; lidImm4 {
+	lidPReg = *[ram]:4 (lidPtr + lidImm4);
+}
+: "LdM16bitToDreg" lidDReg = "W"[lidPtr + lidImm2] "(Z)" is lidZ=0x0 & lidSz=0x1 & lidPtr & lidDReg ; lidImm2 {
+	lidDReg = zext(*[ram]:2 (lidPtr + lidImm2));
+}
+: "LdM16bitToDreg" lidDReg = "W"[lidPtr + lidImm2] "(X)" is lidZ=0x1 & lidSz=0x1 & lidPtr & lidDReg ; lidImm2 {
+	lidDReg = sext(*[ram]:2 (lidPtr + lidImm2));
+}
+: "LdM08bitToDreg" lidDReg = "B"[lidPtr + lidOff] "(Z)"  is lidZ=0x0 & lidSz=0x2 & lidPtr & lidDReg ; lidOff {
+	lidDReg = zext(*[ram]:1 (lidPtr + lidOff));
+}
+: "LdM08bitToDreg" lidDReg = "B"[lidPtr + lidOff] "(X)"  is lidZ=0x1 & lidSz=0x2 & lidPtr & lidDReg ; lidOff {
+	lidDReg = sext(*[ram]:1 (lidPtr + lidOff));
+}
+}
+
+with : lidW=0x1 ... {
+: "StDregToM32bit"  [lidPtr + lidImm4] = lidDReg    is lidZ=0x0 & lidSz=0x0 & lidPtr & lidDReg ; lidImm4 {
+	*[ram]:4 (lidPtr + lidImm4) = lidDReg;
+}
+: "StPregToM32bit"  [lidPtr + lidImm4] = lidPReg    is lidZ=0x1 & lidSz=0x0 & lidPtr & lidPReg ; lidImm4 {
+	*[ram]:4 (lidPtr + lidImm4) = lidPReg;
+}
+: "StDregLToM16bit" "W"[lidPtr + lidImm2] = lidDReg is lidZ=0x0 & lidSz=0x1 & lidPtr & lidDReg ; lidImm2 {
+	*[ram]:2 (lidPtr + lidImm2) = lidDReg:2;
+}
+: "StDregToM08bit"  "B"[lidPtr + lidOff] = lidDReg  is lidZ=0x0 & lidSz=0x2 & lidPtr & lidDReg ; lidOff {
+	*[ram]:1 (lidPtr + lidOff) = lidDReg:1;
+}
+}
+}
+
+
+:^LdStIdxI is LdStIdxI { build LdStIdxI; }

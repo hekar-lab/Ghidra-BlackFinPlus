@@ -1,0 +1,58 @@
+## Virtually Zero Overhead Loop Mechanism with Immediate Values (LoopSetupImm)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |..rop..|.c.|.....immH......|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |.........immL..........|.................eoff..................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token lpiInstr16 (16)
+	lpiSig           = ( 7,15) 
+	lpiRop           = ( 5, 6) 
+	lpiC             = ( 4, 4) 
+	lpiImmH          = ( 0, 3) 
+;
+
+define token lpiInstr32 (16)
+	lpiImmL          = (10,15) 
+	lpiEoff          = ( 0, 9) 
+;
+
+
+### Variables ###
+
+attach variables lpiC [LC0 LC1];
+
+
+### Instructions ###
+
+lpiImm: imm is lpiImmH ; lpiImmL [imm = lpiImmH << 6 | lpiImmL;]{ local out:4 = imm; export out; }
+
+with LoopSetupImm: lpiSig=0x1c1 ... {
+with : lpiC=0x0 ... {
+LoopSetupImm: "LoopSetup" "LSETUP" (endImm) lpiC = lpiImm is (lpiRop=0x2 & lpiC ; lpiEoff) & lpiImm [
+	endImm = lpiEoff * 0x2 + inst_start;
+	loop0active = 0x1; globalset(endImm, loop0active);
+] {
+	LT0 = inst_next;
+	LB0 = endImm;
+	LC0 = lpiImm;
+}
+}
+
+with : lpiC=0x1 ... {
+LoopSetupImm: "LoopSetup" "LSETUP" (endImm) lpiC = lpiImm is (lpiRop=0x2 & lpiC ; lpiEoff) & lpiImm [
+	endImm = lpiEoff * 0x2 + inst_start;
+	loop1active = 0x1; globalset(endImm, loop1active);
+] {
+	LT1 = inst_next;
+	LB1 = endImm;
+	LC1 = lpiImm;
+}
+}
+}
+
+
+:^LoopSetupImm is LoopSetupImm { build LoopSetupImm; }

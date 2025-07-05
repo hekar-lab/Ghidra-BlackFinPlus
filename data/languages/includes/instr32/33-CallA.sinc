@@ -1,0 +1,34 @@
+## Call function with pcrel address (CallA)
+##
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## | 1 | 1 | 1 | 0 | 0 | 0 | 1 |.s.|..............swH..............|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+## |..............................swL..............................|
+## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
+
+### Tokens ###
+
+define token claInstr16 (16)
+	claSig           = ( 9,15) 
+	claS             = ( 8, 8) 
+	claSwH           = ( 0, 7) signed
+;
+
+define token claInstr32 (16)
+	claSwL           = ( 0,15) 
+;
+
+
+### Instructions ###
+
+claAddr: addr is claSwH ; claSwL [ addr = inst_start + ((claSwH << 16 | claSwL) * 2); ] { 
+	export *[ram]:4 addr;
+}
+
+with CallA: claSig=0x71 ... {
+: "JumpAbs" "JUMP.L" claAddr is claS=0x0 ... & claAddr { goto claAddr; }
+: "Call"    "CALL" claAddr   is claS=0x1 ... & claAddr { RETS = inst_next; call claAddr; }
+}
+
+
+:^CallA is CallA { build CallA; }
