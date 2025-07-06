@@ -1,7 +1,7 @@
 ## Set CC conditional bit (CCFlag)
 ##
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
-## | 0 | 0 | 0 | 0 | 1 |.i.|....opc....|.g.|.....x.....|.....y.....|
+## | 0 | 0 | 0 | 0 | 1 |.i.|....opc....|.g.|.....y.....|.....x.....|
 ## +---+---+---+---|---+---+---+---|---+---+---+---|---+---+---+---+
 
 ### Tokens ###
@@ -11,12 +11,12 @@ define token cfgInstr16 (16)
 	cfgI             = (10,10) 
 	cfgOpc           = ( 7, 9) 
 	cfgG             = ( 6, 6) 
-	cfgXDReg         = ( 3, 5) 
-	cfgXPReg         = ( 3, 5) 
-	cfgYUImm         = ( 0, 2) 
-	cfgYImm          = ( 0, 2) signed
-	cfgYDReg         = ( 0, 2) 
-	cfgYPReg         = ( 0, 2) 
+	cfgYUImm         = ( 3, 5) 
+	cfgYImm          = ( 3, 5) signed
+	cfgYDReg         = ( 3, 5) 
+	cfgYPReg         = ( 3, 5) 
+	cfgXDReg         = ( 0, 2) 
+	cfgXPReg         = ( 0, 2) 
 ;
 
 
@@ -36,23 +36,24 @@ cfgXval: cfgXPReg is cfgG=0x1 & cfgXPReg { export cfgXPReg; }
 
 cfgYval: cfgYDReg is cfgI=0x0 & cfgG=0x0 & cfgYDReg { export cfgYDReg; }
 cfgYval: cfgYPReg is cfgI=0x0 & cfgG=0x1 & cfgYPReg { export cfgYPReg; }
-cfgYval: cfgYImm  is (cfgOpc=0x1 | cfgOpc=0x2) & cfgI=0x1 & cfgYImm { local imm:4 = sext(cfgYImm:1); export imm; }
+cfgYval: cfgYImm  is (cfgOpc=0x0 | cfgOpc=0x1 | cfgOpc=0x2) & cfgI=0x1 & cfgYImm 
+	{ local imm:4 = sext(cfgYImm:1); export imm; }
 cfgYval: cfgYUImm is (cfgOpc=0x3 | cfgOpc=0x4) & cfgI=0x1 & cfgYUImm { local imm:4 = zext(cfgYUImm:1); export imm; }
 
 with CCFlag: cfgSig=0x01 {
-:^cfgName cfgXval == cfgYval        is cfgOpc=0x0 & cfgName & cfgXval & cfgYval {
+:^cfgName "CC" = cfgXval == cfgYval        is cfgOpc=0x0 & cfgName & cfgXval & cfgYval {
     CC = (cfgXval == cfgYval);
 }
-:^cfgName cfgXval < cfgYval         is cfgOpc=0x1 & cfgName & cfgXval & cfgYval {
+:^cfgName "CC" = cfgXval < cfgYval         is cfgOpc=0x1 & cfgName & cfgXval & cfgYval {
     CC = (cfgXval s< cfgYval);
 }
-:^cfgName cfgXval <= cfgYval        is cfgOpc=0x2 & cfgName & cfgXval & cfgYval {
+:^cfgName "CC" = cfgXval <= cfgYval        is cfgOpc=0x2 & cfgName & cfgXval & cfgYval {
     CC = (cfgXval s<= cfgYval);
 }
-:^cfgName cfgXval < cfgYval "(UI)"  is cfgOpc=0x3 & cfgName & cfgXval & cfgYval {
+:^cfgName "CC" = cfgXval < cfgYval "(UI)"  is cfgOpc=0x3 & cfgName & cfgXval & cfgYval {
     CC = (cfgXval < cfgYval);
 }
-:^cfgName cfgXval <= cfgYval "(UI)" is cfgOpc=0x4 & cfgName & cfgXval & cfgYval {
+:^cfgName "CC" = cfgXval <= cfgYval "(UI)" is cfgOpc=0x4 & cfgName & cfgXval & cfgYval {
     CC = (cfgXval <= cfgYval);
 }
 
@@ -60,7 +61,7 @@ CompAccAux: "CC = A0 == A1" is cfgOpc=0x5 { CC = (A0 == A1); }
 CompAccAux: "CC = A0 < A1"  is cfgOpc=0x6 { CC = (A0 s< A1); }
 CompAccAux: "CC = A0 <= A1" is cfgOpc=0x7 { CC = (A0 s<= A1); }
 
-: "CompAccumulators" CompAccAux is CompAccAux { build CompAccAux; }
+: "CompAccumulators" CompAccAux is cfgG=0x0 & cfgG=0x0 & CompAccAux { build CompAccAux; }
 }
 
 
