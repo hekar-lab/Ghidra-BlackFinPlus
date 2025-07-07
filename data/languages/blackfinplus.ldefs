@@ -9,7 +9,7 @@
             version="1.0"
             slafile="blackfinplus.sla"
             processorspec="blackfinplus.pspec"
-            id="blackfin:LE:32:blackfin+">
+            id="blackfinplus:LE:32:default">
     <description>Analog Devices Blackfin+ family (ADSP-BF7xx)</description>
     <compiler name="default" spec="blackfinplus.cspec" id="default"/>
   </language>

@@ -33,29 +33,33 @@ dlsIOp: [dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; ptr = ptr + 4; export 
 dlsIOp: [dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; ptr = ptr - 4; export ptr; }
 dlsIOp: [dlsI]   is dlsAop=0x2 & dlsI { export dlsI; }
 
-dlsIOp: [dlsI++dlsM] is dlsAop=0x3 & dlsM & dlsI { local ptr = dlsI; ptr = ptr + dlsM; export ptr; }
-
 dlsIOpW: "W"[dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; ptr = ptr + 2; export ptr; }
 dlsIOpW: "W"[dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; ptr = ptr - 2; export ptr; }
 dlsIOpW: "W"[dlsI]   is dlsAop=0x2 & dlsI { export dlsI; }
 
+dlsIOpM: [dlsI++dlsM] is dlsAop=0x3 & dlsM & dlsI { local ptr = dlsI; ptr = ptr + dlsM; export ptr; }
+
 with DspLdSt: dlsSig=0x27 {
 with : dlsW=0x0 {
+with : dlsAop!=0x3 {
 : "LdM32bitToDreg"  dlsReg = dlsIOp   is dlsM=0x0 & dlsIOp & dlsReg { dlsReg =  *[ram]:4 dlsIOp; }
 
 : "LdM16bitToDregL" dlsRegL = dlsIOpW is dlsM=0x1 & dlsIOpW & dlsRegL { dlsRegL =  *[ram]:2 dlsIOpW; }
 : "LdM16bitToDregH" dlsRegH = dlsIOpW is dlsM=0x2 & dlsIOpW & dlsRegH { dlsRegH =  *[ram]:2 dlsIOpW; }
+}
 
-: "LdM32bitToDreg"  dlsReg = dlsIOp   is dlsIOp & dlsReg { dlsReg =  *[ram]:4 dlsIOp; }
+: "LdM32bitToDreg"  dlsReg = dlsIOpM  is dlsIOpM & dlsReg { dlsReg =  *[ram]:4 dlsIOpM; }
 }
 
 with : dlsW=0x1 {
+with : dlsAop!=0x3 {
 : "StDregToM32bit"  dlsIOp = dlsReg   is dlsM=0x0 & dlsIOp & dlsReg { *[ram]:4 dlsIOp = dlsReg; }
 
 : "StDregLToM16bit" dlsIOpW = dlsRegL is dlsM=0x1 & dlsIOpW & dlsRegL { *[ram]:2 dlsIOpW = dlsRegL; }
 : "StDregHToM16bit" dlsIOpW = dlsRegH is dlsM=0x2 & dlsIOpW & dlsRegH { *[ram]:2 dlsIOpW = dlsRegH; }
+}
 
-: "StDregToM32bit"  dlsIOp = dlsReg   is dlsIOp & dlsReg { *[ram]:4 dlsIOp = dlsReg; }
+: "StDregToM32bit"  dlsIOpM = dlsReg  is dlsIOpM & dlsReg { *[ram]:4 dlsIOpM = dlsReg; }
 }
 }
 
