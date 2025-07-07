@@ -40,6 +40,10 @@ cfgYval: cfgYImm  is (cfgOpc=0x0 | cfgOpc=0x1 | cfgOpc=0x2) & cfgI=0x1 & cfgYImm
 	{ local imm:4 = sext(cfgYImm:1); export imm; }
 cfgYval: cfgYUImm is (cfgOpc=0x3 | cfgOpc=0x4) & cfgI=0x1 & cfgYUImm { local imm:4 = zext(cfgYUImm:1); export imm; }
 
+CompAccAux: "CC = A0 == A1" is cfgOpc=0x5 { CC = (A0 == A1); }
+CompAccAux: "CC = A0 < A1"  is cfgOpc=0x6 { CC = (A0 s< A1); }
+CompAccAux: "CC = A0 <= A1" is cfgOpc=0x7 { CC = (A0 s<= A1); }
+
 with CCFlag: cfgSig=0x01 {
 :^cfgName "CC" = cfgXval == cfgYval        is cfgOpc=0x0 & cfgName & cfgXval & cfgYval {
     CC = (cfgXval == cfgYval);
@@ -57,11 +61,7 @@ with CCFlag: cfgSig=0x01 {
     CC = (cfgXval <= cfgYval);
 }
 
-CompAccAux: "CC = A0 == A1" is cfgOpc=0x5 { CC = (A0 == A1); }
-CompAccAux: "CC = A0 < A1"  is cfgOpc=0x6 { CC = (A0 s< A1); }
-CompAccAux: "CC = A0 <= A1" is cfgOpc=0x7 { CC = (A0 s<= A1); }
-
-: "CompAccumulators" CompAccAux is cfgG=0x0 & cfgG=0x0 & CompAccAux { build CompAccAux; }
+: "CompAccumulators" CompAccAux is CompAccAux { build CompAccAux; }
 }
 
 

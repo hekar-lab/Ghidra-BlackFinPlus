@@ -45,8 +45,8 @@ define token daInstr32 (16)
 	daSrc1          = ( 0, 2) 
 	daSrc1L         = ( 0, 2) 
 	daSrc1H         = ( 0, 2) 
-	daSrc1E         = ( 3, 5)
-	daSrc1O         = ( 3, 5)
+	daSrc1E         = ( 0, 2)
+	daSrc1O         = ( 0, 2)
 	daSrc1Pair      = ( 0, 2) 
 	daSrc1PairD     = ( 0, 2) 
 	daSrc1Cpy       = ( 0, 2) 
@@ -211,14 +211,17 @@ mmavDisp: "Min16Vec" daDst0 = "MIN"(daSrc0, daSrc1) "(V)" is daAop=0x1 & daDst0 
 mmavDisp: "Abs16Vec" daDst0 = "ABS" daSrc0 "(V)"          is daAop=0x2 & daDst0 & daSrc0 {}
 mmavDisp: "Neg16Vec" daDst0 = -daSrc0 "(V)"               is daAop=0x3 & daDst0 & daSrc0 {}
 
-with daMMAVec: daHl=0x0 ; (daS=0x0 & daX=0x0) {
-: mmavDisp is daAopc=0x06 ; (mmavDisp & daAop=0x0 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
+with daMMAVec: (daAopc=0x06 & daHl=0x0) ; (daS=0x0 & daX=0x0) {
+: mmavDisp is daAny16 ; (mmavDisp & daAop=0x0 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
 	{ max(daDst0H, daSrc0H, daSrc1H); max(daDst0L, daSrc0L, daSrc1L); }
-: mmavDisp is daAopc=0x06 ; (mmavDisp & daAop=0x1 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
+: mmavDisp is daAny16 ; (mmavDisp & daAop=0x1 & daDst0H & daDst0L & daSrc0H & daSrc0L & daSrc1H & daSrc1L) 
 	{ min(daDst0H, daSrc0H, daSrc1H); min(daDst0L, daSrc0L, daSrc1L); }
-: mmavDisp is daAopc=0x06 ; (mmavDisp & daAop=0x2 & daDst0H & daDst0L & daSrc0H & daSrc0L) 
+: mmavDisp is daAny16 ; (mmavDisp & daAop=0x2 & daDst0H & daDst0L & daSrc0H & daSrc0L) 
 	{ abs_sat(daDst0H, daSrc0H, 2); abs_sat(daDst0L, daSrc0L, 2); }
-: mmavDisp is daAopc=0x0f ; (mmavDisp & daAop=0x3 & daDst0H & daDst0L & daSrc0H & daSrc0L) 
+}
+
+with daMMAVec2: (daAopc=0x0f & daHl=0x0) ; (daS=0x0 & daX=0x0) {
+: mmavDisp is daAny16 ; (mmavDisp & daAop=0x3 & daDst0H & daDst0L & daSrc0H & daSrc0L) 
 	{ neg_sat(daDst0H, daSrc0H, 2); neg_sat(daDst0L, daSrc0L, 2); }
 }
 
@@ -674,6 +677,7 @@ with Dsp32Alu: (daSig=0xc & daSigDsp=0x2) ... {
 :^daAddSub32    is daAddSub32    { build daAddSub32; }
 :^daAddSubRnd   is daAddSubRnd   { build daAddSubRnd; }
 :^daMMAVec      is daMMAVec      { build daMMAVec; }
+:^daMMAVec2     is daMMAVec2     { build daMMAVec2; }
 :^daMMA32       is daMMA32       { build daMMA32; }
 :^daAccOp       is daAccOp       { build daAccOp; }
 :^daMisc        is daMisc        { build daMisc; }
