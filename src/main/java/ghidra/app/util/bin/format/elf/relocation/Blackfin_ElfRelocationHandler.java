@@ -10,10 +10,13 @@ import ghidra.program.model.mem.Memory;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.reloc.Relocation.Status;
 import ghidra.program.model.reloc.RelocationResult;
-import ghidra.util.exception.NotFoundException;
 
-// TODO: Update to AbstractElfRelocationHandler
-public class Blackfin_ElfRelocationHandler extends ElfRelocationHandler {
+public class Blackfin_ElfRelocationHandler 
+	extends AbstractElfRelocationHandler<Blackfin_ElfRelocationType, ElfRelocationContext<?>> {
+
+	public Blackfin_ElfRelocationHandler() {
+		super(Blackfin_ElfRelocationType.class);
+	}
 
 	@Override
 	public boolean canRelocate(ElfHeader elf) {
@@ -21,52 +24,35 @@ public class Blackfin_ElfRelocationHandler extends ElfRelocationHandler {
 	}
 
 	@Override
-	public RelocationResult relocate(ElfRelocationContext elfRelocationContext, ElfRelocation relocation, Address relocationAddress)
-			throws MemoryAccessException, NotFoundException {
-
-		ElfHeader elf = elfRelocationContext.getElfHeader();
+	protected RelocationResult relocate(
+		ElfRelocationContext<?> elfRelocCtx, ElfRelocation elfReloc, Blackfin_ElfRelocationType elfRelocType,
+		Address relocAddr, ElfSymbol elfSymb, Address symbAddr, long symbVal, String SymbName
+	) throws MemoryAccessException {
+		ElfHeader elf = elfRelocCtx.getElfHeader();
 		if (!canRelocate(elf)) {
 			return RelocationResult.FAILURE;
 		}
-		
-		Program program = elfRelocationContext.getProgram();
-		Memory memory = program.getMemory();
-		int type = relocation.getType();
 
-		ElfSymbol sym = null;
-		long symbolValue = 0;
-		String symbolName = null;
-		
-		int symbolIndex = relocation.getSymbolIndex();
-		if (symbolIndex != 0) {
-			sym = elfRelocationContext.getSymbol(symbolIndex);
-		}
-		
-		if (sym != null) {
-			symbolValue = elfRelocationContext.getSymbolValue(sym);
-			symbolName = sym.getNameAsString();
-		}
-		
+		Program program = elfRelocCtx.getProgram();
+		Memory memory = program.getMemory();
+
 		int byteLength = 4;
 
-		switch (type) {
-			case Blackfin_ElfRelocationConstants.R_BFIN_FUNCDESC:
-				memory.setInt(relocationAddress, (int)symbolValue);
+		switch (elfRelocType) {
+			case R_BFIN_FUNCDESC:
+				memory.setInt(relocAddr, (int)symbVal);
 				break;
-				
-			case Blackfin_ElfRelocationConstants.R_BFIN_FUNCDESC_VALUE:
-				memory.setInt(relocationAddress, (int)symbolValue);
-				memory.setInt(relocationAddress.add(4), 0);
+			case R_BFIN_FUNCDESC_VALUE:
+				memory.setInt(relocAddr, (int)symbVal);
+				memory.setInt(relocAddr.add(4), 0);
 				byteLength = 8;
 				break;
-				
 			default:
-				markAsUnhandled(program, relocationAddress, type, symbolIndex, symbolName, elfRelocationContext.getLog());
+				markAsUnhandled(program, relocAddr, elfRelocType, byteLength, SymbName, elfRelocCtx.getLog());
 				return RelocationResult.UNSUPPORTED;
 		}
-		
+
 		return new RelocationResult(Status.APPLIED, byteLength);
-		
 	}
 
 }
