@@ -28,7 +28,7 @@ attach variables [lspIdx lspPtr] [P0 P1 P2 P3 P4 P5 SP FP];
 
 ### Instructions ###
 
-lspAddr: [lspPtr++lspIdx] is lspPtr & lspIdx { local ptr = lspPtr; ptr = ptr + lspIdx; export ptr; }
+lspAddr: [lspPtr++lspIdx] is lspPtr & lspIdx { local ptr = lspPtr; lspPtr = ptr + lspIdx; export ptr; }
 
 with LdStPmod: lspSig=0x8 {
 with : lspW=0x0 {

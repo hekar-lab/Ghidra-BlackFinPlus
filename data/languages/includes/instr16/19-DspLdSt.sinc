@@ -29,12 +29,12 @@ attach variables dlsM [M0 M1 M2 M3];
 
 ### Instructions ###
 
-dlsIOp: [dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; ptr = ptr + 4; export ptr; }
-dlsIOp: [dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; ptr = ptr - 4; export ptr; }
+dlsIOp: [dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; dlsI = ptr + 4; export ptr; }
+dlsIOp: [dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; dlsI = ptr - 4; export ptr; }
 dlsIOp: [dlsI]   is dlsAop=0x2 & dlsI { export dlsI; }
 
-dlsIOpW: "W"[dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; ptr = ptr + 2; export ptr; }
-dlsIOpW: "W"[dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; ptr = ptr - 2; export ptr; }
+dlsIOpW: "W"[dlsI++] is dlsAop=0x0 & dlsI { local ptr = dlsI; dlsI = ptr + 2; export ptr; }
+dlsIOpW: "W"[dlsI--] is dlsAop=0x1 & dlsI { local ptr = dlsI; dlsI = ptr - 2; export ptr; }
 dlsIOpW: "W"[dlsI]   is dlsAop=0x2 & dlsI { export dlsI; }
 
 dlsIOpM: [dlsI++dlsM] is dlsAop=0x3 & dlsM & dlsI { local ptr = dlsI; ptr = ptr + dlsM; export ptr; }

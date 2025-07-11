@@ -6,57 +6,61 @@
 
 ### Tokens ###
 
-define token ldstInstr16 (16)
-	ldstSig          = (12,15) 
-	ldstSz           = (10,11) 
-	ldstW            = ( 9, 9) 
-	ldstAop          = ( 7, 8) 
-	ldstZ            = ( 6, 6) 
-	ldstPtr          = ( 3, 5) 
-	ldstDReg         = ( 0, 2) 
-	ldstPReg         = ( 0, 2) 
+define token lsInstr16 (16)
+	lsSig          = (12,15) 
+	lsSz           = (10,11) 
+	lsW            = ( 9, 9) 
+	lsAop          = ( 7, 8) 
+	lsZ            = ( 6, 6) 
+	lsPtr          = ( 3, 5) 
+	lsDReg         = ( 0, 2) 
+	lsPReg         = ( 0, 2) 
 ;
 
 
 ### Variables ###
 
-attach variables ldstDReg [R0 R1 R2 R3 R4 R5 R6 R7];
-attach variables ldstPReg [P0 P1 P2 P3 P4 P5 SP FP];
-attach variables ldstPtr [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lsDReg [R0 R1 R2 R3 R4 R5 R6 R7];
+attach variables lsPReg [P0 P1 P2 P3 P4 P5 SP FP];
+attach variables lsPtr [P0 P1 P2 P3 P4 P5 SP FP];
 
 
 ### Instructions ###
 
-ldstOp: [ldstPtr++] is ldstSz & ldstAop=0x0 & ldstPtr { local ptr = ldstPtr; ptr = ptr + (4 >> ldstSz); export ptr; }
-ldstOp: [ldstPtr--] is ldstSz & ldstAop=0x1 & ldstPtr { local ptr = ldstPtr; ptr = ptr - (4 >> ldstSz); export ptr; }
-ldstOp: [ldstPtr]   is ldstAop=0x2 & ldstPtr { export ldstPtr; }
+lsInc: is lsSz=0x0 { local inc:4 = 4; export inc; }
+lsInc: is lsSz=0x1 { local inc:4 = 2; export inc; }
+lsInc: is lsSz=0x2 { local inc:4 = 1; export inc; }
 
-with LdSt: ldstSig=0x9 {
-with : ldstW=0x0 {
-with : ldstSz=0x0 {
-: "LdM32bitToDreg" ldstDReg = ldstOp is ldstZ=0x0 & ldstOp & ldstDReg { ldstDReg = *[ram]:4 ldstOp; }
-: "LdM32bitToPreg" ldstPReg = ldstOp is ldstZ=0x1 & ldstOp & ldstPReg { ldstPReg = *[ram]:4 ldstOp; }
+lsOp: [lsPtr++] is lsInc & lsAop=0x0 & lsPtr { local ptr = lsPtr; lsPtr = ptr + lsInc; export ptr; }
+lsOp: [lsPtr--] is lsInc & lsAop=0x1 & lsPtr { local ptr = lsPtr; lsPtr = ptr - lsInc; export ptr; }
+lsOp: [lsPtr]   is lsAop=0x2 & lsPtr { export lsPtr; }
+
+with LdSt: lsSig=0x9 {
+with : lsW=0x0 {
+with : lsSz=0x0 {
+: "LdM32bitToDreg" lsDReg = lsOp is lsZ=0x0 & lsOp & lsDReg { lsDReg = *[ram]:4 lsOp; }
+: "LdM32bitToPreg" lsPReg = lsOp is lsZ=0x1 & lsOp & lsPReg { lsPReg = *[ram]:4 lsOp; }
 }
 
-with : ldstSz=0x1 {
-: "LdM16bitToDreg" ldstDReg = "W"ldstOp "(Z)" is ldstZ=0x0 & ldstOp & ldstDReg { ldstDReg = zext(*[ram]:2 ldstOp); }
-: "LdM16bitToDreg" ldstDReg = "W"ldstOp "(X)" is ldstZ=0x1 & ldstOp & ldstDReg { ldstDReg = sext(*[ram]:2 ldstOp); }
+with : lsSz=0x1 {
+: "LdM16bitToDreg" lsDReg = "W"lsOp "(Z)" is lsZ=0x0 & lsOp & lsDReg { lsDReg = zext(*[ram]:2 lsOp); }
+: "LdM16bitToDreg" lsDReg = "W"lsOp "(X)" is lsZ=0x1 & lsOp & lsDReg { lsDReg = sext(*[ram]:2 lsOp); }
 }
 
-with : ldstSz=0x2 {
-: "LdM08bitToDreg" ldstDReg = "B"ldstOp "(Z)" is ldstZ=0x0 & ldstOp & ldstDReg { ldstDReg = zext(*[ram]:1 ldstOp); }
-: "LdM08bitToDreg" ldstDReg = "B"ldstOp "(X)" is ldstZ=0x1 & ldstOp & ldstDReg { ldstDReg = sext(*[ram]:1 ldstOp); }
+with : lsSz=0x2 {
+: "LdM08bitToDreg" lsDReg = "B"lsOp "(Z)" is lsZ=0x0 & lsOp & lsDReg { lsDReg = zext(*[ram]:1 lsOp); }
+: "LdM08bitToDreg" lsDReg = "B"lsOp "(X)" is lsZ=0x1 & lsOp & lsDReg { lsDReg = sext(*[ram]:1 lsOp); }
 }
 }
 
-with : ldstW=0x1 {
-with : ldstSz=0x0 {
-: "StDregToM32bit" ldstOp = ldstDReg  is ldstZ=0x0 & ldstOp & ldstDReg { *[ram]:4 ldstOp = ldstDReg; }
-: "StPregToM32bit" ldstOp = ldstPReg  is ldstZ=0x1 & ldstOp & ldstPReg { *[ram]:4 ldstOp = ldstPReg; }
+with : lsW=0x1 {
+with : lsSz=0x0 {
+: "StDregToM32bit" lsOp = lsDReg  is lsZ=0x0 & lsOp & lsDReg { *[ram]:4 lsOp = lsDReg; }
+: "StPregToM32bit" lsOp = lsPReg  is lsZ=0x1 & lsOp & lsPReg { *[ram]:4 lsOp = lsPReg; }
 }
 
-: "StDregLToM16bit" "W"ldstOp = ldstDReg is ldstSz=0x1 & ldstZ=0x0 & ldstOp & ldstDReg { *[ram]:2 ldstOp = ldstDReg:2; }
-: "StDregLToM08bit" "B"ldstOp = ldstDReg is ldstSz=0x2 & ldstZ=0x0 & ldstOp & ldstDReg { *[ram]:1 ldstOp = ldstDReg:1; }
+: "StDregLToM16bit" "W"lsOp = lsDReg is lsSz=0x1 & lsZ=0x0 & lsOp & lsDReg { *[ram]:2 lsOp = lsDReg:2; }
+: "StDregLToM08bit" "B"lsOp = lsDReg is lsSz=0x2 & lsZ=0x0 & lsOp & lsDReg { *[ram]:1 lsOp = lsDReg:1; }
 }
 }
 
