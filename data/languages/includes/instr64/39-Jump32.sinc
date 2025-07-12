@@ -42,8 +42,8 @@ with Jump32: (jmpSig=0x37 & jmpMask8z=0x0) ... {
 : "JumpAbs" "JUMP.A" jmpImmA is jmpC=0x0 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 { goto jmpImmA; }
 : "JumpAbs" "JUMP" jmpImm    is jmpC=0x0 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0  { goto jmpImm; }
 
-: "Call" "CALL.A" jmpImmA is jmpC=0x1 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 { RETS = inst_next; goto jmpImmA; }
-: "Call" "CALL" jmpImm    is jmpC=0x1 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0  { RETS = inst_next; goto jmpImm; }
+: "Call" "CALL.A" jmpImmA is jmpC=0x1 & jmpRel=0x0 ; jmpImmA ; jmpZeros=0x0 { RETS = inst_next; call jmpImmA; }
+: "Call" "CALL" jmpImm    is jmpC=0x1 & jmpRel=0x1 ; jmpImm ; jmpZeros=0x0  { RETS = inst_next; call jmpImm; }
 }
 
 
